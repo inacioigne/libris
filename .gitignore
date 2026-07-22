@@ -1,0 +1,54 @@
+# Python bytecode and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# FastAPI / local data
+*.sqlite3
+*.db
+instance/
+uploads/
+media/
+staticfiles/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.cache/
+*.log
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
