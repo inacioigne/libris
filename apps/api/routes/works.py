@@ -1,11 +1,12 @@
+from typing import List
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.associations import WorkAgent
-from services.crud.work import create_work
+from services.crud.work import create_work, list_works
 from core.db import get_db
 
 from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead
@@ -13,17 +14,21 @@ from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead
 router = APIRouter(prefix="/works", tags=["Works"])
 
 
-@router.post(
-    "/", 
-    response_model=WorkRead, 
-    status_code=status.HTTP_201_CREATED
-    )
+@router.post("/", response_model=WorkRead, status_code=status.HTTP_201_CREATED)
 async def create(
     data: WorkCreate, 
     db: AsyncSession = Depends(get_db)
     ):
     
     return await create_work(db, data)
+
+@router.get("/", response_model=List[WorkRead], status_code=status.HTTP_200_OK)
+async def list_all(
+    offset: int = Query(0, ge=0, description="Quantos registros pular"),
+    limit: int = Query(20, ge=1, le=100, description="Quantidade máxima de registros"),
+    db: AsyncSession = Depends(get_db),
+):
+    return await list_works(db, offset=offset, limit=limit)
 
 @router.post("/{work_id}/agents", response_model=WorkAgentRead, status_code=201)
 async def link_agent_to_work(
