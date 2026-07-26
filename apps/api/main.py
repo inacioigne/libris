@@ -7,12 +7,15 @@ from routes.agents import router as agent_router
 from routes.instances import router as instance_router
 from routes.items import router as item_router
 
+from indexer.elastic.client import close_elasticsearch
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    await close_elasticsearch()
 
 app = FastAPI(
     title="Libris - API",

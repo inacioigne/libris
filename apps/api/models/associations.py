@@ -1,10 +1,15 @@
 import uuid
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Table, Column, String, ForeignKey
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
+
+if TYPE_CHECKING:
+    from models.agent import Agent
+    from models.work import Work
 
 class WorkAgent(Base):
     __tablename__ = "work_agent"
@@ -13,5 +18,5 @@ class WorkAgent(Base):
     agent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("agent.id"), primary_key=True)
     role: Mapped[str] = mapped_column(String(50), nullable=True)
 
-    work: Mapped["Work"] = relationship(back_populates="agents")
-    agent: Mapped["Agent"] = relationship(back_populates="works")
+    work: Mapped["Work"] = relationship(back_populates="agents", lazy="selectin")
+    agent: Mapped["Agent"] = relationship(back_populates="works", lazy="selectin")

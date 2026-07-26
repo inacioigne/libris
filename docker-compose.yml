@@ -30,6 +30,18 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
+  kibana:
+      image: docker.elastic.co/kibana/kibana:8.18.1
+      container_name: kibana
+      depends_on:
+        - elasticsearch
+      environment:
+        SERVER_NAME: kibana
+        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+        XPACK_SECURITY_ENABLED: "false"
+      ports:
+        - "5601:5601"
+
 volumes:
   mariadb_data:
   elasticsearch-data:

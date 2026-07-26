@@ -20,8 +20,8 @@ class Agent(Base):
     type: Mapped[str] = mapped_column(String(50), nullable=True)  
     identifier: Mapped[str] = mapped_column(String(255), nullable=True)  
 
-    works: Mapped[list["WorkAgent"]] = relationship(back_populates="agent")
-    published_instances: Mapped[list["Instance"]] = relationship(back_populates="publisher")
+    works: Mapped[list["WorkAgent"]] = relationship(back_populates="agent", lazy="selectin")
+    published_instances: Mapped[list["Instance"]] = relationship(back_populates="publisher", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Agent {self.name!r}>"

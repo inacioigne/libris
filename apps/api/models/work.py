@@ -18,10 +18,15 @@ class Work(Base):
     type: Mapped[str] = mapped_column(String(50), nullable=True)
     subject: Mapped[str] = mapped_column(String(100), nullable=True)
 
-    instances: Mapped[list["Instance"]] = relationship(back_populates="work", cascade="all, delete-orphan")
+    instances: Mapped[list["Instance"]] = relationship(
+        back_populates="work",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
     agents: Mapped[list["WorkAgent"]] = relationship(
         back_populates="work",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy="selectin",
     )
     def __repr__(self) -> str:
         return f"<Work {self.title!r}>"
