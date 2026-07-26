@@ -5,6 +5,7 @@ from core.db import Base, engine
 from routes.works import router as work_router
 from routes.agents import router as agent_router
 from routes.instances import router as instance_router
+from routes.items import router as item_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,6 +23,7 @@ app = FastAPI(
 app.include_router(work_router)
 app.include_router(agent_router)
 app.include_router(instance_router)
+app.include_router(item_router)
 
 @app.get("/")
 def read_root():
