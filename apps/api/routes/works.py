@@ -43,15 +43,17 @@ async def link_agent_to_work(
     except IntegrityError as exc:
         await db.rollback()
         detail = (
-            f"Associação inválida ou já existente. Detalhes: "
-            f"{exc.orig.args[0] if exc.orig is not None else exc}"
+            f"já existe uma associação para este trabalho e agente. "
+            f"Detalhes: {exc.orig.args[0] if exc.orig is not None else exc}"
         )
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
     except Exception as exc:
         await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Erro ao criar associação: {exc}"
-        )
+        message = str(exc)
+        if "duplicate" in message.lower() or "já existe" in message.lower():
+            detail = f"já existe uma associação para este trabalho e agente. Detalhes: {message}"
+        else:
+            detail = f"Erro ao criar associação: {message}"
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
     await db.refresh(link)
     return link
