@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 class WorkBase(BaseModel):
     title: str
     type: str | None = None
-    subject: str | None = None
+    # subject: str | None = None
 
 
 class WorkCreate(WorkBase):

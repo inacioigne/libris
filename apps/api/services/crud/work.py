@@ -2,9 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from sqlalchemy.ext.asyncio import AsyncSession
-
-
-from services.indexing.work import index_work
+from services.indexing.work import WorkIndex
 from models.work import Work
 from schemas.work import WorkCreate
 
@@ -15,7 +13,7 @@ async def create_work(db: AsyncSession, work_in: WorkCreate) -> Work:
     await db.commit()
     await db.refresh(work)
     
-    await index_work(work)
+    await WorkIndex().reindex(db, work.id)
     return work
 
 async def list_works(db: AsyncSession, offset: int = 0, limit: int = 20):

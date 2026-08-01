@@ -5,11 +5,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.associations import WorkAgent
+
+from schemas.subject import WorkSubjectCreate, WorkSubjectRead
+from models.associations import WorkAgent, WorkSubject
 from services.crud.work import create_work, list_works
 from core.db import get_db
 
 from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead
+from services.crud.subject import link_subject_to_work
 
 router = APIRouter(prefix="/works", tags=["Works"])
 
@@ -57,3 +60,15 @@ async def link_agent_to_work(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
     await db.refresh(link)
     return link
+
+@router.post(
+    "/{work_id}/subjects",
+    response_model=WorkSubjectRead,
+    status_code=status.HTTP_201_CREATED,
+)
+async def subject_to_work(
+    work_id: uuid.UUID,
+    data: WorkSubjectCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    return await link_subject_to_work(work_id, data, db)

@@ -1,4 +1,5 @@
 from models.work import Work
+
 from indexer.documents.work import (
     InstanceSummary,
     WorkSearchDocument,

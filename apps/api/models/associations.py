@@ -20,3 +20,19 @@ class WorkAgent(Base):
 
     work: Mapped["Work"] = relationship(back_populates="agents", lazy="selectin")
     agent: Mapped["Agent"] = relationship(back_populates="works", lazy="selectin")
+    
+class WorkSubject(Base):
+    __tablename__ = "work_subject"
+
+    work_id = mapped_column(
+        ForeignKey("work.id"),
+        primary_key=True,
+    )
+
+    subject_id = mapped_column(
+        ForeignKey("subject.id"),
+        primary_key=True,
+    )
+
+    work = relationship("Work", back_populates="subjects")
+    subject = relationship("Subject", back_populates="works")

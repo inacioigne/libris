@@ -3,6 +3,16 @@ from .work import Work
 from .instance import Instance
 from .item import Item
 from .agent import Agent
-from .associations import WorkAgent
+from .subject import Subject
+from .associations import WorkAgent, WorkSubject
 
-__all__ = ["Base", "Work", "Instance", "Item", "Agent", "WorkAgent"]
+__all__ = [
+    "Base",
+    "Work",
+    "Instance",
+    "Item",
+    "Agent",
+    "Subject",
+    "WorkAgent",
+    "WorkSubject",
+]
