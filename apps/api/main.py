@@ -8,6 +8,7 @@ from routes.agents import router as agent_router
 from routes.instances import router as instance_router
 from routes.items import router as item_router
 from routes.subjects import router as subject_router
+from routes.users import router as user_router
 
 from indexer.elastic.client import close_elasticsearch
 
@@ -30,7 +31,4 @@ app.include_router(agent_router)
 app.include_router(instance_router)
 app.include_router(item_router)
 app.include_router(subject_router)
-
-# @app.get("/")
-# def read_root():
-#     return {"Hello": "World"}
+app.include_router(user_router)
