@@ -25,6 +25,7 @@ async def create(
     
     return await create_work(db, data)
 
+
 @router.get("/", response_model=List[WorkRead], status_code=status.HTTP_200_OK)
 async def list_all(
     offset: int = Query(0, ge=0, description="Quantos registros pular"),
@@ -32,6 +33,7 @@ async def list_all(
     db: AsyncSession = Depends(get_db),
 ):
     return await list_works(db, offset=offset, limit=limit)
+
 
 @router.post("/{work_id}/agents", response_model=WorkAgentRead, status_code=201)
 async def link_agent_to_work(
@@ -61,11 +63,7 @@ async def link_agent_to_work(
     await db.refresh(link)
     return link
 
-@router.post(
-    "/{work_id}/subjects",
-    response_model=WorkSubjectRead,
-    status_code=status.HTTP_201_CREATED,
-)
+@router.post("/{work_id}/subjects", response_model=WorkSubjectRead, status_code=status.HTTP_201_CREATED)
 async def subject_to_work(
     work_id: uuid.UUID,
     data: WorkSubjectCreate,

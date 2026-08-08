@@ -31,6 +31,6 @@ app.include_router(instance_router)
 app.include_router(item_router)
 app.include_router(subject_router)
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# @app.get("/")
+# def read_root():
+#     return {"Hello": "World"}

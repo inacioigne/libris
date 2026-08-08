@@ -44,6 +44,12 @@ async def create_subject(
 
     return subject
 
+async def list_subjects(db: AsyncSession, offset: int = 0, limit: int = 20):
+    result = await db.execute(
+        select(Subject).offset(offset).limit(limit)
+    )
+    return result.scalars().all()
+
 async def link_subject_to_work(work_id: uuid.UUID,
     data: WorkSubjectCreate,
     db: AsyncSession):
