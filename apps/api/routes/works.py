@@ -13,6 +13,7 @@ from core.db import get_db
 
 from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead
 from services.crud.subject import link_subject_to_work
+from services.auth import get_current_user
 
 router = APIRouter(prefix="/works", tags=["Works"])
 
@@ -20,7 +21,8 @@ router = APIRouter(prefix="/works", tags=["Works"])
 @router.post("/", response_model=WorkRead, status_code=status.HTTP_201_CREATED)
 async def create(
     data: WorkCreate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user)
     ):
     
     return await create_work(db, data)

@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -41,5 +43,15 @@ async def existing_user(
         query = query.where(User.email == email)
 
     result = await db.execute(query)
+
+    return result.scalar_one_or_none()
+
+async def get_user_by_id(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+) -> User | None:
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
 
     return result.scalar_one_or_none()
