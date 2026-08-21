@@ -13,7 +13,7 @@ from core.db import get_db
 
 from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead
 from services.crud.subject import link_subject_to_work
-from services.auth import get_current_user
+from services.auth import require_role
 
 router = APIRouter(prefix="/works", tags=["Works"])
 
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/works", tags=["Works"])
 async def create(
     data: WorkCreate, 
     db: AsyncSession = Depends(get_db),
-    current_user=Depends(get_current_user)
+    current_user=Depends(require_role("librarian"))
     ):
     
     return await create_work(db, data)

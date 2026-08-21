@@ -1,4 +1,5 @@
 from fastapi.params import Depends
+from fastapi import HTTPException, status
 from typing_extensions import Annotated
 
 from sqlalchemy import select
@@ -39,10 +40,25 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
 ):
     payload = decode_access_token(token)
-
-    # buscar usuário pelo sub do JWT
     user_id = payload.get("sub")
 
     user = await get_user_by_id(db, user_id)
 
     return user
+
+
+def require_role(required_role: str):
+    async def role_checker(
+        current_user: User = Depends(get_current_user),
+    ):
+        user_roles = {role.name for role in current_user.roles}
+
+        if required_role not in user_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions",
+            )
+
+        return current_user
+
+    return role_checker
