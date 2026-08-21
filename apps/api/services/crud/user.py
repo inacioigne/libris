@@ -2,6 +2,7 @@ import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from core.security import hash_password
 from models.user import User
@@ -51,7 +52,7 @@ async def get_user_by_id(
     user_id: uuid.UUID,
 ) -> User | None:
     result = await db.execute(
-        select(User).where(User.id == user_id)
+        select(User).where(User.id == user_id).options(selectinload(User.roles))
     )
 
     return result.scalar_one_or_none()

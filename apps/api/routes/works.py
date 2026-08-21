@@ -22,7 +22,7 @@ router = APIRouter(prefix="/works", tags=["Works"])
 async def create(
     data: WorkCreate, 
     db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_role("librarian"))
+    current_user=Depends(require_role("admin"))
     ):
     
     return await create_work(db, data)

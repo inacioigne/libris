@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from core.seed import seed_roles
+from core.seed import seed_admin_user
 from core.db import Base, engine, SessionLocal
 import models
 from routes.works import router as work_router
@@ -23,6 +24,7 @@ async def lifespan(app: FastAPI):
     # Executa os seeds
     async with SessionLocal() as db:
         await seed_roles(db)
+        await seed_admin_user(db)
         
     yield
     await close_elasticsearch()

@@ -6,14 +6,6 @@ CONTAINER="mariadb"
 DATABASE="libris_db"
 MARIADB_ROOT_PASSWORD="RizctJ7"
 
-echo "⚠️  ATENÇÃO: o banco '$DATABASE' será completamente apagado."
-read -p "Digite 'SIM' para continuar: " CONFIRM
-
-if [ "$CONFIRM" != "SIM" ]; then
-    echo "Operação cancelada."
-    exit 0
-fi
-
 echo "Removendo banco '$DATABASE'..."
 
 docker exec mariadb mariadb \
