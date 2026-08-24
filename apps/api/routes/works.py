@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from schemas.subject import WorkSubjectCreate, WorkSubjectRead
-from models.associations import WorkAgent, WorkSubject
+from models.work_metadata.workAgent import WorkAgent
+from models.work_metadata.workSubject import WorkSubject
 from services.crud.work import create_work, list_works
 from core.db import get_db
 

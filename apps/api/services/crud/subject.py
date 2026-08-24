@@ -5,8 +5,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.associations import WorkSubject
-from schemas.subject import SubjectCreate, WorkSubjectCreate, WorkSubjectRead
+from models.work_metadata.workSubject import WorkSubject
+from schemas.subject import SubjectCreate, WorkSubjectCreate
 from models.subject import Subject
 
 

@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.indexing.work import WorkIndex
-from models.work import Work
+from models.work_metadata.work import Work
 from schemas.work import WorkCreate
 
 

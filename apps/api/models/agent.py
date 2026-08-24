@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
-from models.associations import WorkAgent
+from models.work_metadata.workAgent import WorkAgent
 
 if TYPE_CHECKING:
     from models.instance import Instance
@@ -25,3 +25,5 @@ class Agent(Base):
 
     def __repr__(self) -> str:
         return f"<Agent {self.name!r}>"
+    
+    

@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.work import Work
+from models.work_metadata.work import Work
 from models.instance import Instance
 
 

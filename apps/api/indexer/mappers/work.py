@@ -1,4 +1,4 @@
-from models.work import Work
+from models.work_metadata.work import Work
 
 from indexer.documents.work import (
     InstanceSummary,
