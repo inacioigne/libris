@@ -1,6 +1,8 @@
 import uuid
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Any
+
+from pydantic import ConfigDict
 
 from pydantic import (
     AnyHttpUrl,
@@ -134,7 +136,7 @@ class WorkAgentCreate(BaseModel):
 
 
 class WorkAgentRead(WorkAgentCreate):
-    work_id: uuid.UUID
+    # work_id: uuid.UUID
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -158,7 +160,7 @@ class WorkSubjectCreate(BaseModel):
 
 
 class WorkSubjectRead(WorkSubjectCreate):
-    work_id: uuid.UUID
+    # work_id: uuid.UUID
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -234,7 +236,7 @@ class WorkBase(BaseModel):
 
     title: NonEmptyStr
 
-    title_variants: list[WorkTitleCreate] = Field(
+    titles: list[WorkTitleCreate] = Field( 
         default_factory=list,
         max_length=50,
     )
@@ -424,6 +426,31 @@ class WorkCreate(WorkBase):
 
     pass
 
+class WorkTitleRead(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
+
+    id: uuid.UUID
+
+    value: str
+
+    language: str | None = None
+
+    title_type: str
+
+    is_preferred: bool = False
+
+    sequence: int | None = None
+
+
+
+class WorkIdentifierRead(WorkIdentifierCreate):
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
+
+    id: uuid.UUID
 
 class WorkRead(BaseModel):
     model_config = ConfigDict(
@@ -434,20 +461,66 @@ class WorkRead(BaseModel):
 
     title: str
 
-    types: list[WorkType]
+    titles: list[WorkTitleRead] = []
 
-    languages: list[str]
+    types: list[WorkType] = []
 
-    agents: list[WorkAgentRead]
+    languages: list[str] = []
 
-    subjects: list[WorkSubjectRead]
+    agents: list[WorkAgentRead] = []
 
-    genres: list[str]
+    subjects: list[WorkSubjectRead] = []
 
-    summary: str | None
+    genres: list[str] = []
 
-    notes: list[str]
+    summary: str | None = None
 
-    identifiers: list[WorkIdentifierCreate]
+    notes: list[str] = []
 
-    uri: AnyHttpUrl | None
+    identifiers: list[WorkIdentifierRead] = []
+
+    uri: AnyHttpUrl | None = None
+
+    @field_validator("types", mode="before")
+    @classmethod
+    def serialize_types(cls, value: Any) -> list[Any]:
+        if not value:
+            return []
+
+        return [
+            item.type if hasattr(item, "type") else item
+            for item in value
+        ]
+
+    @field_validator("languages", mode="before")
+    @classmethod
+    def serialize_languages(cls, value: Any) -> list[Any]:
+        if not value:
+            return []
+
+        return [
+            item.language if hasattr(item, "language") else item
+            for item in value
+        ]
+
+    @field_validator("genres", mode="before")
+    @classmethod
+    def serialize_genres(cls, value: Any) -> list[Any]:
+        if not value:
+            return []
+
+        return [
+            item.name if hasattr(item, "name") else item
+            for item in value
+        ]
+
+    @field_validator("notes", mode="before")
+    @classmethod
+    def serialize_notes(cls, value: Any) -> list[Any]:
+        if not value:
+            return []
+
+        return [
+            item.value if hasattr(item, "value") else item
+            for item in value
+        ]

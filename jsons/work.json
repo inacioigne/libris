@@ -1,41 +1,47 @@
 {
   "title": "Dom Casmurro",
-
+  "titles": [
+    {
+      "value": "Dom Casmurro",
+      "language": "pt-BR",
+      "title_type": "main",
+      "is_preferred": true
+    }
+  ],
   "types": [
     "Text"
   ],
-
   "languages": [
     "pt-BR"
   ],
-
   "agents": [
     {
-      "agent_id": "550e8400-e29b-41d4-a716-446655440000",
+      "agent_id": "a1958d6c-d8d2-40c5-a567-da80cabeea3c",
       "role": "author",
       "primary": true,
       "sequence": 1
     }
   ],
-
   "subjects": [
     {
-      "subject_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "subject_id": "26d386b4-ac98-475f-b623-1e7d126fa651",
       "sequence": 1
     }
   ],
-
   "genres": [
     "Romance"
   ],
-
   "summary": "Romance de Machado de Assis.",
-
-  "identifiers": [],
-
-  "title_variants": [],
-
-  "notes": [],
-
-  "relations": []
+  "notes": [
+    "string"
+  ],
+  "identifiers": [
+    {
+      "type": "isbn",
+      "value": "string",
+      "uri": "https://example.com/1",
+      "source": "string"
+    }
+  ],
+  "uri": "https://example.com/12"
 }

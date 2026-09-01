@@ -1,3 +1,5 @@
+from schemas.agent import AgentRead
+from schemas.work import WorkAgentRead, WorkIdentifierRead, WorkRead, WorkSubjectRead, WorkTitleRead
 from models.work_metadata.work import Work
 
 from indexer.documents.work import (
@@ -62,3 +64,75 @@ class WorkMapper:
                 for instance in getattr(work, "instances", [])
             ),
         )
+        
+    @staticmethod
+    def to_response(work: Work) -> WorkRead:
+        return WorkRead(
+                id=work.id,
+                title=work.title,
+    
+                titles=[
+                    WorkTitleRead(
+                        id=title.id,
+                        value=title.value,
+                        language=title.language,
+                        title_type=title.title_type,
+                        is_preferred=title.is_preferred
+                    )
+                    for title in work.titles
+                ],
+    
+                types=[
+                    type_assignment.type
+                    for type_assignment in work.types
+                ],
+    
+                languages=[
+                    language.language
+                    for language in work.languages
+                ],
+    
+                agents=[
+                    WorkAgentRead(
+                        agent_id=assignment.agent_id,
+                        role=assignment.role,
+                        primary=assignment.primary,
+                        sequence=assignment.sequence
+                    )
+                    for assignment in work.agents
+                ],
+    
+                subjects=[
+                    WorkSubjectRead(
+                        subject_id=assignment.subject_id,
+                        sequence=assignment.sequence
+                    )
+                    for assignment in work.subjects
+                ],
+    
+                genres=[
+                    genre.value
+                    for genre in work.genres
+                ],
+    
+                summary=work.summary,
+    
+                notes=[
+                    note.value
+                    for note in work.notes
+                ],
+    
+                identifiers=[
+                    WorkIdentifierRead(
+                        id=identifier.id,
+                        type=identifier.type,
+                        value=identifier.value,
+                        uri=identifier.uri,
+                        source=identifier.source
+                    )
+                    for identifier in work.identifiers
+                ],
+    
+                uri=work.uri
+            )
+        

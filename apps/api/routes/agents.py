@@ -7,6 +7,7 @@ from services.crud.agent import existing_agent, list_agents
 from core.db import get_db
 from models.agent import Agent
 from schemas.agent import AgentCreate, AgentRead
+from services.auth import require_role
 
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/agents", tags=["Agents"])
 async def create_agent(
     data: AgentCreate,
     db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_role("admin"))
 ):
     if data.identifier:
         existing = await existing_agent(db, data.identifier)

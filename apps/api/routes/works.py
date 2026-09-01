@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
+from indexer.mappers.work import WorkMapper
 from schemas.subject import WorkSubjectCreate, WorkSubjectRead
 from models.work_metadata.workAgent import WorkAgent
 from models.work_metadata.workSubject import WorkSubject
@@ -26,7 +27,10 @@ async def create(
     current_user=Depends(require_role("admin"))
     ):
     
-    return await create_work(db, data)
+    work = await create_work(db, data)
+    
+    return WorkMapper.to_response(work)
+
 
 
 @router.get("/", response_model=List[WorkRead], status_code=status.HTTP_200_OK)

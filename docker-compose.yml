@@ -2,7 +2,7 @@ services:
   mariadb:
     image: mariadb:11
     container_name: mariadb
-    restart: unless-stopped
+    # restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: RizctJ7
       MARIADB_DATABASE: libris_db

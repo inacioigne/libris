@@ -7,6 +7,7 @@ from core.db import get_db
 from models.subject import Subject
 from schemas.subject import SubjectCreate, SubjectRead
 from services.crud.subject import create_subject, existing_subject, list_subjects
+from services.auth import require_role
 
 router = APIRouter(prefix="/subjects", tags=["Subjects"])
 
@@ -15,6 +16,7 @@ router = APIRouter(prefix="/subjects", tags=["Subjects"])
 async def create(
     data: SubjectCreate,
     db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_role("admin"))
 ):
     return await create_subject(db, data)
 

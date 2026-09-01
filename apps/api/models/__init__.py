@@ -3,7 +3,7 @@ from .work_metadata.work import Work
 from .work_metadata import (
     workTitle,
     workLanguage,
-    # workGenre,
+    workGenre,
     workNote,
     workIdentifier,
     workRelation,
