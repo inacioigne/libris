@@ -3,9 +3,11 @@
   "type": "Person"
 }
 
-{
-  "id": "a1958d6c-d8d2-40c5-a567-da80cabeea3c",
-  "name": "Assis, Machado",
-  "type": "Person",
-  "identifier": null
-}
+[
+  {
+    "id": "878c8fc1-dcfa-4f07-9c7b-2ed0aa76fecc",
+    "name": "Assis, Machado",
+    "type": "Person",
+    "identifier": null
+  }
+]

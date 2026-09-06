@@ -12,7 +12,7 @@ class AgentCreate(BaseModel):
 class AgentRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    agent_id: UUID
+    id: UUID
     name: str
     type: str | None
     identifier: str | None

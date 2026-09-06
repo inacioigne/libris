@@ -2,33 +2,44 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from indexer.documents.agent import AgentSearch
+from indexer.documents.identifier import IdentifierSearch
+from indexer.documents.subject import SubjectSearch
+from indexer.documents.workTitle import WorkTitleSearch
+
 
 class InstanceSummary(BaseModel):
     id: UUID
-    edition: str | None = None
-    publisher: str | None = None
-    publication_date: int | None = None
     isbn: str | None = None
+    publication_year: int | None = None
+    formato: str | None = None
+    publisher_id: UUID | None = None
 
 
 class WorkSearchDocument(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     id: UUID
+
+    uri: str | None = None
 
     title: str
 
-    subtitle: str | None = None
+    titles: list[WorkTitleSearch] = []
 
-    authors: list[str] = []
-
-    subjects: list[str] = []
+    types: list[str] = []
 
     languages: list[str] = []
 
+    genres: list[str] = []
+
+    agents: list[AgentSearch] = []
+
+    subjects: list[SubjectSearch] = []
+
     summary: str | None = None
 
-    identifiers: list[str] = []
+    notes: list[str] = []
+
+    identifiers: list[IdentifierSearch] = []
 
     instances: list[InstanceSummary] = []
 

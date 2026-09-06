@@ -16,7 +16,7 @@
   ],
   "agents": [
     {
-      "agent_id": "a1958d6c-d8d2-40c5-a567-da80cabeea3c",
+      "agent_id": "878c8fc1-dcfa-4f07-9c7b-2ed0aa76fecc",
       "role": "author",
       "primary": true,
       "sequence": 1
@@ -24,7 +24,7 @@
   ],
   "subjects": [
     {
-      "subject_id": "26d386b4-ac98-475f-b623-1e7d126fa651",
+      "subject_id": "ec65c6ac-09c4-4495-b946-39ff41ca87c2",
       "sequence": 1
     }
   ],
@@ -43,5 +43,5 @@
       "source": "string"
     }
   ],
-  "uri": "https://example.com/12"
+  "uri": "https://example.com/2"
 }

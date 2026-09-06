@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
+from services.indexing.work import WorkIndex
 from indexer.mappers.work import WorkMapper
 from schemas.subject import WorkSubjectCreate, WorkSubjectRead
 from models.work_metadata.workAgent import WorkAgent
@@ -28,6 +29,8 @@ async def create(
     ):
     
     work = await create_work(db, data)
+    
+    await WorkIndex.index(work.id, WorkMapper.to_search_document(work).model_dump(mode="json"))
     
     return WorkMapper.to_response(work)
 
