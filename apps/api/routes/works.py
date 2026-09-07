@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 from services.indexing.work import WorkIndex
 from indexer.mappers.work import WorkMapper
 from schemas.subject import WorkSubjectCreate, WorkSubjectRead

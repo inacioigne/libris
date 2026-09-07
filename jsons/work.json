@@ -16,7 +16,7 @@
   ],
   "agents": [
     {
-      "agent_id": "878c8fc1-dcfa-4f07-9c7b-2ed0aa76fecc",
+      "agent_id": "26107cf5-0ecb-4930-a01d-4850150c98c6",
       "role": "author",
       "primary": true,
       "sequence": 1
@@ -24,7 +24,7 @@
   ],
   "subjects": [
     {
-      "subject_id": "ec65c6ac-09c4-4495-b946-39ff41ca87c2",
+      "subject_id": "64b5a7d6-76a1-43a7-a54c-08cbe2029702",
       "sequence": 1
     }
   ],
@@ -39,9 +39,9 @@
     {
       "type": "isbn",
       "value": "string",
-      "uri": "https://example.com/1",
+      "uri": "https://libris.com/1",
       "source": "string"
     }
   ],
-  "uri": "https://example.com/3"
+  "uri": "https://libris.com/1"
 }
