@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from indexer.elastic.indices import create_works_index
 from core.seed import seed_roles
 from core.seed import seed_admin_user
 from core.db import Base, engine, SessionLocal
@@ -20,6 +21,8 @@ async def lifespan(app: FastAPI):
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        
+    await create_works_index()
     
     # Executa os seeds
     async with SessionLocal() as db:

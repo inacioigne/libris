@@ -29,8 +29,9 @@ async def create(
     ):
     
     work = await create_work(db, data)
-    
-    await WorkIndex.index(work.id, WorkMapper.to_search_document(work).model_dump(mode="json"))
+    document = WorkMapper.to_search_document(work).model_dump(mode="json")    
+    work_index = WorkIndex() 
+    await work_index.index(work.id, document)
     
     return WorkMapper.to_response(work)
 
