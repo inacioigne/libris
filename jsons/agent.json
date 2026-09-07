@@ -3,11 +3,22 @@
   "type": "Person"
 }
 
+{
+  "name": "Companhia das Letras",
+  "type": "Organization"
+}
+
 [
   {
-    "id": "26107cf5-0ecb-4930-a01d-4850150c98c6",
+    "id": "22bb0ba4-8e8e-47c8-919b-069e2951d7eb",
     "name": "Assis, Machado",
     "type": "Person",
+    "identifier": null
+  },
+  {
+    "id": "973b1032-56fa-42a3-ac4f-5f9bb1e727a7",
+    "name": "Companhia das Letras",
+    "type": "Organization",
     "identifier": null
   }
 ]

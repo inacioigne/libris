@@ -23,7 +23,7 @@ from schemas.work import WorkCreate
 async def create_work(
     db: AsyncSession,
     work_data: WorkCreate,
-) -> Work:
+    ) -> Work:
 
     # 1. Cria apenas os atributos pertencentes diretamente ao Work
     work = Work(
@@ -145,14 +145,6 @@ async def create_work(
             )
         )
     work.subjects = work_subjects
-    
-    # for sequence, subject in enumerate(work_data.subjects, start=1):
-    #     work.subjects.append(
-    #         WorkSubject(
-    #             subject_id=subject.subject_id,
-    #             sequence=subject.sequence or sequence,
-    #         )
-    #     )
 
     # 10. Relations
     for relation in work_data.relations:
@@ -166,7 +158,6 @@ async def create_work(
     db.add(work)
 
     await db.commit()
-    # await db.refresh(work)
 
     return await WorkRepository.get_complete(db, work.id)
 

@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import uuid
+from indexer.mappers import work
 from services.indexing.work import WorkIndex
 from models.instance import Instance
 from schemas.instances import InstanceCreate
@@ -13,8 +14,18 @@ async def create_instance(db: AsyncSession, instance_in: InstanceCreate) -> Inst
     instance = Instance(**instance_in.model_dump())
     db.add(instance)
     await db.commit()
-    await db.refresh(instance)
-    await WorkIndex.reindex(db, instance.work_id)
+    
+    result = await db.execute(
+        select(Instance)
+        .options(
+            selectinload(Instance.publisher)
+        )
+        .where(Instance.id == instance.id)
+    )
+    instance = result.scalars().first()
+    
+    work_index = WorkIndex() 
+    await work_index.reindex(db, instance.work_id) 
     return instance
 
 

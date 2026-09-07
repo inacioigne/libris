@@ -4,6 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.work_metadata.workAgent import WorkAgent
+from models.work_metadata.workSubject import WorkSubject
 from models.work_metadata.work import Work
 from models.instance import Instance
 
@@ -32,13 +34,39 @@ class WorkRepository:
             select(Work)
             .where(Work.id == work_id)
             .options(
-                selectinload(Work.agents),
-                selectinload(Work.subjects),
-                # selectinload(Work.languages),
-                # selectinload(Work.identifiers),
-                selectinload(Work.instances)
-                    .selectinload(Instance.items),
-            )
+            # Agents
+            selectinload(Work.agents)
+                .selectinload(WorkAgent.agent),
+
+            # Subjects
+            selectinload(Work.subjects)
+                .selectinload(WorkSubject.subject),
+
+            # Instances
+            selectinload(Work.instances)
+                .selectinload(Instance.items),
+
+            # Languages
+            selectinload(Work.languages),
+
+            # Identifiers
+            selectinload(Work.identifiers),
+
+            # Genres
+            selectinload(Work.genres),
+
+            # Titles
+            selectinload(Work.titles),
+
+            # Notes
+            selectinload(Work.notes),
+
+            # Relations
+            # selectinload(Work.relations),
+
+            # Types
+            selectinload(Work.types),
+        )
         )
 
         return result.scalar_one_or_none()

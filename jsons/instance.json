@@ -1,0 +1,29 @@
+{
+  "work_id": "b75040de-40e5-43e4-9d09-0dc14b5d4de3",
+  "isbn": "9788535914849",
+  "publisher_id": "973b1032-56fa-42a3-ac4f-5f9bb1e727a7",
+  "publication_year": 2016,
+  "publication_place": "São Paulo, SP",
+  "edition": "1ª edição",
+  "carrier": "volume",
+  "extent": "256 páginas",
+  "dimensions": "21 cm"
+}
+
+{
+  "id": "2f0e64f4-e37d-44d6-978e-da779c274100",
+  "work_id": "b75040de-40e5-43e4-9d09-0dc14b5d4de3",
+  "isbn": "9788535914845",
+  "publisher": {
+    "id": "973b1032-56fa-42a3-ac4f-5f9bb1e727a7",
+    "name": "Companhia das Letras",
+    "type": "Organization",
+    "identifier": null
+  },
+  "publication_year": 2016,
+  "publication_place": "São Paulo, SP",
+  "edition": "1ª edição",
+  "carrier": "volume",
+  "extent": "256 páginas",
+  "dimensions": "21 cm"
+}
