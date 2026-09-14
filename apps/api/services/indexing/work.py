@@ -14,6 +14,7 @@ class WorkIndex:
         self.client = get_elasticsearch()
 
     async def index(self, work_id: UUID, document: dict) -> None:
+        
         await self.client.index(
             index=INDEX_NAME,
             id=str(work_id),

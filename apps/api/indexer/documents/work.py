@@ -18,31 +18,17 @@ class InstanceSummary(BaseModel):
 
 class WorkSearchDocument(BaseModel):
     id: UUID
-
     uri: str | None = None
-
     title: str
-
     titles: list[WorkTitleSearch] = []
-
     types: list[str] = []
-
     languages: list[str] = []
-
     genres: list[str] = []
-
     agents: list[AgentSearch] = []
-
     subjects: list[SubjectSearch] = []
-
     summary: str | None = None
-
     notes: list[str] = []
-
     identifiers: list[IdentifierSearch] = []
-
     instances: list[InstanceSummary] = []
-
     instance_count: int = 0
-
     available_item_count: int = 0

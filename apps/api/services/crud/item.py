@@ -6,6 +6,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from indexer.elastic.item import ItemIndex
+from indexer.mappers.item import ItemMapper
 from models.instance import Instance
 from models.item import Item
 from schemas.item import ItemCreate
@@ -46,6 +48,17 @@ async def create_items(
 
     for item in items:
         await db.refresh(item)
+        
+     # Indexação no Elasticsearch
+    item_index = ItemIndex()
+
+    for item in items:
+        document = ItemMapper.to_search_document(item)
+
+        await item_index.index(
+            item.id,
+            document.model_dump(mode="json"),
+        )
 
     return items
 
