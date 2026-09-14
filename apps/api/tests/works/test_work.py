@@ -16,6 +16,9 @@ from httpx import AsyncClient, ASGITransport
 from routes.works import router
 import routes.works as works_module
 from core.db import get_db
+from models.work_metadata.work import Work
+from schemas.work import WorkRead
+from services.crud.work import list_works
 
 
 @pytest.fixture
@@ -59,6 +62,23 @@ async def test_create_work_success(client, monkeypatch):
     assert response_json["title"] == fake_work["title"]
     assert response_json["subject"] is None
     assert response_json["type"] is None
+
+
+@pytest.mark.asyncio
+async def test_list_works_returns_response_model_objects():
+    db = MagicMock()
+    work = Work(id=uuid.uuid4(), title="Obra 1", summary="Resumo")
+
+    result = MagicMock()
+    result.scalars.return_value.all.return_value = [work]
+    db.execute = AsyncMock(return_value=result)
+
+    response = await list_works(db, offset=0, limit=20)
+
+    assert len(response) == 1
+    assert isinstance(response[0], WorkRead)
+    assert response[0].title == "Obra 1"
+    assert response[0].summary == "Resumo"
 
 
 @pytest.mark.asyncio

@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from indexer.mappers.work import WorkMapper
 from models.subject import Subject
 from models.agent import Agent
 from services.repositories.work_repository import WorkRepository
@@ -163,6 +164,19 @@ async def create_work(
 
 async def list_works(db: AsyncSession, offset: int = 0, limit: int = 20):
     result = await db.execute(
-        select(Work).options(selectinload(Work.agents)).offset(offset).limit(limit)
+        select(Work)
+        .options(
+            selectinload(Work.agents).selectinload(WorkAgent.agent),
+            selectinload(Work.subjects).selectinload(WorkSubject.subject),
+            selectinload(Work.titles),
+            selectinload(Work.types),
+            selectinload(Work.languages),
+            selectinload(Work.genres),
+            selectinload(Work.notes),
+            selectinload(Work.identifiers),
+        )
+        .offset(offset)
+        .limit(limit)
     )
-    return result.scalars().all()
+    works = result.scalars().all()
+    return [WorkMapper.to_response(work) for work in works]
