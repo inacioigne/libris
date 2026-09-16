@@ -1,3 +1,4 @@
+from indexer.documents.item import ItemSearchDocument
 from indexer.documents.identifier import IdentifierSearch
 from indexer.documents.subject import SubjectSearch
 from indexer.documents.agent import AgentSearch
@@ -143,6 +144,7 @@ class WorkMapper:
 
     @staticmethod
     def to_search_document(work: Work) -> WorkSearchDocument:
+        
         return WorkSearchDocument(
             id=work.id,
             uri=work.uri,
@@ -219,6 +221,16 @@ class WorkMapper:
                     publication_year=instance.publication_year,
                     formato=instance.formato,
                     publisher_id=instance.publisher_id,
+                    
+                    items=[
+                    ItemSearchDocument(
+                        id=item.id,
+                        barcode=item.barcode,
+                        status=item.status,
+                    )
+                    for item in instance.items
+                ],
+                    
                 )
                 for instance in work.instances
             ],

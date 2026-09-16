@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from services.indexing.work import WorkIndex
 from indexer.elastic.item import ItemIndex
 from indexer.mappers.item import ItemMapper
 from models.instance import Instance
@@ -59,6 +60,10 @@ async def create_items(
             item.id,
             document.model_dump(mode="json"),
         )
+    await WorkIndex.reindex(
+        db,
+        instance.work_id,
+    )
 
     return items
 

@@ -43,7 +43,7 @@ class WorkIndex:
         work = await WorkRepository.get_complete(db, work_id)
 
         if work is None:
-            return
+            raise ValueError("Work not found")
 
         document = WorkMapper.to_search_document(work)
 
