@@ -27,3 +27,34 @@
   "extent": "256 páginas",
   "dimensions": "21 cm"
 }
+
+
+{
+  "work_id": "e00ebb83-bc5f-47a3-b810-5a7d5e7d1e82",
+  "isbn": "978-6556403830",
+  "publisher_id": "e235df0a-fde4-4f04-9400-d74f94118b2f",
+  "publication_year": 2025,
+  "publication_place": "São Paulo",
+  "edition": "1. ed.",
+  "carrier": "volume",
+  "extent": "600 páginas",
+  "dimensions": "21 cm"
+}
+
+{
+  "id": "37844b26-8af5-41a1-9e1b-d1213a85106b",
+  "work_id": "e00ebb83-bc5f-47a3-b810-5a7d5e7d1e82",
+  "isbn": "978-6556403830",
+  "publisher": {
+    "id": "e235df0a-fde4-4f04-9400-d74f94118b2f",
+    "name": "Companhia das Letras",
+    "type": "Organization",
+    "identifier": "companhia-01"
+  },
+  "publication_year": 2025,
+  "publication_place": "São Paulo",
+  "edition": "1. ed.",
+  "carrier": "volume",
+  "extent": "600 páginas",
+  "dimensions": "21 cm"
+}

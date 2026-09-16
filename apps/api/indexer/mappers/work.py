@@ -225,6 +225,7 @@ class WorkMapper:
                     items=[
                     ItemSearchDocument(
                         id=item.id,
+                        instance_id=item.instance_id,
                         barcode=item.barcode,
                         status=item.status,
                     )

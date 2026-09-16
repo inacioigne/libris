@@ -60,7 +60,8 @@ async def create_items(
             item.id,
             document.model_dump(mode="json"),
         )
-    await WorkIndex.reindex(
+    work_index = WorkIndex()
+    await work_index.reindex(
         db,
         instance.work_id,
     )

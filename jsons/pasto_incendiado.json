@@ -1,0 +1,115 @@
+{
+  "title": "O pasto incendiado",
+  "titles": [
+    {
+      "value": "O pasto incendiado",
+      "language": "pt-BR",
+      "title_type": "main",
+      "is_preferred": true
+    },
+    {
+      "value": "Poesia completa",
+      "language": "pt-BR",
+      "title_type": "subtitle",
+      "is_preferred": false
+    }
+  ],
+  "types": [
+    "Text"
+  ],
+  "languages": [
+    "pt-BR"
+  ],
+  "agents": [
+    {
+      "agent_id": "aef8ac6e-641c-4c86-8285-ded019d25627",
+      "role": "author",
+      "primary": true,
+      "sequence": 1
+    }
+  ],
+  "subjects": [
+    {
+      "subject_id": "7f5594a8-32c4-4d08-89e7-81161d823d5b",
+      "sequence": 1
+    }
+  ],
+  "genres": [
+    "Poesia"
+  ],
+  "summary": "Reunião da produção poética completa de Ariano Suassuna, organizada por Carlos Newton Júnior, incluindo poemas publicados e material inédito.",
+  "notes": [
+    "1ª edição publicada pela Nova Fronteira em 2025.",
+    "Edição com 640 páginas."
+  ],
+  "identifiers": [
+    {
+      "type": "isbn",
+      "value": "9786556403830",
+      "uri": "https://www.amazon.com.br/dp/6556403830",
+      "source": "Amazon"
+    }
+  ],
+  "uri": "https://www.amazon.com.br/dp/6556403830"
+}
+
+{
+  "id": "e00ebb83-bc5f-47a3-b810-5a7d5e7d1e82",
+  "title": "O pasto incendiado",
+  "titles": [
+    {
+      "id": "09f5c3f6-8bd6-4a65-97f3-a17d01a435a0",
+      "value": "O pasto incendiado",
+      "language": "pt-BR",
+      "title_type": "main",
+      "is_preferred": true,
+      "sequence": null
+    },
+    {
+      "id": "3d77c810-5c89-4a29-b9d6-ea457fb3e5ff",
+      "value": "Poesia completa",
+      "language": "pt-BR",
+      "title_type": "subtitle",
+      "is_preferred": false,
+      "sequence": null
+    }
+  ],
+  "types": [
+    "Text"
+  ],
+  "languages": [
+    "pt-br"
+  ],
+  "agents": [
+    {
+      "agent_id": "aef8ac6e-641c-4c86-8285-ded019d25627",
+      "role": "author",
+      "primary": true,
+      "sequence": 1
+    }
+  ],
+  "subjects": [
+    {
+      "subject_id": "7f5594a8-32c4-4d08-89e7-81161d823d5b",
+      "sequence": 1
+    }
+  ],
+  "genres": [
+    "Poesia"
+  ],
+  "summary": "Reunião da produção poética completa de Ariano Suassuna, organizada por Carlos Newton Júnior, incluindo poemas publicados e material inédito.",
+  "notes": [
+    "1ª edição publicada pela Nova Fronteira em 2025.",
+    "Edição com 640 páginas."
+  ],
+  "identifiers": [
+    {
+      "type": "isbn",
+      "value": "9786556403830",
+      "uri": "https://www.amazon.com.br/dp/6556403830",
+      "source": "Amazon",
+      "id": "c5b63db9-8aa0-4aae-85df-f1263dd297ac"
+    }
+  ],
+  "uri": "https://www.amazon.com.br/dp/6556403830"
+}
