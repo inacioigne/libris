@@ -15,11 +15,7 @@ from schemas.item import ItemCreate
 
 
 
-async def create_items(
-    db: AsyncSession,
-    instance_id: uuid.UUID,
-    data: List[ItemCreate],
-) -> List[Item]:
+async def create_items(db: AsyncSession, instance_id: uuid.UUID, data: List[ItemCreate]) -> List[Item]:
 
     instance = await db.scalar(
         select(Instance).where(Instance.id == instance_id)
@@ -67,6 +63,32 @@ async def create_items(
     )
 
     return items
+
+async def delete_item( db: AsyncSession, item_id: uuid.UUID, ) -> None:
+    
+    item = await db.scalar(
+        select(Item).where(Item.id == item_id)
+    )
+    if item is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Item não encontrado."
+        )
+        
+    instance = await db.scalar( select(Instance).where(Instance.id == item.instance_id) )
+    if instance is None: 
+        raise HTTPException( status_code=404, detail="Instance do item não encontrada." )
+    
+    work_id = instance.work_id
+
+    await db.delete(item)
+    await db.commit()
+
+    # Indexação no Elasticsearch
+    item_index = ItemIndex()
+    await item_index.delete(item_id)
+    work_index = WorkIndex()
+    await work_index.reindex(db, work_id)
 
 
 async def list_items(db: AsyncSession, offset: int = 0, limit: int = 20) -> List[Item]:

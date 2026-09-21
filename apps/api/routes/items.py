@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_db
 from schemas.item import ItemCreate, ItemRead
-from services.crud.item import create_items, list_items
+from services.crud.item import create_items, delete_item, list_items
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
@@ -18,6 +18,13 @@ async def create(
     db: AsyncSession = Depends(get_db),
 ):
     return await create_items(db, instance_id, data)
+
+@router.delete("/{item_id}", status_code=204)
+async def delete(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    await delete_item(db, item_id)
 
 
 @router.get("/", response_model=List[ItemRead], status_code=200)
