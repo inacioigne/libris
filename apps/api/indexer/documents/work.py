@@ -13,7 +13,7 @@ class InstanceSummary(BaseModel):
     id: UUID
     isbn: str | None = None
     publication_year: int | None = None
-    formato: str | None = None
+    format: str | None = None
     publisher_id: UUID | None = None
     items: list[ItemSearchDocument]
 

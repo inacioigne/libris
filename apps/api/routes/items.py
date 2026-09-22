@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import get_db
 from schemas.item import ItemCreate, ItemRead
 from services.crud.item import create_items, delete_item, list_items
+from services.auth import require_role
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
@@ -16,6 +17,7 @@ async def create(
     instance_id: uuid.UUID,
     data: List[ItemCreate],
     db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_role("admin"))
 ):
     return await create_items(db, instance_id, data)
 
@@ -23,14 +25,15 @@ async def create(
 async def delete(
     item_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_role("admin"))
 ):
     await delete_item(db, item_id)
 
 
-@router.get("/", response_model=List[ItemRead], status_code=200)
-async def list_all(
-    offset: int = Query(0, ge=0, description="Quantos registros pular"),
-    limit: int = Query(20, ge=1, le=100, description="Quantidade máxima de registros"),
-    db: AsyncSession = Depends(get_db),
-):
-    return await list_items(db, offset=offset, limit=limit)
+# @router.get("/", response_model=List[ItemRead], status_code=200)
+# async def list_all(
+#     offset: int = Query(0, ge=0, description="Quantos registros pular"),
+#     limit: int = Query(20, ge=1, le=100, description="Quantidade máxima de registros"),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     return await list_items(db, offset=offset, limit=limit)

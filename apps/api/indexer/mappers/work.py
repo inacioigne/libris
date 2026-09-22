@@ -219,7 +219,7 @@ class WorkMapper:
                     id=instance.id,
                     isbn=instance.isbn,
                     publication_year=instance.publication_year,
-                    format=instance.formato,
+                    format=instance.format,
                     publisher_id=instance.publisher_id,
                     
                     items=[

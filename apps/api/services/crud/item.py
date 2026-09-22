@@ -38,7 +38,6 @@ async def create_items(db: AsyncSession, instance_id: uuid.UUID, data: List[Item
             call_number=item_data.call_number,
             status=item_data.status,
         )
-        # item = Item(**item_data)
 
         db.add(item)
         items.append(item)
@@ -49,15 +48,15 @@ async def create_items(db: AsyncSession, instance_id: uuid.UUID, data: List[Item
         await db.refresh(item)
         
      # Indexação no Elasticsearch
-    item_index = ItemIndex()
+    # item_index = ItemIndex()
 
-    for item in items:
-        document = ItemMapper.to_search_document(item)
+    # for item in items:
+    #     document = ItemMapper.to_search_document(item)
 
-        await item_index.index(
-            item.id,
-            document.model_dump(mode="json"),
-        )
+    #     await item_index.index(
+    #         item.id,
+    #         document.model_dump(mode="json"),
+    #     )
     work_index = WorkIndex()
     await work_index.reindex(
         db,
@@ -86,9 +85,9 @@ async def delete_item( db: AsyncSession, item_id: uuid.UUID, ) -> None:
     await db.delete(item)
     await db.commit()
 
-    # Indexação no Elasticsearch
-    item_index = ItemIndex()
-    await item_index.delete(item_id)
+    # # Indexação no Elasticsearch
+    # item_index = ItemIndex()
+    # await item_index.delete(item_id)
     work_index = WorkIndex()
     await work_index.reindex(db, work_id)
 
