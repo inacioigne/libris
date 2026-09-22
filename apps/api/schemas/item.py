@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
  
  
 class ItemCreate(BaseModel): 
-    # instance_id: UUID
+    instance_id: UUID
     uri: str | None = None 
     barcode: str | None = None 
     location: str | None = None 

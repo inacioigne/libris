@@ -32,11 +32,13 @@ async def create_items(db: AsyncSession, instance_id: uuid.UUID, data: List[Item
     for item_data in data:
         item = Item(
             instance_id=instance_id,
+            uri=item_data.uri,
             barcode=item_data.barcode,
             location=item_data.location,
             call_number=item_data.call_number,
             status=item_data.status,
         )
+        # item = Item(**item_data)
 
         db.add(item)
         items.append(item)

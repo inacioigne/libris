@@ -61,7 +61,7 @@ class Instance(Base):
     )
 
     # BIBFRAME: bf:carrier
-    formato: Mapped[str | None] = mapped_column(
+    format: Mapped[str | None] = mapped_column(
         String(100),
         nullable=True,
     )

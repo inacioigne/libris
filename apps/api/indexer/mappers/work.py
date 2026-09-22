@@ -219,13 +219,16 @@ class WorkMapper:
                     id=instance.id,
                     isbn=instance.isbn,
                     publication_year=instance.publication_year,
-                    formato=instance.formato,
+                    format=instance.formato,
                     publisher_id=instance.publisher_id,
                     
                     items=[
                     ItemSearchDocument(
                         id=item.id,
                         instance_id=item.instance_id,
+                        uri=item.uri,
+                        location=item.location,
+                        call_number=item.call_number,
                         barcode=item.barcode,
                         status=item.status,
                     )

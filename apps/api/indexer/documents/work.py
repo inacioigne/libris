@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from indexer.documents.item import ItemSearchDocument
 from indexer.documents.agent import AgentSearch
 from indexer.documents.identifier import IdentifierSearch
 from indexer.documents.subject import SubjectSearch
@@ -14,6 +15,7 @@ class InstanceSummary(BaseModel):
     publication_year: int | None = None
     formato: str | None = None
     publisher_id: UUID | None = None
+    items: list[ItemSearchDocument]
 
 
 class WorkSearchDocument(BaseModel):
