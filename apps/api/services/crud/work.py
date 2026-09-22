@@ -1,8 +1,11 @@
+import uuid
+
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from services.indexing.work import WorkIndex
 from indexer.mappers.work import WorkMapper
 from models.subject import Subject
 from models.agent import Agent
@@ -162,21 +165,60 @@ async def create_work(
 
     return await WorkRepository.get_complete(db, work.id)
 
-async def list_works(db: AsyncSession, offset: int = 0, limit: int = 20):
-    result = await db.execute(
-        select(Work)
-        .options(
-            selectinload(Work.agents).selectinload(WorkAgent.agent),
-            selectinload(Work.subjects).selectinload(WorkSubject.subject),
-            selectinload(Work.titles),
-            selectinload(Work.types),
-            selectinload(Work.languages),
-            selectinload(Work.genres),
-            selectinload(Work.notes),
-            selectinload(Work.identifiers),
-        )
-        .offset(offset)
-        .limit(limit)
+async def delete_work(
+    db: AsyncSession,
+    work_id: uuid.UUID,
+) -> None:
+
+    work = await WorkRepository.get_by_id(
+        db,
+        work_id,
     )
-    works = result.scalars().all()
-    return [WorkMapper.to_response(work) for work in works]
+
+    if work is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Work não encontrado."
+        )
+
+    has_instances = await WorkRepository.has_instances(
+        db,
+        work_id,
+    )
+
+    if has_instances:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Não é possível excluir o Work porque "
+                "existem Instances associadas."
+            )
+        )
+
+    await WorkRepository.delete(
+        db,
+        work,
+    )
+
+    work_index = WorkIndex()
+
+    await work_index.delete(work_id)
+    
+# async def list_works(db: AsyncSession, offset: int = 0, limit: int = 20):
+#     result = await db.execute(
+#         select(Work)
+#         .options(
+#             selectinload(Work.agents).selectinload(WorkAgent.agent),
+#             selectinload(Work.subjects).selectinload(WorkSubject.subject),
+#             selectinload(Work.titles),
+#             selectinload(Work.types),
+#             selectinload(Work.languages),
+#             selectinload(Work.genres),
+#             selectinload(Work.notes),
+#             selectinload(Work.identifiers),
+#         )
+#         .offset(offset)
+#         .limit(limit)
+#     )
+#     works = result.scalars().all()
+#     return [WorkMapper.to_response(work) for work in works]

@@ -23,6 +23,29 @@ class WorkRepository:
         )
 
         return result.scalar_one_or_none()
+    
+    @staticmethod
+    async def has_instances(
+        db: AsyncSession,
+        work_id,
+    ) -> bool:
+
+        result = await db.scalar(
+            select(Instance.id)
+            .where(Instance.work_id == work_id)
+            .limit(1)
+        )
+
+        return result is not None
+    
+    @staticmethod
+    async def delete(
+        db: AsyncSession,
+        work: Work,
+    ) -> None:
+
+        await db.delete(work)
+        await db.commit()
 
     @staticmethod
     async def get_complete(
