@@ -25,6 +25,7 @@ class InstanceCreate(BaseModel):
     publication_year: int | None = None
     publication_place: str | None = None
     edition: str | None = None
+    format: str | None = None
     carrier: str | None = None
     extent: str | None = None
     dimensions: str | None = None
@@ -38,6 +39,7 @@ class InstanceRead(BaseModel):
     publication_year: int | None = None
     publication_place: str | None = None
     edition: str | None = None
+    format: str | None = None
     carrier: str | None = None
     extent: str | None = None
     dimensions: str | None = None
