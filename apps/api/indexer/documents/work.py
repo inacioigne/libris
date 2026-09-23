@@ -2,6 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from schemas.instances import InstanceImageRead
 from indexer.documents.item import ItemSearchDocument
 from indexer.documents.agent import AgentSearch
 from indexer.documents.identifier import IdentifierSearch
@@ -15,6 +16,7 @@ class InstanceSummary(BaseModel):
     publication_year: int | None = None
     format: str | None = None
     publisher_id: UUID | None = None
+    images: InstanceImageRead | None = None
     items: list[ItemSearchDocument]
 
 

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.db import Base
 
 if TYPE_CHECKING:
-    from models.instance import Instance
+    from api.models.instance_metadata.instance import Instance
     from models.work_metadata import (
         WorkTitle,
         WorkLanguage,

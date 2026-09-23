@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_db
-from models.instance import Instance
+from models.instance_metadata.instance import Instance
 from schemas.instances import InstanceCreate, InstanceRead
 # , InstancePublisherUpdate
 from services.crud.instance import create_instance, delete_instance

@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from models.work_metadata.workAgent import WorkAgent
 from models.work_metadata.workSubject import WorkSubject
 from models.work_metadata.work import Work
-from models.instance import Instance
+from models.instance_metadata.instance import Instance
 
 
 class WorkRepository:

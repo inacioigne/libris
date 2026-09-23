@@ -9,7 +9,7 @@ from core.db import Base
 from models.work_metadata.workAgent import WorkAgent
 
 if TYPE_CHECKING:
-    from models.instance import Instance
+    from api.models.instance_metadata.instance import Instance
 
 
 class Agent(Base):

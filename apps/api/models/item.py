@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
-from models.instance import Instance
+from models.instance_metadata.instance import Instance
 
 
 class Item(Base):

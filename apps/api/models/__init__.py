@@ -11,7 +11,8 @@ from .work_metadata import (
     workAgent, 
     workSubject
     )
-from .instance import Instance
+from .instance_metadata.instance import Instance
+from .instance_metadata.instanceImage import InstanceImage
 from .item import Item
 from .agent import Agent
 from .subject import Subject

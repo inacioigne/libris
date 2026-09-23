@@ -10,6 +10,7 @@ from core.db import Base
 if TYPE_CHECKING:
     from models.agent import Agent
     from models.item import Item
+    from api.models.instance_metadata.instanceImage import InstanceImage
     from api.models.work_metadata.work import Work
     
     
@@ -92,6 +93,11 @@ class Instance(Base):
     )
 
     items: Mapped[list["Item"]] = relationship(
+        back_populates="instance",
+        cascade="all, delete-orphan",
+    )
+    
+    images: Mapped["InstanceImage | None"] = relationship(
         back_populates="instance",
         cascade="all, delete-orphan",
     )

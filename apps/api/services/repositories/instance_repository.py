@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from models.instance import Instance
+from api.models.instance_metadata.instance import Instance
 
 class InstanceRepository:
 

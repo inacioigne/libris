@@ -5,7 +5,7 @@ from sqlalchemy import select
 import uuid
 from indexer.mappers import work
 from services.indexing.work import WorkIndex
-from models.instance import Instance
+from models.instance_metadata.instance import Instance
 from schemas.instances import InstanceCreate
 from sqlalchemy.orm import selectinload
 
