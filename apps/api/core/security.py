@@ -3,8 +3,8 @@ import os
 from datetime import datetime, timedelta, timezone
 import jwt
 from schemas.config import settings
-
 from fastapi.security import OAuth2PasswordBearer
+from fastapi import Cookie, HTTPException, status
 
 SECRET_KEY = settings.secret_key
 if not SECRET_KEY:
@@ -57,3 +57,14 @@ def decode_access_token(token: str) -> dict:
         SECRET_KEY,
         algorithms=[ALGORITHM],
     )
+    
+async def get_token_from_cookie(
+    access_token: str | None = Cookie(default=None),
+):
+    if not access_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+
+    return access_token
