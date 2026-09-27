@@ -24,9 +24,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-         {/* <NavBar /> */}
-        {children}</body>
+      <body>
+        <div className="flex min-h-[100dvh]">
+
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

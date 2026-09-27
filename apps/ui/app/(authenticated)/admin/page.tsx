@@ -14,9 +14,11 @@ export default async function Page() {
   }
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <div>
+
+
       <h1>Admin</h1>
       <p>Essa é uma página inicial básica dentro do app autenticado.</p>
-    </main>
+    </div>
   );
 }
