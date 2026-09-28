@@ -29,7 +29,7 @@ export default function LoginPage() {
     }
 
     return (
-        <main className="min-h-screen flex flex-col items-center justify-center">
+        <main className="min-h-screen w-full flex flex-col items-center justify-center">
             <div
                 className="p-6 rounded-lg bg-white border border-slate-300 shadow-xs md:p-8 dark:bg-neutral-800 dark:border-neutral-700">
                 <div className="mb-6 flex justify-center">
@@ -60,7 +60,7 @@ export default function LoginPage() {
                             className="mb-2 text-slate-900 font-medium text-sm inline-block dark:text-slate-50">
                             Senha
                         </label>
-                        <button type="button" id="togglePassword" aria-label="Show password" aria-pressed="false"
+                        {/* <button type="button" id="togglePassword" aria-label="Show password" aria-pressed="false"
                             className="absolute top-1 right-2 p-0.5 flex cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 className="size-[18px] fill-slate-400 text-slate-400 overflow-visible" viewBox="0 0 128 128">
@@ -70,7 +70,7 @@ export default function LoginPage() {
                                 <path id="eyeStrike" className="bloxk" d="M10.586 10.586l106.828 106.828" stroke="currentColor"
                                     stroke-width="10" stroke-linecap="round"></path>
                             </svg>
-                        </button>
+                        </button> */}
 
                         <input
                             type="password"

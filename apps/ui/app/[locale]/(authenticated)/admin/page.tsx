@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+// import { useSidebar } from "@/context/SidebarContext";
 export default async function Page() {
 
   const cookieStore = await cookies();
@@ -13,10 +13,10 @@ export default async function Page() {
     redirect("/login");
   }
 
+
+
   return (
     <div>
-
-
       <h1>Admin</h1>
       <p>Essa é uma página inicial básica dentro do app autenticado.</p>
     </div>
