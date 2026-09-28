@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 // import "simplebar-react/dist/simplebar.min.css";
 // import "swiper/css/bundle";
 import "../globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -40,12 +41,11 @@ export default async function RootLayout({
     >
       <body className={`${outfit.className} dark:bg-gray-900`}>
         <NextIntlClientProvider>
-          <ThemeProvider>
-            <div>{children}</div>
-          </ThemeProvider>
-          {/*
-            <SidebarProvider>{children}</SidebarProvider>
-          </ThemeProvider> */}
+          <AuthProvider>
+            <ThemeProvider>
+              <div>{children}</div>
+            </ThemeProvider>
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

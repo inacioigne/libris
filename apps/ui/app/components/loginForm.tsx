@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { login } from "@/app/services/auth";
+import { login } from "@/services/auth";
 
 export default function LoginForm() {
 

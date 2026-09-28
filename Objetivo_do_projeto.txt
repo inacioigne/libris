@@ -1,0 +1,17 @@
+Objetivo do projeto
+O objetivo deste projeto é desenvolver uma plataforma de software livre, moderna, robusta e escalável para a gestão de bibliotecas, tendo como núcleo a gestão, organização, descrição, descoberta e disponibilização de recursos bibliográficos.
+
+A plataforma será composta por uma API, responsável pela implementação das regras de negócio, persistência, gerenciamento e integração dos dados, e por um frontend web, destinado a oferecer interfaces adequadas aos diferentes perfis de utilização, incluindo bibliotecários, administradores e usuários do catálogo.
+
+O desenvolvimento será realizado de forma incremental, partindo de uma arquitetura simples e evoluindo progressivamente para uma plataforma abrangente de gestão de bibliotecas. Inicialmente, o projeto terá como foco a gestão do catálogo e das entidades bibliográficas, contemplando recursos como obras, manifestações, itens, agentes, assuntos, gêneros, identificadores, exemplares, localizações e disponibilidade. Posteriormente, a arquitetura deverá permitir a incorporação de outros processos e serviços relacionados à gestão de bibliotecas, como circulação, empréstimos, devoluções, reservas, usuários, aquisições, periódicos, relatórios e demais funcionalidades necessárias às instituições.
+
+A modelagem e a representação dos dados bibliográficos serão desenvolvidas tendo como referência a ontologia BIBFRAME, buscando estabelecer uma estrutura capaz de representar adequadamente as relações entre obras, manifestações, itens, agentes, assuntos e demais entidades bibliográficas. Essa abordagem deverá permitir a evolução gradual do modelo de dados sem comprometer a compatibilidade e a funcionalidade dos recursos já implementados.
+
+Outro objetivo fundamental do projeto é preparar a plataforma para os princípios de Linked Data, possibilitando a identificação das entidades por meio de URIs, o estabelecimento de relações entre recursos e a interoperabilidade com outras fontes e sistemas de informação. Dessa forma, o catálogo não será concebido apenas como um conjunto isolado de registros bibliográficos, mas como uma estrutura de dados capaz de estabelecer relações semânticas e integrar-se a um ecossistema mais amplo de informação bibliográfica.
+
+A arquitetura deverá priorizar modularidade, interoperabilidade, extensibilidade e separação entre as camadas de apresentação, serviços e dados, permitindo que a API seja consumida tanto pelo frontend oficial quanto por aplicações e serviços externos. Essa característica deverá possibilitar a construção de diferentes interfaces e integrações sem que a lógica central do sistema fique vinculada a uma única aplicação.
+
+O projeto pretende, portanto, estabelecer uma alternativa de software livre aos sistemas tradicionais de automação e gestão de bibliotecas, combinando recursos de gestão bibliotecária com uma arquitetura tecnológica contemporânea e um modelo de dados orientado à interoperabilidade e à representação semântica.
+
+Como princípio de desenvolvimento, a plataforma deverá crescer de maneira gradual, permitindo que novos módulos, entidades, serviços e integrações sejam incorporados ao longo do tempo. O objetivo não é apenas reproduzir as funcionalidades existentes nos sistemas tradicionais de bibliotecas, mas construir uma base tecnológica capaz de acompanhar a evolução das práticas de gestão bibliográfica, dos padrões de representação da informação e das tecnologias de dados conectados.
+
