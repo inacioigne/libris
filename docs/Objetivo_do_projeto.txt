@@ -1,4 +1,3 @@
-Objetivo do projeto
 O objetivo deste projeto é desenvolver uma plataforma de software livre, moderna, robusta e escalável para a gestão de bibliotecas, tendo como núcleo a gestão, organização, descrição, descoberta e disponibilização de recursos bibliográficos.
 
 A plataforma será composta por uma API, responsável pela implementação das regras de negócio, persistência, gerenciamento e integração dos dados, e por um frontend web, destinado a oferecer interfaces adequadas aos diferentes perfis de utilização, incluindo bibliotecários, administradores e usuários do catálogo.

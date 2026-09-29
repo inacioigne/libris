@@ -44,8 +44,9 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <LuLayoutDashboard />,
-    key: "cataloging",
-    subItems: [{ key: "work", path: "/" }],
+    key: "cataloguing",
+    path: "/admin/cataloguing",
+    // subItems: [{ key: "work", path: "/" }],
   },
   // {
   //   icon: <CalenderIcon />,
