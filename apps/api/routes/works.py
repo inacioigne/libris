@@ -11,7 +11,6 @@ from schemas.subject import WorkSubjectCreate, WorkSubjectRead
 from models.work_metadata.workAgent import WorkAgent
 from models.work_metadata.workSubject import WorkSubject
 from services.crud.work import create_work, delete_work
-# , list_works
 from core.db import get_db
 
 from schemas.work import WorkAgentCreate, WorkAgentRead, WorkCreate, WorkRead

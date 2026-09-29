@@ -14,6 +14,7 @@ from routes.items import router as item_router
 from routes.subjects import router as subject_router
 from routes.users import router as user_router
 from routes.auth import router as auth_router
+from routes.cataloging import router as cataloging_router
 
 from indexer.elastic.client import close_elasticsearch
 
@@ -48,6 +49,7 @@ app.add_middleware(
 )
 
 # Rotas
+app.include_router(cataloging_router)
 app.include_router(work_router)
 app.include_router(agent_router)
 app.include_router(instance_router)

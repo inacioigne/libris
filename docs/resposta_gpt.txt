@@ -1,0 +1,1257 @@
+Analisei a estrutura atual da API do **Libris** e a direção que você sugeriu — criar um **workspace de catalogação** — encaixa muito bem no projeto. Eu faria isso como uma camada de processo acima de `Work`, `Instance`, `Item`, `Agent` e `Subject`, sem misturar “registro em elaboração” com as entidades bibliográficas definitivas.
+
+Hoje a API já está relativamente bem separada em `routes`, `services`, `repositories`, `schemas` e `models`, e o domínio também já segue a separação conceitual esperada: `Work`, `Instance`, `Item`, agentes e assuntos aparecem como entidades distintas.  Isso está alinhado com o objetivo declarado do projeto de modelar os dados tomando BIBFRAME como referência e permitir evolução gradual do modelo. :chatgpt-content-reference{index="1"}
+
+O problema principal do fluxo atual é que `POST /works/` já cria imediatamente o `Work` definitivo. A rota chama `create_work()`, persiste, faz `commit`, monta o documento de busca e já indexa o registro.  Dentro de `create_work()`, títulos, tipos, idiomas, gêneros, notas, identificadores, agentes, assuntos e relações são construídos e finalmente persistidos de uma vez. 
+
+Isso funciona muito bem para uma API CRUD, mas não representa bem **catalogação bibliográfica**, porque catalogação é um processo.
+
+## Arquitetura que eu adotaria
+
+Eu acrescentaria um novo agregado:
+
+```text
+CatalogingWorkspace
+```
+
+ou simplesmente:
+
+```text
+Workspace
+```
+
+Ele não seria uma entidade BIBFRAME. Seria uma entidade operacional do Libris.
+
+A arquitetura ficaria conceitualmente assim:
+
+```text
+Cataloging Workspace
+       │
+       │ contém um rascunho
+       ▼
+┌───────────────────────┐
+│ Work draft            │
+│ Instance draft        │
+│ Item drafts           │
+│ Agents / Subjects refs│
+└───────────────────────┘
+       │
+       │ publish
+       ▼
+┌───────────────────────┐
+│ Work                  │
+│ Instance              │
+│ Item                  │
+│ relationships         │
+└───────────────────────┘
+       │
+       ▼
+ Elasticsearch
+```
+
+O ponto importante é:
+
+> **não criar `Work`, `Instance` ou `Item` enquanto a catalogação estiver em andamento.**
+
+Eles só passam a existir definitivamente quando o workspace for publicado.
+
+---
+
+# 1. Modelo do Workspace
+
+Eu começaria com algo aproximadamente assim:
+
+```python
+class CatalogingWorkspace(Base):
+    __tablename__ = "cataloging_workspace"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+
+    owner_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("user.id"),
+        nullable=False,
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        default="draft",
+    )
+
+    resource_type: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="bibliographic",
+    )
+
+    data: Mapped[dict] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=dict,
+    )
+
+    created_at: Mapped[datetime]
+
+    updated_at: Mapped[datetime]
+
+    published_at: Mapped[datetime | None]
+
+    published_work_id: Mapped[uuid.UUID | None]
+```
+
+E os estados poderiam começar simples:
+
+```text
+draft
+ready
+published
+cancelled
+```
+
+No futuro:
+
+```text
+draft
+in_review
+needs_correction
+approved
+published
+cancelled
+```
+
+Isso permitiria inclusive fluxo de revisão por outro bibliotecário.
+
+---
+
+# 2. Eu usaria JSONB para o draft inicialmente
+
+Aqui há uma decisão arquitetural importante.
+
+Eu **não criaria inicialmente tabelas** como:
+
+```text
+workspace_work_title
+workspace_work_agent
+workspace_subject
+workspace_instance
+workspace_identifier
+...
+```
+
+Isso duplicaria praticamente todo o modelo do catálogo.
+
+O workspace deveria guardar algo semelhante ao payload final:
+
+```json
+{
+  "work": {
+    "title": "Dom Casmurro",
+    "types": ["Text"],
+    "languages": ["pt"],
+    "titles": [],
+    "agents": [],
+    "subjects": []
+  },
+
+  "instance": {
+    "title": "Dom Casmurro",
+    "publication_place": "Rio de Janeiro",
+    "publisher": "...",
+    "date": "1899",
+    "identifiers": [
+      {
+        "type": "isbn",
+        "value": "..."
+      }
+    ]
+  },
+
+  "items": [
+    {
+      "barcode": "12345",
+      "location_id": "...",
+      "call_number": "..."
+    }
+  ]
+}
+```
+
+PostgreSQL `JSONB` é muito conveniente para isso.
+
+A grande vantagem é que o modelo definitivo pode continuar normalizado, como já está hoje. Por exemplo, seu `Work` continua possuindo relacionamentos normalizados para títulos, tipos, idiomas, gêneros, notas, identificadores, relações, assuntos, agentes e instances. 
+
+Então temos:
+
+```text
+Workspace
+    JSON flexível
+
+        ↓ publish
+
+modelo bibliográfico normalizado
+```
+
+Isso deixa a arquitetura bastante limpa.
+
+---
+
+# 3. Endpoints do fluxo
+
+Eu criaria uma API própria:
+
+```text
+/api/cataloging/workspaces
+```
+
+### Criar catalogação
+
+```http
+POST /cataloging/workspaces
+```
+
+Payload:
+
+```json
+{
+  "template": "monograph"
+}
+```
+
+Resposta:
+
+```json
+{
+  "id": "0499...",
+  "status": "draft",
+  "created_at": "...",
+  "updated_at": "...",
+  "data": {
+    "work": {},
+    "instance": {},
+    "items": []
+  }
+}
+```
+
+---
+
+### Recuperar catalogação
+
+```http
+GET /cataloging/workspaces/{workspace_id}
+```
+
+Isso permite:
+
+```text
+catalogar
+↓
+fechar navegador
+↓
+voltar amanhã
+↓
+continuar catalogando
+```
+
+---
+
+### Listar meus trabalhos em andamento
+
+```http
+GET /cataloging/workspaces?status=draft
+```
+
+Por exemplo:
+
+```json
+{
+  "items": [
+    {
+      "id": "...",
+      "title": "Dom Casmurro",
+      "status": "draft",
+      "updated_at": "..."
+    },
+    {
+      "id": "...",
+      "title": "Grande Sertão: Veredas",
+      "status": "draft",
+      "updated_at": "..."
+    }
+  ]
+}
+```
+
+Isso poderia alimentar no frontend uma tela:
+
+```text
+Minha catalogação
+
+Dom Casmurro                Rascunho       há 5 min
+Grande Sertão: Veredas      Rascunho       ontem
+Memórias Póstumas           Em revisão     ontem
+```
+
+---
+
+# 4. PATCH é particularmente adequado
+
+Eu evitaria obrigar o frontend a mandar o registro inteiro a cada alteração.
+
+Você poderia ter:
+
+```http
+PATCH /cataloging/workspaces/{id}
+```
+
+Payload:
+
+```json
+{
+  "work": {
+    "title": "Dom Casmurro"
+  }
+}
+```
+
+ou até endpoints especializados:
+
+```text
+PATCH /workspaces/{id}/work
+PATCH /workspaces/{id}/instance
+PATCH /workspaces/{id}/items
+```
+
+Eu prefiro começar com:
+
+```text
+PATCH /workspaces/{id}
+```
+
+porque deixa o frontend menos acoplado à estrutura interna da API.
+
+---
+
+# 5. Autosave
+
+Aqui o workspace começa realmente a fazer diferença.
+
+No frontend:
+
+```text
+usuário digita
+       ↓
+debounce 500-1000 ms
+       ↓
+PATCH workspace
+```
+
+Por exemplo:
+
+```typescript
+form.valueChanges.pipe(
+  debounceTime(800),
+  distinctUntilChanged()
+).subscribe(data => {
+  workspaceService.update(id, data)
+})
+```
+
+Então a experiência fica semelhante a Google Docs:
+
+```text
+Catalogando...
+
+Salvando...
+
+Salvo às 21:34
+```
+
+Isso é muito superior a um grande formulário que só cria o registro quando o usuário clica em "Salvar".
+
+---
+
+# 6. Separar "salvar" de "validar"
+
+Essa é provavelmente uma das mudanças mais importantes.
+
+Hoje `WorkCreate` exige, por exemplo:
+
+```python
+types: list[WorkType] = Field(
+    default_factory=list,
+    min_length=1,
+)
+```
+
+e contém várias validações de duplicidade e estrutura. 
+
+Isso é correto para um objeto **pronto para ser persistido**, mas não para um draft.
+
+Durante a catalogação isto deveria ser perfeitamente válido:
+
+```json
+{
+  "work": {
+    "title": "Dom..."
+  }
+}
+```
+
+Portanto eu separaria:
+
+```text
+CatalogingDraft
+```
+
+de:
+
+```text
+WorkCreate
+InstanceCreate
+ItemCreate
+```
+
+Algo como:
+
+```python
+class CatalogingWorkDraft(BaseModel):
+    title: str | None = None
+    types: list[WorkType] = []
+    languages: list[str] = []
+    agents: list[WorkAgentDraft] = []
+    subjects: list[WorkSubjectDraft] = []
+```
+
+Tudo opcional.
+
+Quando o usuário clicar:
+
+```text
+Publicar registro
+```
+
+a API converte:
+
+```text
+CatalogingDraft
+       ↓
+validation
+       ↓
+WorkCreate
+InstanceCreate
+ItemCreate
+```
+
+---
+
+# 7. Endpoint de validação
+
+Eu criaria:
+
+```http
+POST /cataloging/workspaces/{id}/validate
+```
+
+Resposta:
+
+```json
+{
+  "valid": false,
+
+  "errors": [
+    {
+      "path": "work.title",
+      "code": "required",
+      "message": "Título principal obrigatório"
+    },
+    {
+      "path": "instance.publication.publisher",
+      "code": "required",
+      "message": "Editor obrigatório"
+    }
+  ],
+
+  "warnings": [
+    {
+      "path": "work.agents",
+      "code": "missing_primary_author",
+      "message": "Nenhum autor principal foi informado"
+    }
+  ]
+}
+```
+
+Eu distinguiria fortemente:
+
+```text
+errors
+```
+
+de:
+
+```text
+warnings
+```
+
+Por exemplo:
+
+```text
+ERROR
+ISBN inválido.
+
+WARNING
+Registro não possui assunto.
+```
+
+O primeiro impede publicação.
+
+O segundo talvez não.
+
+---
+
+# 8. Endpoint de publicação
+
+O endpoint central seria:
+
+```http
+POST /cataloging/workspaces/{id}/publish
+```
+
+Internamente:
+
+```text
+1. Carrega workspace
+
+2. verifica owner/permissões
+
+3. valida draft
+
+4. BEGIN TRANSACTION
+
+5. cria Work
+
+6. cria Instance
+
+7. cria Items
+
+8. cria relações
+
+9. COMMIT
+
+10. marca workspace = published
+
+11. indexa Work
+```
+
+E aqui eu mudaria uma coisa importante na implementação atual.
+
+Hoje `create_work()` executa:
+
+```python
+await db.commit()
+```
+
+internamente. 
+
+`create_instance()` também faz seu próprio:
+
+```python
+await db.commit()
+```
+
+e depois dispara reindexação. 
+
+Para publicação do workspace, isso é problemático.
+
+Imagine:
+
+```text
+Work criado ✓
+commit
+
+Instance criada ✓
+commit
+
+Item 1 criado ✓
+
+Item 2 falha ✗
+```
+
+Você termina com uma catalogação parcialmente publicada.
+
+Eu refatoraria os services para trabalharem assim:
+
+```python
+async def create_work(
+    db: AsyncSession,
+    data: WorkCreate,
+    *,
+    commit: bool = True
+):
+```
+
+Mas melhor ainda: remover completamente `commit` de dentro dos services de domínio.
+
+Algo como:
+
+```python
+work = await work_service.create(db, data)
+
+instance = await instance_service.create(
+    db,
+    work_id=work.id,
+    data=instance_data,
+)
+
+items = await item_service.create_many(...)
+
+await db.commit()
+```
+
+Assim o workspace controla a transação inteira.
+
+---
+
+# 9. Indexação só depois do commit
+
+Hoje a rota de Work faz:
+
+```text
+create_work
+↓
+commit
+↓
+map
+↓
+index
+```
+
+
+
+Isso já está melhor do que indexar antes do banco, mas para o novo fluxo eu centralizaria:
+
+```text
+CatalogingService.publish()
+```
+
+e faria:
+
+```python
+async with db.begin():
+
+    work = ...
+
+    instance = ...
+
+    items = ...
+```
+
+Depois:
+
+```python
+await index_service.reindex(work.id)
+```
+
+Idealmente, no futuro:
+
+```text
+DB transaction
+     ↓
+Outbox event
+     ↓
+Indexer
+```
+
+Por exemplo:
+
+```text
+CatalogPublished
+WorkUpdated
+InstanceUpdated
+```
+
+Mas isso pode ficar para uma segunda etapa.
+
+---
+
+# 10. Templates de catalogação
+
+Outra coisa que eu introduziria desde o começo:
+
+```text
+CatalogingTemplate
+```
+
+Não precisa necessariamente começar como tabela.
+
+Pode ser configuração:
+
+```text
+monograph
+thesis
+serial
+article
+map
+sound_recording
+video
+```
+
+Então:
+
+```http
+POST /cataloging/workspaces
+```
+
+poderia receber:
+
+```json
+{
+  "template": "monograph"
+}
+```
+
+e iniciar:
+
+```json
+{
+  "work": {
+    "types": ["Text"],
+    "languages": []
+  },
+  "instance": {},
+  "items": []
+}
+```
+
+Depois você pode definir regras:
+
+```text
+monograph
+    requires ISBN?         não
+    instance required?     sim
+    item required?         sim
+
+electronic_book
+    instance required?     sim
+    physical item?         não
+
+thesis
+    degree required?       sim
+    advisor recommended?   sim
+```
+
+Isso evita colocar regras específicas de cada material diretamente no frontend.
+
+---
+
+# 11. Autoridades deveriam continuar fora do workspace
+
+Uma distinção importante.
+
+Eu não salvaria:
+
+```json
+{
+  "author": "Machado de Assis"
+}
+```
+
+como texto definitivo.
+
+O workspace deveria guardar:
+
+```json
+{
+  "agents": [
+    {
+      "agent_id": "bd910...",
+      "role": "author",
+      "primary": true
+    }
+  ]
+}
+```
+
+Isso já segue a filosofia de seu `WorkAgentCreate`, que referencia Agent por UUID porque agentes são entidades próprias do domínio. 
+
+Fluxo no frontend:
+
+```text
+Autor
+[ Machado de Assis              ]
+
+        ↓ autocomplete
+
+Machado de Assis
+1839-1908
+VIAF ...
+        [Selecionar]
+
+ou
+
+[+ Criar nova autoridade]
+```
+
+O mesmo vale para:
+
+```text
+Subjects
+Publishers
+Places
+Genres
+```
+
+quando forem entidades controladas.
+
+---
+
+# 12. Um workspace pode representar várias entidades
+
+Isso é particularmente importante para BIBFRAME.
+
+Uma catalogação de livro normalmente não é:
+
+```text
+1 registro
+```
+
+mas:
+
+```text
+Work
+ └── Instance
+      ├── Item
+      ├── Item
+      └── Item
+```
+
+Então eu não criaria:
+
+```text
+WorkWorkspace
+InstanceWorkspace
+ItemWorkspace
+```
+
+Eu criaria:
+
+```text
+CatalogingWorkspace
+```
+
+contendo o agregado completo:
+
+```json
+{
+  "work": {},
+  "instances": [
+    {
+      "data": {},
+      "items": []
+    }
+  ]
+}
+```
+
+Isso prepara o Libris para coisas interessantes depois:
+
+```text
+Work
+ ├─ Instance capa dura
+ ├─ Instance brochura
+ ├─ Instance ebook
+ └─ Instance tradução
+```
+
+sem redesenhar o fluxo.
+
+---
+
+# 13. Criação a partir de um registro existente
+
+Também adicionaria:
+
+```http
+POST /cataloging/workspaces/from-work/{work_id}
+```
+
+Isso cria um draft contendo o estado atual.
+
+Então edição passa a usar **o mesmo mecanismo** que criação.
+
+```text
+novo registro
+      ↓
+workspace
+
+editar registro
+      ↓
+workspace
+```
+
+Em vez de ter dois sistemas diferentes.
+
+Por exemplo:
+
+```text
+GET Work
+↓
+snapshot
+↓
+CatalogingWorkspace
+↓
+edição
+↓
+publish
+↓
+update Work
+```
+
+Isso será especialmente útil quando você implementar auditoria e revisão.
+
+---
+
+# 14. Histórico e auditoria
+
+Eu incluiria desde cedo:
+
+```text
+created_by
+updated_by
+published_by
+created_at
+updated_at
+published_at
+```
+
+Depois você pode adicionar:
+
+```text
+CatalogingRevision
+```
+
+Por exemplo:
+
+```text
+revision 1
+revision 2
+revision 3
+```
+
+Isso permitiria mostrar:
+
+```text
+Alterações
+
+28/09 21:20
+João alterou título
+
+28/09 21:15
+Maria adicionou ISBN
+```
+
+Não precisa fazer isso agora, mas vale projetar o workspace de modo que não impeça essa evolução.
+
+---
+
+# 15. Estrutura de código que eu criaria
+
+Dentro da sua arquitetura atual:
+
+```text
+apps/api/
+
+models/
+    cataloging/
+        workspace.py
+
+schemas/
+    cataloging/
+        workspace.py
+        draft.py
+        validation.py
+
+routes/
+    cataloging.py
+
+services/
+    cataloging/
+        workspace_service.py
+        validation_service.py
+        publication_service.py
+
+repositories/
+    cataloging_workspace_repository.py
+```
+
+Ou, se quiser começar mais simples:
+
+```text
+models/cataloging_workspace.py
+schemas/cataloging.py
+routes/cataloging.py
+services/cataloging.py
+```
+
+Eu prefiro a primeira abordagem porque esse módulo provavelmente crescerá bastante.
+
+---
+
+# 16. Endpoints que considero suficientes para a primeira versão
+
+Não começaria com vinte endpoints. Uma primeira API poderia ter somente:
+
+```text
+POST   /cataloging/workspaces
+
+GET    /cataloging/workspaces
+
+GET    /cataloging/workspaces/{id}
+
+PATCH  /cataloging/workspaces/{id}
+
+DELETE /cataloging/workspaces/{id}
+
+POST   /cataloging/workspaces/{id}/validate
+
+POST   /cataloging/workspaces/{id}/publish
+```
+
+E:
+
+```text
+POST /cataloging/workspaces/from-work/{work_id}
+```
+
+quando iniciar edição.
+
+Só isso já suporta um fluxo completo.
+
+---
+
+# 17. Fluxo da UI
+
+Eu imagino a interface aproximadamente assim:
+
+```text
+Nova catalogação
+
+┌──────────────────────────────────────────────┐
+│ Livro                                        │
+├──────────────────────────────────────────────┤
+│                                              │
+│ Obra                                         │
+│ ───────────────────────────────────────────  │
+│                                              │
+│ Título                                       │
+│ [ Dom Casmurro                         ]      │
+│                                              │
+│ Tipo                                         │
+│ [ Texto ▼ ]                                  │
+│                                              │
+│ Autor                                        │
+│ [ Machado de Assis                     ]      │
+│                                              │
+│ Assuntos                                     │
+│ [ Literatura brasileira               ]      │
+│                                              │
+├──────────────────────────────────────────────┤
+│ Manifestação                                 │
+│                                              │
+│ Editora                                      │
+│ Ano                                          │
+│ ISBN                                         │
+├──────────────────────────────────────────────┤
+│ Exemplares                                   │
+│                                              │
+│ + Adicionar exemplar                         │
+├──────────────────────────────────────────────┤
+│                                              │
+│ Salvo automaticamente                        │
+│                                              │
+│ [Validar]                [Publicar]           │
+└──────────────────────────────────────────────┘
+```
+
+O usuário nem precisa saber que internamente existem Work/Instance/Item. A UI pode usar termos bibliotecários adequados enquanto a API mantém o modelo BIBFRAME.
+
+---
+
+# 18. Outra melhoria importante: `WorkCreate` não deveria ser o formulário
+
+Isso é arquiteturalmente importante no Libris.
+
+Hoje existe uma proximidade natural entre:
+
+```text
+form frontend
+↓
+WorkCreate
+↓
+SQLAlchemy model
+```
+
+Eu evitaria que isso evoluísse nessa direção.
+
+Melhor:
+
+```text
+UI
+
+↓ CatalogingDraft
+
+Cataloging module
+
+↓ commands
+
+domain services
+
+↓ entities
+
+Work / Instance / Item
+```
+
+Ou seja:
+
+```text
+Cataloging ≠ Work CRUD
+```
+
+Cataloging é um **caso de uso**.
+
+Work é uma **entidade do domínio**.
+
+Essa separação vai facilitar muito quando aparecerem coisas como:
+
+```text
+importação MARC
+
+Z39.50
+
+SRU
+
+Crossref
+
+OpenAlex
+
+ISBN lookup
+
+duplicação de registro
+
+copy cataloging
+
+revisão
+
+aprovação
+
+catalogação cooperativa
+```
+
+Todos eles podem produzir ou alterar um:
+
+```text
+CatalogingWorkspace
+```
+
+antes de publicar.
+
+---
+
+# 19. Inclusive importação externa encaixa naturalmente
+
+Por exemplo:
+
+```text
+ISBN
+9788535902778
+
+      ↓
+
+OpenLibrary / Library of Congress / outro
+
+      ↓
+
+dados recuperados
+
+      ↓
+
+CatalogingWorkspace
+
+      ↓
+
+bibliotecário revisa
+
+      ↓
+
+Publish
+
+      ↓
+
+Work + Instance + Item
+```
+
+Isso é melhor do que deixar uma integração externa criar diretamente as tabelas definitivas.
+
+---
+
+# 20. Minha proposta de arquitetura final
+
+Eu estruturaria conceitualmente o Libris assim:
+
+```text
+                     Libris API
+
+                ┌──────────────────┐
+                │ Cataloging       │
+                │ Workspace        │
+                └────────┬─────────┘
+                         │
+                 validate│publish
+                         │
+             ┌───────────▼────────────┐
+             │ Domain Services         │
+             │                         │
+             │ WorkService             │
+             │ InstanceService         │
+             │ ItemService             │
+             │ AgentService            │
+             │ SubjectService          │
+             └───────────┬────────────┘
+                         │
+             ┌───────────▼────────────┐
+             │ Repositories            │
+             └───────────┬────────────┘
+                         │
+                     PostgreSQL
+
+                         │
+                     events
+                         │
+                         ▼
+
+                  Elasticsearch
+```
+
+Essa solução também combina muito bem com a intenção do projeto de manter a API desacoplada da interface e permitir que outros clientes e integrações consumam a lógica central. :chatgpt-content-reference{index="10"}
+
+## O que eu mudaria primeiro no código atual
+
+Eu faria a evolução nesta ordem:
+
+1. **Criar `CatalogingWorkspace` com JSONB e owner/status.**
+2. Criar os endpoints `POST`, `GET`, `PATCH`, `DELETE`.
+3. Criar `CatalogingDraftSchema`, permissivo e com campos opcionais.
+4. Criar `/validate`.
+5. Refatorar `create_work()`, `create_instance()` e o futuro `create_item()` para **não executarem `commit()` internamente**.
+6. Criar `CatalogingPublicationService`, responsável por abrir uma única transação e gerar `Work → Instance → Items`.
+7. Criar `/publish`.
+8. Mover a indexação para depois da publicação.
+9. Implementar autosave no frontend.
+10. Depois acrescentar templates, edição de registros existentes, revisão e histórico.
+
+Com isso, você preserva praticamente todo o modelo bibliográfico que já construiu e adiciona uma camada que está faltando hoje: **o ciclo de vida da catalogação**. O desenho atual já contém uma boa base para isso; especialmente porque `Work`, `Instance`, agentes e assuntos não foram modelados como um único “registro MARC gigante”, o que torna o workspace bem mais natural de implementar.

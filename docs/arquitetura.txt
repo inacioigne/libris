@@ -1,0 +1,31 @@
+                     Libris API
+
+                ┌──────────────────┐
+                │ Cataloging       │
+                │ Workspace        │
+                └────────┬─────────┘
+                         │
+                 validate│publish
+                         │
+             ┌───────────▼────────────┐
+             │ Domain Services         │
+             │                         │
+             │ WorkService             │
+             │ InstanceService         │
+             │ ItemService             │
+             │ AgentService            │
+             │ SubjectService          │
+             └───────────┬────────────┘
+                         │
+             ┌───────────▼────────────┐
+             │ Repositories            │
+             └───────────┬────────────┘
+                         │
+                     PostgreSQL
+
+                         │
+                     events
+                         │
+                         ▼
+
+                  Elasticsearch

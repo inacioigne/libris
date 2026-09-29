@@ -1,0 +1,77 @@
+apps/api/
+
+models/
+    cataloging/
+        workspace.py
+
+schemas/
+    cataloging/
+        workspace.py
+        draft.py
+        validation.py
+
+routes/
+    cataloging.py
+
+services/
+    cataloging/
+        workspace_service.py
+        validation_service.py
+        publication_service.py
+
+repositories/
+    cataloging_workspace_repository.py
+
+
+POST   /cataloging/workspaces
+
+GET    /cataloging/workspaces
+
+GET    /cataloging/workspaces/{id}
+
+PATCH  /cataloging/workspaces/{id}
+
+DELETE /cataloging/workspaces/{id}
+
+POST   /cataloging/workspaces/{id}/validate
+
+POST   /cataloging/workspaces/{id}/publish
+
+
+Nova catalogação
+
+┌──────────────────────────────────────────────┐
+│ Livro                                        │
+├──────────────────────────────────────────────┤
+│                                              │
+│ Obra                                         │
+│ ───────────────────────────────────────────  │
+│                                              │
+│ Título                                       │
+│ [ Dom Casmurro                         ]      │
+│                                              │
+│ Tipo                                         │
+│ [ Texto ▼ ]                                  │
+│                                              │
+│ Autor                                        │
+│ [ Machado de Assis                     ]      │
+│                                              │
+│ Assuntos                                     │
+│ [ Literatura brasileira               ]      │
+│                                              │
+├──────────────────────────────────────────────┤
+│ Manifestação                                 │
+│                                              │
+│ Editora                                      │
+│ Ano                                          │
+│ ISBN                                         │
+├──────────────────────────────────────────────┤
+│ Exemplares                                   │
+│                                              │
+│ + Adicionar exemplar                         │
+├──────────────────────────────────────────────┤
+│                                              │
+│ Salvo automaticamente                        │
+│                                              │
+│ [Validar]                [Publicar]           │
+└──────────────────────────────────────────────┘
