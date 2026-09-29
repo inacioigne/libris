@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import DateTime, ForeignKey, String, func
 
 from core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -34,16 +34,37 @@ class CatalogingWorkspace(Base):
         default="bibliographic",
     )
 
+    template: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
     data: Mapped[dict] = mapped_column(
         JSON,
         nullable=False,
         default=dict,
+    )    
+    
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
     )
 
-    created_at: Mapped[datetime]
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
 
-    updated_at: Mapped[datetime]
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
 
-    published_at: Mapped[datetime | None]
-
-    published_work_id: Mapped[uuid.UUID | None]
+    published_work_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("work.id"),
+        nullable=True,
+    )
