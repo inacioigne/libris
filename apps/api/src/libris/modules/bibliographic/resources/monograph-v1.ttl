@@ -1,0 +1,40 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix profile: <urn:libris:profile:monograph:v1:> .
+
+profile:Title a sh:NodeShape ;
+    sh:class bf:Title ;
+    sh:property [ sh:path bf:mainTitle ; sh:minCount 1 ; sh:nodeKind sh:Literal ;
+        sh:message "O título deve ter ao menos um bf:mainTitle literal."@pt ] .
+
+profile:Work a sh:NodeShape ; sh:targetClass bf:Work ; sh:nodeKind sh:IRI ;
+    sh:property [ sh:path bf:title ; sh:minCount 1 ; sh:node profile:Title ;
+        sh:nodeKind sh:BlankNodeOrIRI ; sh:message "Work requer um título estruturado."@pt ] ;
+    sh:property [ sh:path bf:language ; sh:nodeKind sh:IRI ;
+        sh:message "Idioma deve referenciar uma URI de vocabulário."@pt ] ;
+    sh:property [ sh:path bf:content ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path [ sh:inversePath bf:instanceOf ] ; sh:equals bf:hasInstance ] ;
+    sh:property [ sh:path bf:hasInstance ; sh:class bf:Instance ; sh:nodeKind sh:IRI ] .
+
+profile:Instance a sh:NodeShape ; sh:targetClass bf:Instance ; sh:nodeKind sh:IRI ;
+    sh:property [ sh:path bf:title ; sh:minCount 1 ; sh:node profile:Title ] ;
+    sh:property [ sh:path bf:instanceOf ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:class bf:Work ;
+        sh:message "Neste perfil, Instance referencia exatamente um Work descrito."@pt ] ;
+    sh:property [ sh:path [ sh:inversePath bf:hasInstance ] ; sh:equals bf:instanceOf ;
+        sh:message "instanceOf e hasInstance devem ser consistentes."@pt ] ;
+    sh:property [ sh:path bf:hasItem ; sh:nodeKind sh:IRI ; sh:class bf:Item ] ;
+    sh:property [ sh:path [ sh:inversePath bf:itemOf ] ; sh:equals bf:hasItem ] ;
+    sh:property [ sh:path bf:identifiedBy ; sh:nodeKind sh:BlankNodeOrIRI ] .
+
+profile:Item a sh:NodeShape ; sh:targetClass bf:Item ; sh:nodeKind sh:IRI ;
+    sh:property [ sh:path bf:itemOf ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:class bf:Instance ;
+        sh:message "Neste perfil, Item referencia exatamente uma Instance descrita."@pt ] ;
+    sh:property [ sh:path [ sh:inversePath bf:hasItem ] ; sh:equals bf:itemOf ;
+        sh:message "itemOf e hasItem devem ser consistentes."@pt ] ;
+    sh:property [ sh:path bf:heldBy ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path bf:identifiedBy ; sh:minCount 1 ;
+        sh:nodeKind sh:BlankNodeOrIRI ; sh:severity sh:Warning ;
+        sh:message "Recomenda-se um identificador bibliográfico para o Item."@pt ] .

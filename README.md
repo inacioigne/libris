@@ -7,9 +7,14 @@ Tailwind e uma primitiva acessível Radix UI; a adoção de shadcn/ui para contr
 complexos está registrada no ADR 0005.
 
 **Implementado:** `/health`, página inicial `/pt` e `/en`, configuração validada,
-engine/sessões SQLAlchemy assíncronas, ambiente Alembic sem tabelas de negócio,
-testes de inicialização e Docker Compose. Catalogação, circulação, autoridades,
-periódicos, pesquisa e autenticação ainda não estão implementados.
+engine/sessões SQLAlchemy assíncronas, Docker Compose e núcleo semântico experimental
+BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/URI,
+snapshots JSONB, revisões e concorrência otimista. Há uma migração Alembic
+experimental; ela não executa no startup. Editor, APIs de catalogação, circulação,
+autoridades, pesquisa e autenticação ainda não estão implementados.
+
+Consulte a [fundação semântica](docs/architecture/semantic-foundation.md) para
+exemplos, serviços internos, limites e testes de integração PostgreSQL.
 
 ## Estrutura
 
@@ -124,8 +129,10 @@ uv run alembic heads
 uv run alembic upgrade head --sql
 ```
 
-Não há revisões Alembic nesta etapa. `alembic current` exige banco acessível;
-`heads` e geração offline verificam o ambiente sem criar tabelas bibliográficas.
+Existe a revisão experimental `0001_semantic`. `alembic current` exige banco
+acessível; `heads` e geração offline inspecionam o ambiente sem modificar o banco.
+Execute `uv run alembic upgrade head` explicitamente quando desejar instalar as
+tabelas experimentais. O downgrade descarta seus dados.
 
 ```bash
 cd apps/web
@@ -143,18 +150,18 @@ docker compose run --rm --user root -v "$PWD/tests:/tests:ro" api \
 ```
 
 Esse comando instala ferramentas somente no container descartável e precisa de
-rede. Os testes cobrem lifespan/saúde sem serviços externos, contrato OpenAPI,
-CORS e validação/configuração por ambiente. Não constituem testes de integração
-com banco ou índices. Evidências desta sessão estão em
+rede. A suíte padrão cobre lifespan/saúde sem serviços externos, contrato OpenAPI,
+CORS, configuração, RDF e SHACL. A suíte separada de integração verifica snapshots,
+histórico e concorrência em PostgreSQL real; não há integração com índices. Evidências desta sessão estão em
 [verification.md](docs/architecture/verification.md).
 
 ## Próxima etapa
 
-Definir um perfil mínimo de catalogação Work/Instance/Item, exemplos RDF reais,
-política de URIs e fixtures de validação. Prototipar round-trip JSON-LD/RDF e SHACL
-antes de escolher tabelas definitivas. Depois, registrar um ADR de persistência e
-introduzir a primeira migração e APIs de catalogação, com revisão/proveniência.
-Autenticação e autorização devem anteceder exposição de escrita ou dados pessoais.
+Validar o perfil com catalogadores, definir limites dos agregados Work/Instance/Item,
+política de resolução das URIs e autenticação/autorização antes de criar APIs de
+escrita e editor mínimo. As tabelas permanecem experimentais; não há esquema
+bibliográfico definitivo. Ver [ADR 0007](docs/decisions/0007-semantic-core.md) e
+[ADR 0008](docs/decisions/0008-experimental-rdf-persistence.md).
 
 A licença do Libris ainda precisa ser escolhida pelos mantenedores; não foi
 adicionada uma licença arbitrária. Avaliar também os termos das distribuições

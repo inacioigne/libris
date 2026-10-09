@@ -7,7 +7,7 @@ from libris.core.config import Settings
 
 
 class Base(DeclarativeBase):
-    """Migration metadata; no business tables exist in this stage."""
+    """Shared migration metadata; modules register their own tables."""
 
 
 class Database:

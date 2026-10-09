@@ -36,6 +36,8 @@ services:
       context: .
       dockerfile: infrastructure/docker/api.Dockerfile
     environment:
+      RESOURCE_BASE_URI: ${RESOURCE_BASE_URI:-http://localhost:8000/resources}
+      RDF_MAX_DOCUMENT_BYTES: ${RDF_MAX_DOCUMENT_BYTES:-1048576}
       APP_ENV: ${APP_ENV:-development}
       DATABASE_URL: ${DATABASE_URL:?Configure DATABASE_URL no .env}
       ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}

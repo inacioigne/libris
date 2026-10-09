@@ -1,0 +1,283 @@
+{
+  "id": "urn:libris:profile:monograph:v1",
+  "version": 1,
+  "label": {
+    "pt": "Monografia mínima experimental"
+  },
+  "validationShapes": "monograph-v1.ttl",
+  "resources": [
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "label": {
+            "pt": "Título"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Title"
+          ]
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/content",
+          "label": {
+            "pt": "Conteúdo"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "vocabulary": "http://id.loc.gov/vocabulary/contentTypes/"
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/language",
+          "label": {
+            "pt": "Idioma"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "vocabulary": "http://id.loc.gov/vocabulary/languages/"
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/subject",
+          "label": {
+            "pt": "Assuntos"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/contribution",
+          "label": {
+            "pt": "Contribuições"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Contribution"
+          ]
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/relatedTo",
+          "label": {
+            "pt": "Obras relacionadas"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/hasInstance",
+          "label": {
+            "pt": "Instâncias"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Instance"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "label": {
+            "pt": "Título da manifestação"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": true
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/editionStatement",
+          "label": {
+            "pt": "Edição"
+          },
+          "repeatable": true,
+          "valueKind": "literal",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+          "label": {
+            "pt": "Publicação"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Publication"
+          ]
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/carrier",
+          "label": {
+            "pt": "Suporte"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "vocabulary": "http://id.loc.gov/vocabulary/carriers/"
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/extent",
+          "label": {
+            "pt": "Extensão"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+          "label": {
+            "pt": "Obra"
+          },
+          "repeatable": false,
+          "valueKind": "resource",
+          "requiredInForm": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Work"
+          ]
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/hasItem",
+          "label": {
+            "pt": "Items"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Item"
+          ]
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Item",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/itemOf",
+          "label": {
+            "pt": "Instância"
+          },
+          "repeatable": false,
+          "valueKind": "resource",
+          "requiredInForm": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Instance"
+          ]
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "label": {
+            "pt": "Identificador bibliográfico"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/heldBy",
+          "label": {
+            "pt": "Instituição detentora"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Title",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+          "label": {
+            "pt": "Título principal"
+          },
+          "repeatable": true,
+          "valueKind": "literal",
+          "requiredInForm": true,
+          "languages": true
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Contribution",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/agent",
+          "label": {
+            "pt": "Agente"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/role",
+          "label": {
+            "pt": "Papel"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false,
+          "vocabulary": "http://id.loc.gov/vocabulary/relators/"
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Publication",
+      "fields": [
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/agent",
+          "label": {
+            "pt": "Publicador"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/place",
+          "label": {
+            "pt": "Local"
+          },
+          "repeatable": true,
+          "valueKind": "resource",
+          "requiredInForm": false
+        },
+        {
+          "property": "http://id.loc.gov/ontologies/bibframe/date",
+          "label": {
+            "pt": "Data"
+          },
+          "repeatable": true,
+          "valueKind": "literal",
+          "requiredInForm": false,
+          "datatypes": true
+        }
+      ]
+    }
+  ]
+}

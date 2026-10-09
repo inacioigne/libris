@@ -1,13 +1,17 @@
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from libris.core.config import Settings
-from libris.infrastructure.database import Base
 from libris.main import create_app
 
 
-def test_lifespan_and_health_without_external_services() -> None:
+def test_lifespan_and_health_without_external_services(monkeypatch: pytest.MonkeyPatch) -> None:
+    def unexpected_connection(*args: object, **kwargs: object) -> None:
+        pytest.fail("Startup/health must not connect to PostgreSQL")
+
+    monkeypatch.setattr(AsyncEngine, "connect", unexpected_connection)
     settings = Settings(_env_file=None, app_env="test")
     app = create_app(settings)
     with TestClient(app) as client:
@@ -16,7 +20,6 @@ def test_lifespan_and_health_without_external_services() -> None:
         assert response.status_code == 200
         assert response.json() == {"status": "ok", "service": "libris-api"}
         assert response.headers["content-type"] == "application/json"
-    assert not Base.metadata.tables
 
 
 def test_openapi_exposes_health_contract() -> None:

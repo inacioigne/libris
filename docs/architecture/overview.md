@@ -3,8 +3,9 @@
 ## Escopo e estado
 
 O Libris será um ILS de código aberto, modular e orientado a dados conectados.
-Nesta etapa há somente uma API de saúde, uma página institucional bilíngue,
-configuração de persistência e infraestrutura local. Não há catalogação, login,
+Há uma API de saúde, uma página institucional bilíngue, infraestrutura local e
+um núcleo semântico experimental com RDF/SHACL e snapshots PostgreSQL.
+A [fundação semântica](semantic-foundation.md) documenta a Etapa 2. Não há catalogação, login,
 consulta bibliográfica ou operações de circulação. A licença de distribuição do
 projeto ainda precisa ser escolhida pelos mantenedores antes de publicação.
 
@@ -27,8 +28,8 @@ serviços de infraestrutura. Um único backend controla transações e módulos.
 ## Organização do código
 
 - `apps/api/src/libris`: fábrica FastAPI, configuração, rotas e infraestrutura.
-- `apps/api/src/libris/modules`: domínios futuros; nenhuma implementação fictícia.
-- `apps/api/migrations`: ambiente Alembic assíncrono, sem migrações de negócio.
+- `apps/api/src/libris/modules`: núcleo bibliográfico experimental; demais domínios futuros.
+- `apps/api/migrations`: ambiente Alembic assíncrono e migração semântica experimental.
 - `apps/web/src/app`: App Router e páginas `/pt`, `/en`; `/` redireciona para `/pt`.
 - `apps/web/src/i18n`: dicionários tipados; internacionalização explícita por URL.
 - `packages/shared`: reservado para contratos OpenAPI e vocabulários compartilhados.

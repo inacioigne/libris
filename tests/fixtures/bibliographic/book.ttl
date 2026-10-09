@@ -1,0 +1,40 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix res: <http://localhost:8000/resources/> .
+
+res:00000000-0000-4000-8000-000000000001 a bf:Work ;
+    bf:title [ a bf:Title ; bf:mainTitle "Jardins imaginários"@pt, "Imaginary gardens"@en ] ;
+    bf:content <http://id.loc.gov/vocabulary/contentTypes/txt> ;
+    bf:language <http://id.loc.gov/vocabulary/languages/por> ;
+    bf:subject <https://example.invalid/concepts/gardens>, <https://example.invalid/concepts/books> ;
+    bf:contribution [ a bf:Contribution ;
+        bf:agent [ a bf:Person ; rdfs:label "Autoria fictícia de teste"@pt ] ;
+        bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:relatedTo <https://example.invalid/works/related> ;
+    dcterms:description "Registro exclusivamente sintético."@pt ;
+    bf:hasInstance res:00000000-0000-4000-8000-000000000002 .
+
+res:00000000-0000-4000-8000-000000000002 a bf:Instance ;
+    bf:title [ a bf:Title ; bf:mainTitle "Jardins imaginários"@pt ] ;
+    bf:editionStatement "Edição de teste"@pt ;
+    bf:provisionActivity [ a bf:Publication ;
+        bf:agent [ a bf:Organization ; rdfs:label "Editora fictícia"@pt ] ;
+        bf:place <https://example.invalid/places/test> ; bf:date "2026"^^xsd:gYear ] ;
+    bf:identifiedBy [ a bf:Isbn ; rdf:value "9780000000002" ] ;
+    bf:carrier <http://id.loc.gov/vocabulary/carriers/nc> ;
+    bf:extent [ a bf:Extent ; rdfs:label "120 páginas"@pt ] ;
+    bf:instanceOf res:00000000-0000-4000-8000-000000000001 ;
+    bf:hasItem res:00000000-0000-4000-8000-000000000003 .
+
+res:00000000-0000-4000-8000-000000000003 a bf:Item ;
+    bf:itemOf res:00000000-0000-4000-8000-000000000002 ;
+    bf:identifiedBy [ a bf:Local ; rdf:value "SEMANTIC-TEST-001" ] ;
+    bf:heldBy <https://example.invalid/organizations/test-library> .
+
+<https://example.invalid/concepts/gardens> a skos:Concept ;
+    skos:prefLabel "Jardins"@pt, "Gardens"@en ;
+    skos:broader <https://example.invalid/concepts/landscapes> .

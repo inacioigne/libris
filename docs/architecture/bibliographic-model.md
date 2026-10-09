@@ -1,5 +1,11 @@
 # Estratégia bibliográfica: BIBFRAME 2.0
 
+A Etapa 2 implementou o protótipo descrito abaixo. Consulte
+[fundação semântica](semantic-foundation.md), [ADR 0007](../decisions/0007-semantic-core.md)
+e [ADR 0008](../decisions/0008-experimental-rdf-persistence.md).
+O restante deste documento registra a estratégia inicial e requisitos futuros;
+as tabelas existentes são experimentais, sem esquema bibliográfico definitivo.
+
 ## Entidades e limites
 
 BIBFRAME 2.0 será o modelo semântico principal, utilizando o namespace
@@ -39,7 +45,7 @@ poderão complementar BIBFRAME em perfis explícitos, preservando os URIs origin
 
 PostgreSQL deve manter registros e revisões semânticas canônicas (possivelmente
 JSON-LD/RDF em JSONB, com projeções relacionais para restrições e consultas), além
-de dados administrativos relacionais. Essa direção ainda precisa de um protótipo:
+de dados administrativos relacionais. Essa direção foi validada por um protótipo de snapshots JSON-LD em JSONB:
 JSONB não é triplestore e não fornece SPARQL. Não criar uma tabela genérica de
 triplas nem modelo relacional definitivo sem validar casos de catalogação reais.
 
@@ -63,7 +69,7 @@ Fusões, exclusões e redirecionamentos de URIs precisam de política própria.
 
 Pydantic valida os contratos HTTP; SHACL validará grafos segundo perfis versionados.
 Validade de JSON não implica validade RDF ou conformidade catalográfica. RDFLib e
-pySHACL são candidatos a avaliar no protótipo, sem dependências ociosas nesta etapa.
+pySHACL são utilizados pelo protótipo da Etapa 2, com perfis locais versionados.
 JSON-LD será formato de intercâmbio, com Turtle opcional para inspeção técnica.
 
 Elasticsearch receberá documentos por recursos/projeções de descoberta. Índices

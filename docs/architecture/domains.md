@@ -1,7 +1,8 @@
 # Domínios e responsabilidades
 
 Os módulos abaixo são fronteiras propostas, não funcionalidades implementadas.
-Apenas a infraestrutura comum e saúde existem. Cada módulo possui seus dados e
+Infraestrutura comum, saúde e núcleo bibliográfico experimental existem; a
+catalogação completa continua futura. Cada módulo possui seus dados e
 contratos; as dependências abaixo são lógicas e não autorizam acesso direto a tabelas.
 
 | Módulo futuro | Responsabilidade | Limites e colaboração |

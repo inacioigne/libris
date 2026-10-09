@@ -1,0 +1,52 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix res: <http://localhost:8000/resources/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+res:00000000-0000-4000-8000-000000000001 a bf:Work ;
+    bf:content <http://id.loc.gov/vocabulary/contentTypes/txt> ;
+    bf:contribution [ a bf:Contribution ;
+            bf:agent [ a bf:Person ;
+                    rdfs:label "Autoria fictícia de teste"@pt ] ;
+            bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:hasInstance res:00000000-0000-4000-8000-000000000002 ;
+    bf:language <http://id.loc.gov/vocabulary/languages/por> ;
+    bf:relatedTo <https://example.invalid/works/related> ;
+    bf:subject <https://example.invalid/concepts/books>,
+        <https://example.invalid/concepts/gardens> ;
+    bf:title [ a bf:Title ;
+            bf:mainTitle "Imaginary gardens"@en,
+                "Jardins imaginários"@pt ] ;
+    dcterms:description "Registro exclusivamente sintético."@pt .
+
+res:00000000-0000-4000-8000-000000000003 a bf:Item ;
+    bf:heldBy <https://example.invalid/organizations/test-library> ;
+    bf:identifiedBy [ a bf:Local ;
+            rdf:value "SEMANTIC-TEST-001" ] ;
+    bf:itemOf res:00000000-0000-4000-8000-000000000002 .
+
+<https://example.invalid/concepts/gardens> a skos:Concept ;
+    skos:broader <https://example.invalid/concepts/landscapes> ;
+    skos:prefLabel "Gardens"@en,
+        "Jardins"@pt .
+
+res:00000000-0000-4000-8000-000000000002 a bf:Instance ;
+    bf:carrier <http://id.loc.gov/vocabulary/carriers/nc> ;
+    bf:editionStatement "Edição de teste"@pt ;
+    bf:extent [ a bf:Extent ;
+            rdfs:label "120 páginas"@pt ] ;
+    bf:hasItem res:00000000-0000-4000-8000-000000000003 ;
+    bf:identifiedBy [ a bf:Isbn ;
+            rdf:value "9780000000002" ] ;
+    bf:instanceOf res:00000000-0000-4000-8000-000000000001 ;
+    bf:provisionActivity [ a bf:Publication ;
+            bf:agent [ a bf:Organization ;
+                    rdfs:label "Editora fictícia"@pt ] ;
+            bf:date "2026"^^xsd:gYear ;
+            bf:place <https://example.invalid/places/test> ] ;
+    bf:title [ a bf:Title ;
+            bf:mainTitle "Jardins imaginários"@pt ] .
+

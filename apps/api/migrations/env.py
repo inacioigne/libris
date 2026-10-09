@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from libris.core.config import Settings
 from libris.infrastructure.database import Base
+from libris.modules.bibliographic.infrastructure import persistence  # noqa: F401
 
 settings = Settings()
 target_metadata = Base.metadata

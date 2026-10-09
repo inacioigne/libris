@@ -1,0 +1,265 @@
+[
+  {
+    "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000003",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Item"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/heldBy": [
+      {
+        "@id": "https://example.invalid/organizations/test-library"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/identifiedBy": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b9"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/itemOf": [
+      {
+        "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000002"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b9",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Local"
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#value": [
+      {
+        "@value": "SEMANTIC-TEST-001"
+      }
+    ]
+  },
+  {
+    "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000001",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Work"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/content": [
+      {
+        "@id": "http://id.loc.gov/vocabulary/contentTypes/txt"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/contribution": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b2"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/hasInstance": [
+      {
+        "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000002"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/language": [
+      {
+        "@id": "http://id.loc.gov/vocabulary/languages/por"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/relatedTo": [
+      {
+        "@id": "https://example.invalid/works/related"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/subject": [
+      {
+        "@id": "https://example.invalid/concepts/gardens"
+      },
+      {
+        "@id": "https://example.invalid/concepts/books"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/title": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b1"
+      }
+    ],
+    "http://purl.org/dc/terms/description": [
+      {
+        "@language": "pt",
+        "@value": "Registro exclusivamente sintético."
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b1",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Title"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/mainTitle": [
+      {
+        "@language": "pt",
+        "@value": "Jardins imaginários"
+      },
+      {
+        "@language": "en",
+        "@value": "Imaginary gardens"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b2",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Contribution"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/agent": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b3"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/role": [
+      {
+        "@id": "http://id.loc.gov/vocabulary/relators/aut"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b3",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Person"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "pt",
+        "@value": "Autoria fictícia de teste"
+      }
+    ]
+  },
+  {
+    "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000002",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Instance"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/carrier": [
+      {
+        "@id": "http://id.loc.gov/vocabulary/carriers/nc"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/editionStatement": [
+      {
+        "@language": "pt",
+        "@value": "Edição de teste"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/extent": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b8"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/hasItem": [
+      {
+        "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000003"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/identifiedBy": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b7"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/instanceOf": [
+      {
+        "@id": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000001"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/provisionActivity": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b5"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/title": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b4"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b4",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Title"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/mainTitle": [
+      {
+        "@language": "pt",
+        "@value": "Jardins imaginários"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b5",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Publication"
+    ],
+    "http://id.loc.gov/ontologies/bibframe/agent": [
+      {
+        "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b6"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/date": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#gYear",
+        "@value": "2026"
+      }
+    ],
+    "http://id.loc.gov/ontologies/bibframe/place": [
+      {
+        "@id": "https://example.invalid/places/test"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b6",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Organization"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "pt",
+        "@value": "Editora fictícia"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b7",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Isbn"
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#value": [
+      {
+        "@value": "9780000000002"
+      }
+    ]
+  },
+  {
+    "@id": "_:n40a4abe720b24b4dbdf415671a8afd32b8",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Extent"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@language": "pt",
+        "@value": "120 páginas"
+      }
+    ]
+  },
+  {
+    "@id": "https://example.invalid/concepts/gardens",
+    "@type": [
+      "http://www.w3.org/2004/02/skos/core#Concept"
+    ],
+    "http://www.w3.org/2004/02/skos/core#broader": [
+      {
+        "@id": "https://example.invalid/concepts/landscapes"
+      }
+    ],
+    "http://www.w3.org/2004/02/skos/core#prefLabel": [
+      {
+        "@language": "pt",
+        "@value": "Jardins"
+      },
+      {
+        "@language": "en",
+        "@value": "Gardens"
+      }
+    ]
+  }
+]

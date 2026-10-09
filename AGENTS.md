@@ -1,7 +1,8 @@
 # Convenções do Libris
 
 Leia README.md, docs/architecture e docs/decisions antes de alterar a arquitetura.
-Esta fase contém infraestrutura somente; não acrescentar funcionalidades fictícias.
+A Etapa 2 contém infraestrutura e núcleo semântico experimental; não acrescentar
+funcionalidades fictícias ou processos administrativos fora do escopo.
 
 - Monólito modular. Módulos futuros em apps/api/src/libris/modules/<domínio>.
 - Separe api, application, domain e infrastructure quando houver código que justifique
@@ -25,3 +26,10 @@ Esta fase contém infraestrutura somente; não acrescentar funcionalidades fict�
 - Testes de integração futuros devem usar PostgreSQL, não SQLite como substituto.
 - Preserve arquivos existentes. Nunca afirme que serviços ou testes passaram sem execução.
 - Novas decisões estruturais exigem ADR. Não escolha licença do projeto unilateralmente.
+
+- Grafos bibliográficos usam RDFLib Graph; conversões exigem isomorfismo, não igualdade textual.
+- Perfis de formulário JSON e shapes SHACL locais são independentes e versionados.
+- Parsing de RDF passa pelo adaptador limitado; não resolver contextos/imports remotos.
+- Revisões semânticas são imutáveis; serviços exigem revisão esperada para atualizar.
+- Tabelas experimental_semantic_* não definem esquema bibliográfico definitivo.
+- URI armazenada é reutilizada nas revisões; mudança da URI base não reescreve identidades.

@@ -78,3 +78,59 @@ containers, rede e volumes exclusivos do projeto `libris-verification` foram
 removidos. As imagens construídas permanecem no cache Docker. Nenhum serviço de
 outro projeto foi alterado. Não foi criado `.env` com credenciais reais.
 
+
+# Verificação da fundação semântica — Etapa 2
+
+Data: 2026-10-09. A seção anterior é o registro histórico da Etapa 1.
+
+## Resultados executados
+
+| Verificação | Resultado observado |
+| --- | --- |
+| `bash scripts/check.sh` | Passou completo: suíte padrão, Ruff, mypy, build Next.js, TypeScript e Compose |
+| `pytest` final após invariantes adicionais | 33 passaram em 2,67 s; sem PostgreSQL/Elasticsearch |
+| `ruff check . ../../tests` final | Passou |
+| `mypy src` final | Passou: 18 arquivos Python, modo strict |
+| Integração PostgreSQL 17 via asyncpg | 1 teste composto passou em 1,47 s na execução final |
+| `alembic heads` | `0001_semantic (head)` |
+| `alembic upgrade head --sql` | Passou; DDL das duas tabelas, FK diferida e trigger revisado |
+| `alembic check` em PostgreSQL | Nenhuma nova operação detectada; modelos e migração correspondem |
+| `alembic downgrade base` / `upgrade head` | Ambos passaram no PostgreSQL descartável; integração repetida após recriação |
+| Diagnóstico/exportação Turtle | Conforme, 49 triplas, sem issues; arquivos em docs/examples |
+| Diagnóstico do JSON-LD exportado | Conforme, 49 triplas, sem issues |
+| Termos BIBFRAME contra ontologia oficial LC | 32 classes/propriedades verificadas; nenhuma ausente |
+| `uv build --wheel` | Passou; wheel inclui perfil JSON e shapes Turtle |
+| `git diff --check` | Passou |
+
+O script completo usou a suíte com 32 testes; depois da invariável adicional de
+identidade HTTP(S), foram repetidos pytest (33), Ruff, mypy e integração PostgreSQL.
+O frontend não recebeu mudanças de código. Os exemplos foram gerados pelo CLI e
+os testes verificam equivalência por isomorfismo, sem comparação textual RDF.
+
+## Integração e isolamento
+
+Foi criado exclusivamente para esta sessão o container `libris-semantic-stage2`,
+PostgreSQL 17, banco `libris_semantic_test`, porta de loopback 55439, sem volumes
+persistentes e com senha descartável. As migrações não foram aplicadas ao banco
+`libris-postgres-1` de trabalho. Nenhum serviço existente foi alterado. O container
+descartável foi removido ao concluir a verificação.
+
+A integração comprovou round-trip JSONB, origem/processo/perfil/UTC, recuperação
+histórica, URI estável mesmo após mudança de RESOURCE_BASE_URI, rejeição de revisão
+obsoleta, rollback após grafo inválido e concorrência entre duas sessões reais.
+Também comprovou bloqueio de UPDATE/DELETE de revisões pelo trigger e rejeição de
+referência a revisão atual inexistente pelo PostgreSQL. A suíte usa banco real;
+SQLite não foi utilizado. Sem TEST_DATABASE_URL o teste é explicitamente pulado.
+
+## Limites e avisos
+
+O sandbox bloqueou rede/subprocessos e acesso ao Docker; dependências e verificações
+que precisaram desses recursos foram executadas com escalonamento autorizado.
+Tentativas iniciais de Ruff/mypy revelaram organização de imports, uma linha longa
+e um ignore de tipagem desnecessário, corrigidos antes das verificações finais.
+
+RDFLib emite aviso interno de depreciação de ConjunctiveGraph; Starlette mantém
+aviso sobre httpx do TestClient. Os avisos não causaram falhas e não foram ocultados.
+O ensaio não mediu desempenho/carga, não auditou produção, não testou navegação
+visual e não refez o build das imagens Docker completas. Validou o frontend
+existente com build/typecheck e Compose com config --quiet.
