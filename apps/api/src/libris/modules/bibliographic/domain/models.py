@@ -45,6 +45,22 @@ class Revision:
     provenance: Provenance
     profile: str
 
+    @property
+    def concurrency_token(self) -> str:
+        """Opaque write token, independent of representation-specific HTTP cache ETags."""
+        return revision_token(self.identity.internal_id, self.number)
+
+
+def revision_token(identifier: UUID, number: int) -> str:
+    if number < 1:
+        raise ValueError("A revisão deve ser positiva.")
+    return f"{identifier}:r{number}"
+
+
+def require_revision_token(identifier: UUID, number: int, expected: str) -> None:
+    if expected != revision_token(identifier, number):
+        raise StaleRevisionError("Validador de escrita obsoleto ou incompatível.")
+
 
 class StaleRevisionError(Exception):
     """The supplied revision is no longer current."""

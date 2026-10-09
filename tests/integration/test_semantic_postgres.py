@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from rdflib import Literal, URIRef
 from rdflib.compare import isomorphic
+from rdflib.namespace import DCTERMS
 from sqlalchemy import select, text, update
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -22,7 +23,6 @@ from libris.modules.bibliographic.infrastructure.persistence import (
     SemanticRevision,
 )
 from libris.modules.bibliographic.infrastructure.rdf import (
-    BF,
     new_graph,
     parse_document,
 )
@@ -64,7 +64,7 @@ async def exercise_postgres(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
         assert recovered.created_at.utcoffset().total_seconds() == 0  # type: ignore[union-attr]
         assert isomorphic(graph, restored)
         monkeypatch.setenv("RESOURCE_BASE_URI", "https://example.invalid/changed-base")
-        graph.add((URIRef(identity.uri), BF.editionStatement, Literal("Revisão 2")))
+        graph.add((URIRef(identity.uri), DCTERMS.description, Literal("Revisão 2")))
         newer = await service.revise(identity.internal_id, 1, graph, provenance)
         assert newer.number == 2
         assert newer.identity == identity

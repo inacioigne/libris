@@ -1,0 +1,43 @@
+# Exemplo exclusivamente sintético; identificadores externos são placeholders de teste.
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000003> a bf:Item ;
+    bf:custodialHistory "Doação sintética"@pt ;
+    bf:heldBy <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> ;
+    bf:identifiedBy [ a bf:Local ;
+            rdf:value "TEST-3" ] ;
+    bf:itemOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Dedicatória fictícia de teste"@pt ] ;
+    bf:shelfMark [ a bf:ShelfMark ;
+            rdf:value "TEST 001" ] ;
+    prov:wasDerivedFrom <urn:libris:test:inventory-source> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> a bf:Work ;
+    bf:contribution [ a bf:Contribution ;
+            bf:agent <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010> ;
+            bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:language <http://id.loc.gov/vocabulary/languages/por> ;
+    bf:title [ a bf:Title ;
+            bf:mainTitle "Monografia sintética de teste"@pt ] .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> a bf:Instance ;
+    bf:editionStatement "Edição sintética 2"@pt ;
+    bf:identifiedBy [ a bf:Isbn ;
+            rdf:value "9780000000002" ] ;
+    bf:instanceOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010> a bf:Person ;
+    rdfs:label "Autoridade fictícia 10"@pt ;
+    skos:altLabel "Variante fictícia 10"@pt ;
+    prov:wasDerivedFrom <urn:libris:test:source> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> a bf:Organization ;
+    rdfs:label "Autoridade fictícia 20"@pt ;
+    skos:altLabel "Variante fictícia 20"@pt ;
+    prov:wasDerivedFrom <urn:libris:test:source> .
+

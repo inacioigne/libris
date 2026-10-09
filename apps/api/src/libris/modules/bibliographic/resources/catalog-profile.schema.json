@@ -1,0 +1,215 @@
+{
+  "$defs": {
+    "ProfileField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "property": {
+          "title": "Property",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Label",
+          "type": "object"
+        },
+        "valueKind": {
+          "enum": [
+            "literal",
+            "resource"
+          ],
+          "title": "Valuekind",
+          "type": "string"
+        },
+        "nodeKind": {
+          "enum": [
+            "IRI",
+            "Literal",
+            "BlankNodeOrIRI"
+          ],
+          "title": "Nodekind",
+          "type": "string"
+        },
+        "minCount": {
+          "minimum": 0,
+          "title": "Mincount",
+          "type": "integer"
+        },
+        "maxCount": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maxcount"
+        },
+        "repeatable": {
+          "title": "Repeatable",
+          "type": "boolean"
+        },
+        "requiredInForm": {
+          "title": "Requiredinform",
+          "type": "boolean"
+        },
+        "languages": {
+          "default": false,
+          "title": "Languages",
+          "type": "boolean"
+        },
+        "datatypes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Datatypes",
+          "type": "array"
+        },
+        "targetClasses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Targetclasses",
+          "type": "array"
+        },
+        "vocabulary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vocabulary"
+        },
+        "derived": {
+          "default": false,
+          "title": "Derived",
+          "type": "boolean"
+        },
+        "absent": {
+          "enum": [
+            "omit",
+            "violation"
+          ],
+          "title": "Absent",
+          "type": "string"
+        },
+        "validation": {
+          "title": "Validation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "property",
+        "label",
+        "valueKind",
+        "nodeKind",
+        "minCount",
+        "repeatable",
+        "requiredInForm",
+        "absent",
+        "validation"
+      ],
+      "title": "ProfileField",
+      "type": "object"
+    },
+    "ProfileResource": {
+      "additionalProperties": false,
+      "properties": {
+        "class": {
+          "title": "Class",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Label",
+          "type": "object"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/ProfileField"
+          },
+          "minItems": 1,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "class",
+        "label",
+        "fields"
+      ],
+      "title": "ProfileResource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "release": {
+      "title": "Release",
+      "type": "string"
+    },
+    "status": {
+      "const": "candidate",
+      "title": "Status",
+      "type": "string"
+    },
+    "label": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "minProperties": 1,
+      "title": "Label",
+      "type": "object"
+    },
+    "validationShapes": {
+      "title": "Validationshapes",
+      "type": "string"
+    },
+    "resources": {
+      "items": {
+        "$ref": "#/$defs/ProfileResource"
+      },
+      "minItems": 1,
+      "title": "Resources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "release",
+    "status",
+    "label",
+    "validationShapes",
+    "resources"
+  ],
+  "title": "CatalogProfile",
+  "type": "object"
+}

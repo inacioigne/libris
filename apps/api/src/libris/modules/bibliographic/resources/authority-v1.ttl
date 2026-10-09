@@ -1,0 +1,49 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix p: <urn:libris:shape:institutional:1:> .
+
+p:Agent a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Agent> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Agent> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:message "Forma autorizada: Uma forma autorizada por idioma; preservar forma transcrita."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#altLabel> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Formas variantes: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/identifiedBy> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Identifier ; sh:message "Identificadores: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#seeAlso> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Referências externas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/ns/prov#wasDerivedFrom> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Proveniência: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://purl.org/dc/terms/relation> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Autoridade relacionada: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Person a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Person> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Person> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:message "Forma autorizada: Uma forma autorizada por idioma; preservar forma transcrita."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#altLabel> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Formas variantes: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/identifiedBy> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Identifier ; sh:message "Identificadores: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#seeAlso> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Referências externas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/ns/prov#wasDerivedFrom> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Proveniência: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://purl.org/dc/terms/relation> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Autoridade relacionada: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Organization a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Organization> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Organization> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:message "Forma autorizada: Uma forma autorizada por idioma; preservar forma transcrita."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#altLabel> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Formas variantes: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/identifiedBy> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Identifier ; sh:message "Identificadores: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#seeAlso> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Referências externas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/ns/prov#wasDerivedFrom> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Proveniência: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://purl.org/dc/terms/relation> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Autoridade relacionada: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Concept a sh:NodeShape ;
+    sh:targetClass <http://www.w3.org/2004/02/skos/core#Concept> ;
+    sh:or ( [ sh:class <http://www.w3.org/2004/02/skos/core#Concept> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#prefLabel> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:disjoint <http://www.w3.org/2004/02/skos/core#altLabel> ; sh:message "Termo autorizado: Um prefLabel por idioma; disjunto de altLabel."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#altLabel> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Termos variantes: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#inScheme> ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:message "Vocabulário: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#broader> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Conceito mais amplo: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2004/02/skos/core#related> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Conceito relacionado: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#seeAlso> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Referências externas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/ns/prov#wasDerivedFrom> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Proveniência: Referência RDF explícita; sem resolução remota."@pt ] .

@@ -1,0 +1,117 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix p: <urn:libris:shape:institutional:1:> .
+
+p:Work a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Work> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Work> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/title> ; sh:minCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Title ; sh:message "Títulos principal e alternativos: Ao menos um título não variante; um mainTitle por idioma em cada nó."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/language> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Idioma: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/content> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Conteúdo: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/contribution> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Contribution ; sh:message "Contribuições: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/subject> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://www.w3.org/2004/02/skos/core#Concept> ] ) ] ; sh:message "Assuntos: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/classification> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Classification ; sh:message "Classificação: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/relatedTo> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Work> ] ) ] ; sh:message "Obras relacionadas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/translationOf> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Work> ] ) ] ; sh:message "Tradução de: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/hasInstance> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Instance> ] ) ] ; sh:message "Manifestações: Derivada de instanceOf; não gravar no snapshot proprietário."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/note> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Note ; sh:message "Notas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path bf:title ; sh:qualifiedValueShape [ sh:not [ sh:class bf:VariantTitle ] ] ; sh:qualifiedMinCount 1 ] ;
+    sh:property [ sh:path bf:editionStatement ; sh:maxCount 0 ] ;
+    sh:property [ sh:path bf:provisionActivity ; sh:maxCount 0 ] ;
+    sh:property [ sh:path bf:instanceOf ; sh:maxCount 0 ] ;
+    sh:property [ sh:path bf:itemOf ; sh:maxCount 0 ] .
+
+p:Instance a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Instance> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Instance> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/title> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Title ; sh:message "Título: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/editionStatement> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Indicação de edição: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/provisionActivity> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Publication ; sh:message "Publicação: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/identifiedBy> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Identifier ; sh:message "Identificadores: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/extent> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Extent ; sh:message "Extensão: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/carrier> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Suporte: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/instanceOf> ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:maxCount 1 ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Work> ] ) ] ; sh:message "Obra: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/hasItem> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Item> ] ) ] ; sh:message "Exemplares: Derivada de itemOf; não gravar no snapshot proprietário."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/note> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Note ; sh:message "Notas: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Item a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Item> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Item> ] ) ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/itemOf> ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:maxCount 1 ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Instance> ] ) ] ; sh:message "Manifestação: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/identifiedBy> ; sh:minCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Identifier ; sh:message "Identificador institucional: Ao menos um bf:Local com rdf:value não vazio; barcode/inventário são atributos."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/heldBy> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Organization> ] ) ] ; sh:message "Instituição detentora: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/note> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:Note ; sh:message "Notas: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/custodialHistory> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Histórico de custódia: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/shelfMark> ; sh:minCount 0 ; sh:nodeKind sh:BlankNodeOrIRI ; sh:node p:ShelfMark ; sh:message "Marca de estante bibliográfica: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://www.w3.org/ns/prov#wasDerivedFrom> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Proveniência semântica: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path bf:identifiedBy ; sh:qualifiedValueShape [ sh:class bf:Local ] ; sh:qualifiedMinCount 1 ] .
+
+p:Title a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Title> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Title> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/VariantTitle> ] ) ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/mainTitle> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:message "Título principal: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/subtitle> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Subtítulo: Literal não vazio; preservar idioma/datatype."@pt ] .
+
+p:Contribution a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Contribution> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Contribution> ] ) ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/agent> ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:maxCount 1 ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Agent> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Person> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Organization> ] ) ] ; sh:message "Agente: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/role> ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:message "Papel: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Publication a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Publication> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Publication> ] ) ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/agent> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:node [ sh:or ( [ sh:not [ sh:property [ sh:path rdf:type ; sh:minCount 1 ] ] ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Agent> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Person> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Organization> ] ) ] ; sh:message "Publicador: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/place> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Local de publicação: Referência RDF explícita; sem resolução remota."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/date> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/2001/XMLSchema#gYear> ] [ sh:datatype <http://www.w3.org/2001/XMLSchema#date> ] ) ; sh:message "Data de publicação: Texto transcrito ou data/gYear bem tipados; conservar incerteza como texto."@pt ] .
+
+p:Identifier a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Identifier> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Identifier> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Local> ] [ sh:class <http://id.loc.gov/ontologies/bibframe/Isbn> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:maxCount 1 ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Valor: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/source> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Fonte: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Extent a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Extent> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Extent> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Descrição: Literal não vazio; preservar idioma/datatype."@pt ] .
+
+p:Note a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Note> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Note> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/2000/01/rdf-schema#label> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Texto: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/noteType> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Tipo da nota: Literal não vazio; preservar idioma/datatype."@pt ] .
+
+p:Classification a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Classification> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Classification> ] ) ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/classificationPortion> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Código de classificação: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/source> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Esquema de classificação: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:VariantTitle a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/VariantTitle> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/VariantTitle> ] ) ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/mainTitle> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:uniqueLang true ; sh:message "Título principal: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/subtitle> ; sh:minCount 0 ; sh:nodeKind sh:Literal ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] [ sh:datatype <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> ] ) ; sh:message "Subtítulo: Literal não vazio; preservar idioma/datatype."@pt ] .
+
+p:Local a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Local> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Local> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:maxCount 1 ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Valor: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/source> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Fonte: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:Isbn a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/Isbn> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/Isbn> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:maxCount 1 ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Valor: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/source> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Fonte: Referência RDF explícita; sem resolução remota."@pt ] .
+
+p:ShelfMark a sh:NodeShape ;
+    sh:targetClass <http://id.loc.gov/ontologies/bibframe/ShelfMark> ;
+    sh:or ( [ sh:class <http://id.loc.gov/ontologies/bibframe/ShelfMark> ] ) ;
+    sh:property [ sh:path <http://www.w3.org/1999/02/22-rdf-syntax-ns#value> ; sh:minCount 1 ; sh:nodeKind sh:Literal ; sh:maxCount 1 ; sh:minLength 1 ; sh:or ( [ sh:datatype <http://www.w3.org/2001/XMLSchema#string> ] ) ; sh:message "Valor: Literal não vazio; preservar idioma/datatype."@pt ] ;
+    sh:property [ sh:path <http://id.loc.gov/ontologies/bibframe/source> ; sh:minCount 0 ; sh:nodeKind sh:IRI ; sh:message "Fonte: Referência RDF explícita; sem resolução remota."@pt ] .

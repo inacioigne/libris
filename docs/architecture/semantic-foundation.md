@@ -1,5 +1,12 @@
 # Fundação semântica — Etapa 2
 
+Este documento descreve a release experimental legada, preservada. Para o contrato
+consolidado e os novos perfis candidatos da Etapa 3, consulte
+[contrato catalográfico](catalogographic-contract.md),
+[diagnóstico](catalogographic-contract-diagnosis.md) e
+[verificação](catalogographic-contract-verification.md). As chamadas sem perfil
+explícito continuam usando o comportamento legado descrito abaixo.
+
 Implementado em `apps/api/src/libris/modules/bibliographic/`:
 
 - `domain/models.py`: UUID/URI estáveis, revisão, proveniência e conflito de revisão.

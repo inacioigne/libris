@@ -8,6 +8,13 @@ from rdflib.namespace import RDF, SH
 from libris.modules.bibliographic.infrastructure.rdf import check_graph
 
 PROFILE_ID = "urn:libris:profile:monograph:v1"
+INSTITUTIONAL_PROFILE_ID = "urn:libris:profile:monograph:v1:1"
+AUTHORITY_PROFILE_ID = "urn:libris:profile:authority:v1"
+PROFILE_SHAPES = {
+    PROFILE_ID: ("monograph-v1.ttl",),
+    INSTITUTIONAL_PROFILE_ID: ("monograph-v1.1.ttl", "authority-v1.ttl"),
+    AUTHORITY_PROFILE_ID: ("monograph-v1.1.ttl", "authority-v1.ttl"),
+}
 
 
 @dataclass(frozen=True)
@@ -26,13 +33,24 @@ class ValidationReport:
 
 
 def validate_monograph(graph: Graph) -> ValidationReport:
+    return validate_profile(graph, PROFILE_ID)
+
+
+def validate_profile(graph: Graph, profile: str, *, composed: bool = False) -> ValidationReport:
     check_graph(graph)
-    shapes = Graph().parse(
-        data=files("libris.modules.bibliographic")
-        .joinpath("resources/monograph-v1.ttl")
-        .read_text(encoding="utf-8"),
-        format="turtle",
-    )
+    if profile not in PROFILE_SHAPES:
+        raise ValueError("Perfil local desconhecido.")
+    names = PROFILE_SHAPES[profile]
+    if composed and profile != PROFILE_ID:
+        names += ("monograph-v1.1-composed.ttl",)
+    shapes = Graph()
+    for name in names:
+        shapes.parse(
+            data=files("libris.modules.bibliographic")
+            .joinpath(f"resources/{name}")
+            .read_text(encoding="utf-8"),
+            format="turtle",
+        )
     conforms, report, _ = validate(
         graph,
         shacl_graph=shapes,

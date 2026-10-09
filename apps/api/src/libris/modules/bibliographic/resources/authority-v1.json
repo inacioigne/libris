@@ -1,0 +1,580 @@
+{
+  "id": "urn:libris:profile:authority:v1",
+  "version": 1,
+  "release": "1.0",
+  "status": "candidate",
+  "label": {
+    "pt": "Autoridades básicas — candidato 1"
+  },
+  "validationShapes": "authority-v1.ttl",
+  "resources": [
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Agent",
+      "label": {
+        "pt": "Agente"
+      },
+      "fields": [
+        {
+          "name": "authorizedName",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 1,
+          "maxCount": null,
+          "requiredInForm": true,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "violation",
+          "validation": "Uma forma autorizada por idioma; preservar forma transcrita."
+        },
+        {
+          "name": "variantName",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Literal não vazio; preservar idioma/datatype."
+        },
+        {
+          "name": "identifiedBy",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "valueKind": "resource",
+          "nodeKind": "BlankNodeOrIRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Identifier",
+            "http://id.loc.gov/ontologies/bibframe/Local",
+            "http://id.loc.gov/ontologies/bibframe/Isbn"
+          ],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "externalReference",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "provenance",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "relatedAuthority",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "property": "http://purl.org/dc/terms/relation",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Person",
+      "label": {
+        "pt": "Pessoa"
+      },
+      "fields": [
+        {
+          "name": "authorizedName",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 1,
+          "maxCount": null,
+          "requiredInForm": true,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "violation",
+          "validation": "Uma forma autorizada por idioma; preservar forma transcrita."
+        },
+        {
+          "name": "variantName",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Literal não vazio; preservar idioma/datatype."
+        },
+        {
+          "name": "identifiedBy",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "valueKind": "resource",
+          "nodeKind": "BlankNodeOrIRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Identifier",
+            "http://id.loc.gov/ontologies/bibframe/Local",
+            "http://id.loc.gov/ontologies/bibframe/Isbn"
+          ],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "externalReference",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "provenance",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "relatedAuthority",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "property": "http://purl.org/dc/terms/relation",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        }
+      ]
+    },
+    {
+      "class": "http://id.loc.gov/ontologies/bibframe/Organization",
+      "label": {
+        "pt": "Entidade coletiva"
+      },
+      "fields": [
+        {
+          "name": "authorizedName",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 1,
+          "maxCount": null,
+          "requiredInForm": true,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "violation",
+          "validation": "Uma forma autorizada por idioma; preservar forma transcrita."
+        },
+        {
+          "name": "variantName",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Literal não vazio; preservar idioma/datatype."
+        },
+        {
+          "name": "identifiedBy",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "valueKind": "resource",
+          "nodeKind": "BlankNodeOrIRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [
+            "http://id.loc.gov/ontologies/bibframe/Identifier",
+            "http://id.loc.gov/ontologies/bibframe/Local",
+            "http://id.loc.gov/ontologies/bibframe/Isbn"
+          ],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "externalReference",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "provenance",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "relatedAuthority",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "property": "http://purl.org/dc/terms/relation",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        }
+      ]
+    },
+    {
+      "class": "http://www.w3.org/2004/02/skos/core#Concept",
+      "label": {
+        "pt": "Conceito controlado"
+      },
+      "fields": [
+        {
+          "name": "preferredLabel",
+          "label": {
+            "pt": "Termo autorizado"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 1,
+          "maxCount": null,
+          "requiredInForm": true,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "violation",
+          "validation": "Um prefLabel por idioma; disjunto de altLabel."
+        },
+        {
+          "name": "alternativeLabel",
+          "label": {
+            "pt": "Termos variantes"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "valueKind": "literal",
+          "nodeKind": "Literal",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": true,
+          "datatypes": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"
+          ],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Literal não vazio; preservar idioma/datatype."
+        },
+        {
+          "name": "scheme",
+          "label": {
+            "pt": "Vocabulário"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#inScheme",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 1,
+          "maxCount": null,
+          "requiredInForm": true,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "violation",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "broader",
+          "label": {
+            "pt": "Conceito mais amplo"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#broader",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "related",
+          "label": {
+            "pt": "Conceito relacionado"
+          },
+          "property": "http://www.w3.org/2004/02/skos/core#related",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "externalReference",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        },
+        {
+          "name": "provenance",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "valueKind": "resource",
+          "nodeKind": "IRI",
+          "minCount": 0,
+          "maxCount": null,
+          "requiredInForm": false,
+          "repeatable": true,
+          "targetClasses": [],
+          "vocabulary": null,
+          "languages": false,
+          "datatypes": [],
+          "derived": false,
+          "absent": "omit",
+          "validation": "Referência RDF explícita; sem resolução remota."
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 from rdflib import BNode, Literal, URIRef
 from rdflib.compare import isomorphic
-from rdflib.namespace import RDF, SH, XSD
+from rdflib.namespace import DCTERMS, RDF, SH, XSD
 
 from libris.modules.bibliographic.domain.models import ResourceIdentity
 from libris.modules.bibliographic.infrastructure.rdf import (
@@ -81,7 +81,7 @@ def test_stable_identity() -> None:
     assert identity.uri == str(WORK)
     assert ResourceIdentity.create("http://localhost:8000/resources", identifier) == identity
     graph = parse_document(FIXTURE.read_text(), "turtle")
-    graph.add((WORK, BF.editionStatement, Literal("Alteração")))
+    graph.add((WORK, DCTERMS.description, Literal("Alteração")))
     assert (URIRef(identity.uri), RDF.type, BF.Work) in parse_document(
         serialize_document(graph, "json-ld"), "json-ld"
     )

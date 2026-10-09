@@ -1,0 +1,125 @@
+{
+  "description": "Corpus sintético; não são registros reais. Relações diretas canônicas, sem inversas materializadas.",
+  "fixtures": [
+    {
+      "file": "single-author.ttl",
+      "scenario": "single-author",
+      "valid": true
+    },
+    {
+      "file": "multiple-contributions.ttl",
+      "scenario": "multiple-contributions",
+      "valid": true
+    },
+    {
+      "file": "two-editions.ttl",
+      "scenario": "two-editions",
+      "valid": true
+    },
+    {
+      "file": "multiple-items.ttl",
+      "scenario": "multiple-items",
+      "valid": true
+    },
+    {
+      "file": "shared-authority.ttl",
+      "scenario": "shared-authority",
+      "valid": true
+    },
+    {
+      "file": "translated-monograph.ttl",
+      "scenario": "translated-monograph",
+      "valid": true
+    },
+    {
+      "file": "controlled-subjects.ttl",
+      "scenario": "controlled-subjects",
+      "valid": true
+    },
+    {
+      "file": "local-item.ttl",
+      "scenario": "local-item",
+      "valid": true
+    },
+    {
+      "file": "without-isbn.ttl",
+      "scenario": "without-isbn",
+      "valid": true
+    },
+    {
+      "file": "external-identifiers.ttl",
+      "scenario": "external-identifiers",
+      "valid": true
+    },
+    {
+      "file": "invalid-missing-title.ttl",
+      "scenario": "missing-title",
+      "valid": false
+    },
+    {
+      "file": "invalid-literal-work-reference.ttl",
+      "scenario": "literal-work-reference",
+      "valid": false
+    },
+    {
+      "file": "invalid-two-work-references.ttl",
+      "scenario": "two-work-references",
+      "valid": false
+    },
+    {
+      "file": "invalid-missing-item-reference.ttl",
+      "scenario": "missing-item-reference",
+      "valid": false
+    },
+    {
+      "file": "invalid-missing-local-identifier.ttl",
+      "scenario": "missing-local-identifier",
+      "valid": false
+    },
+    {
+      "file": "invalid-missing-contribution-role.ttl",
+      "scenario": "missing-contribution-role",
+      "valid": false
+    },
+    {
+      "file": "invalid-literal-agent.ttl",
+      "scenario": "literal-agent",
+      "valid": false
+    },
+    {
+      "file": "invalid-wrong-reference-type.ttl",
+      "scenario": "wrong-reference-type",
+      "valid": false
+    },
+    {
+      "file": "invalid-wrong-edition-owner.ttl",
+      "scenario": "wrong-edition-owner",
+      "valid": false
+    },
+    {
+      "file": "invalid-empty-identifier.ttl",
+      "scenario": "empty-identifier",
+      "valid": false
+    },
+    {
+      "file": "invalid-duplicate-authorized-label.ttl",
+      "scenario": "duplicate-authorized-label",
+      "valid": false
+    },
+    {
+      "file": "invalid-numeric-title.ttl",
+      "scenario": "numeric-title",
+      "valid": false
+    },
+    {
+      "file": "invalid-numeric-publication-date.ttl",
+      "scenario": "numeric-publication-date",
+      "valid": false
+    },
+    {
+      "file": "invalid-only-variant-title.ttl",
+      "scenario": "only-variant-title",
+      "valid": false
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix p: <urn:libris:shape:institutional:1:> .
+p:ComposedWork a sh:NodeShape ; sh:targetClass bf:Work ;
+    sh:property [ sh:path [ sh:inversePath bf:instanceOf ] ; sh:equals bf:hasInstance ] .
+p:ComposedInstance a sh:NodeShape ; sh:targetClass bf:Instance ;
+    sh:property [ sh:path [ sh:inversePath bf:hasInstance ] ; sh:equals bf:instanceOf ] ;
+    sh:property [ sh:path [ sh:inversePath bf:itemOf ] ; sh:equals bf:hasItem ] .
+p:ComposedItem a sh:NodeShape ; sh:targetClass bf:Item ;
+    sh:property [ sh:path [ sh:inversePath bf:hasItem ] ; sh:equals bf:itemOf ] .

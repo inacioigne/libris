@@ -16,6 +16,14 @@ autoridades, pesquisa e autenticação ainda não estão implementados.
 Consulte a [fundação semântica](docs/architecture/semantic-foundation.md) para
 exemplos, serviços internos, limites e testes de integração PostgreSQL.
 
+A Etapa 3, Incremento 1 consolida o [contrato catalográfico](docs/architecture/catalogographic-contract.md):
+release candidata monograph-v1.1, perfil complementar de autoridades, snapshots
+proprietários e revisões independentes, preservando o perfil experimental legado.
+Ver [diagnóstico](docs/architecture/catalogographic-contract-diagnosis.md),
+[ADRs 0009–0015](docs/decisions/) e
+[relatório de verificação](docs/architecture/catalogographic-contract-verification.md).
+A homologação institucional permanece pendente; não há novos endpoints ou editor.
+
 ## Estrutura
 
 ```text
@@ -157,11 +165,11 @@ histórico e concorrência em PostgreSQL real; não há integração com índice
 
 ## Próxima etapa
 
-Validar o perfil com catalogadores, definir limites dos agregados Work/Instance/Item,
-política de resolução das URIs e autenticação/autorização antes de criar APIs de
-escrita e editor mínimo. As tabelas permanecem experimentais; não há esquema
-bibliográfico definitivo. Ver [ADR 0007](docs/decisions/0007-semantic-core.md) e
-[ADR 0008](docs/decisions/0008-experimental-rdf-persistence.md).
+Homologar os perfis candidatos com catalogadores e implementar a API de catalogação
+no Incremento 2, conforme o contrato consolidado de entidades, URIs, referências
+e concorrência. Autenticação/autorização e auditoria humana continuam pendentes.
+As tabelas permanecem experimentais; não há esquema bibliográfico definitivo.
+Ver [contrato](docs/architecture/catalogographic-contract.md) e ADRs 0009–0015.
 
 A licença do Libris ainda precisa ser escolhida pelos mantenedores; não foi
 adicionada uma licença arbitrária. Avaliar também os termos das distribuições

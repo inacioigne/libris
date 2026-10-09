@@ -1,5 +1,11 @@
 # Estratégia bibliográfica: BIBFRAME 2.0
 
+Os limites de entidades, propriedade de snapshots, revisões independentes e política
+de URIs foram consolidados tecnicamente na Etapa 3, Incremento 1. Consulte o
+[contrato catalográfico](catalogographic-contract.md) e ADRs 0009–0015; os perfis
+institucionais continuam candidatos à homologação. O restante registra a estratégia
+inicial e o protótipo legado.
+
 A Etapa 2 implementou o protótipo descrito abaixo. Consulte
 [fundação semântica](semantic-foundation.md), [ADR 0007](../decisions/0007-semantic-core.md)
 e [ADR 0008](../decisions/0008-experimental-rdf-persistence.md).

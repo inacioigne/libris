@@ -6,7 +6,11 @@ from pathlib import Path
 
 from libris.core.config import Settings
 from libris.modules.bibliographic.infrastructure.rdf import parse_document, serialize_document
-from libris.modules.bibliographic.infrastructure.validation import PROFILE_ID, validate_monograph
+from libris.modules.bibliographic.infrastructure.validation import (
+    PROFILE_ID,
+    PROFILE_SHAPES,
+    validate_profile,
+)
 
 
 def main() -> None:
@@ -14,16 +18,18 @@ def main() -> None:
     parser.add_argument("input", type=Path)
     parser.add_argument("--format", choices=("turtle", "json-ld"), default="turtle")
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--profile", choices=tuple(PROFILE_SHAPES), default=PROFILE_ID)
+    parser.add_argument("--composed", action="store_true")
     args = parser.parse_args()
     settings = Settings()
     with args.input.open("rb") as source:
         document = source.read(settings.rdf_max_document_bytes + 1)
     graph = parse_document(document.decode("utf-8"), args.format)
-    report = validate_monograph(graph)
+    report = validate_profile(graph, args.profile, composed=args.composed)
     print(
         json.dumps(
             {
-                "profile": PROFILE_ID,
+                "profile": args.profile,
                 "conforms": report.conforms,
                 "triples": len(graph),
                 "issues": [
