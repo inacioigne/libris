@@ -1,0 +1,49 @@
+import pytest
+from fastapi.testclient import TestClient
+from pydantic import ValidationError
+
+from libris.core.config import Settings
+from libris.infrastructure.database import Base
+from libris.main import create_app
+
+
+def test_lifespan_and_health_without_external_services() -> None:
+    settings = Settings(_env_file=None, app_env="test")
+    app = create_app(settings)
+    with TestClient(app) as client:
+        assert app.state.database.engine.url.drivername == "postgresql+asyncpg"
+        response = client.get("/health")
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok", "service": "libris-api"}
+        assert response.headers["content-type"] == "application/json"
+    assert not Base.metadata.tables
+
+
+def test_openapi_exposes_health_contract() -> None:
+    with TestClient(create_app(Settings(_env_file=None, app_env="test"))) as client:
+        schema = client.get("/openapi.json").json()
+    assert schema["info"]["title"] == "Libris API"
+    assert schema["paths"]["/health"]["get"]["responses"]["200"]
+    assert list(schema["paths"]) == ["/health"]
+
+
+def test_cors_allows_only_configured_origin() -> None:
+    app = create_app(Settings(_env_file=None, cors_origins=["http://localhost:3000"]))
+    with TestClient(app) as client:
+        allowed = client.get("/health", headers={"Origin": "http://localhost:3000"})
+        denied = client.get("/health", headers={"Origin": "https://example.invalid"})
+    assert allowed.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert "access-control-allow-origin" not in denied.headers
+
+
+def test_settings_read_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("CORS_ORIGINS", '["http://localhost:4000"]')
+    settings = Settings(_env_file=None)
+    assert settings.app_env == "test"
+    assert settings.cors_origins == ["http://localhost:4000"]
+
+
+def test_settings_reject_invalid_configuration() -> None:
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, app_env="invalid")
