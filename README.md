@@ -11,7 +11,9 @@ engine/sessões SQLAlchemy assíncronas, Docker Compose e núcleo semântico exp
 BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/URI,
 snapshots JSONB, revisões e concorrência otimista. Há uma migração Alembic
 experimental; ela não executa no startup. Editor, APIs de catalogação, circulação,
-autoridades, pesquisa e autenticação ainda não estão implementados.
+autoridades e pesquisa ainda não estão implementados. A Entrega A do Incremento 2
+implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
+`/api/v1/identity/me` e ator opcional nas revisões, sem login no frontend.
 
 Consulte a [fundação semântica](docs/architecture/semantic-foundation.md) para
 exemplos, serviços internos, limites e testes de integração PostgreSQL.
@@ -137,7 +139,7 @@ uv run alembic heads
 uv run alembic upgrade head --sql
 ```
 
-Existe a revisão experimental `0001_semantic`. `alembic current` exige banco
+Existem as revisões experimentais `0001_semantic` e `0002_revision_actor`. `alembic current` exige banco
 acessível; `heads` e geração offline inspecionam o ambiente sem modificar o banco.
 Execute `uv run alembic upgrade head` explicitamente quando desejar instalar as
 tabelas experimentais. O downgrade descarta seus dados.
@@ -167,7 +169,8 @@ histórico e concorrência em PostgreSQL real; não há integração com índice
 
 Homologar os perfis candidatos com catalogadores e implementar a API de catalogação
 no Incremento 2, conforme o contrato consolidado de entidades, URIs, referências
-e concorrência. Autenticação/autorização e auditoria humana continuam pendentes.
+e concorrência. Autenticação/autorização OIDC está implementada na Entrega A; auditoria humana
+completa e entregas B–E continuam pendentes.
 As tabelas permanecem experimentais; não há esquema bibliográfico definitivo.
 Ver [contrato](docs/architecture/catalogographic-contract.md) e ADRs 0009–0015.
 

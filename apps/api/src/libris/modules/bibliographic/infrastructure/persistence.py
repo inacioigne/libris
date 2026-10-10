@@ -52,6 +52,7 @@ class SemanticRevision(Base):
     source: Mapped[str] = mapped_column(String)
     process: Mapped[str] = mapped_column(String)
     profile: Mapped[str] = mapped_column(String)
+    actor_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
 
 class RevisionStore:
@@ -84,6 +85,7 @@ class RevisionStore:
                 source=revision.provenance.source,
                 process=revision.provenance.process,
                 profile=revision.profile,
+                actor_id=revision.actor_id,
             )
         )
         await session.flush()
@@ -110,5 +112,6 @@ class RevisionStore:
             stored.created_at,
             Provenance(stored.source, stored.process),
             stored.profile,
+            stored.actor_id,
         )
         return revision, stored.document

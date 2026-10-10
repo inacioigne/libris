@@ -67,8 +67,8 @@ readiness de PostgreSQL ou Elasticsearch. Um endpoint de readiness com timeouts
 será necessário quando as APIs realmente dependerem deles. O Compose verifica
 PostgreSQL e Elasticsearch separadamente e aguarda sua saúde antes de iniciar a API.
 
-Configuração por ambiente validada por Pydantic Settings. Não há autenticação
-simulada. Autenticação, autorização, proteção de dados pessoais, auditoria e
+Configuração por ambiente validada por Pydantic Settings. A Entrega A implementa [identidade OIDC](identity.md) com permissões internas
+e ator opcional nas revisões. Proteção de dados pessoais, auditoria e
 políticas institucionais exigirão decisões antes dos módulos de usuários/circulação.
 CORS tem origens explícitas. Imagens de aplicação executam como usuário sem privilégios.
 O Compose é exclusivamente local: portas no loopback, Elasticsearch sem segurança,

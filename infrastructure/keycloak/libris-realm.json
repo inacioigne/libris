@@ -1,0 +1,81 @@
+{
+  "realm": "libris",
+  "enabled": true,
+  "registrationAllowed": false,
+  "roles": {
+    "client": {
+      "libris-api": [
+        {
+          "name": "libris-reader"
+        },
+        {
+          "name": "libris-cataloger"
+        },
+        {
+          "name": "libris-authority-manager"
+        },
+        {
+          "name": "libris-admin"
+        }
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "libris-api",
+      "enabled": true,
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "libris-web",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/oidc/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:3000"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "roles",
+        "profile"
+      ],
+      "protocolMappers": [
+        {
+          "name": "libris-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "libris-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        },
+        {
+          "name": "libris-api-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "usermodel.clientRoleMapping.clientId": "libris-api",
+            "claim.name": "resource_access.libris-api.roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -21,6 +21,7 @@ from libris.modules.bibliographic.infrastructure.validation import (
     PROFILE_ID,
     validate_profile,
 )
+from libris.modules.identity.domain.models import AuthenticatedActor
 
 
 def prepare_document(graph: Graph, uri: str, profile: str = PROFILE_ID) -> list[dict[str, object]]:
@@ -62,16 +63,30 @@ class BibliographicService:
         provenance: Provenance,
         *,
         profile: str = PROFILE_ID,
+        actor: AuthenticatedActor | None = None,
     ) -> Revision:
         document = prepare_document(graph, identity.uri, profile)
-        revision = Revision(identity, 1, datetime.now(UTC), provenance, profile)
+        revision = Revision(
+            identity,
+            1,
+            datetime.now(UTC),
+            provenance,
+            profile,
+            actor.actor_id if actor is not None else None,
+        )
         async with self.sessions() as session, session.begin():
             await self.store.create(session, identity)
             await self.store.save(session, revision, document)
         return revision
 
     async def revise(
-        self, identifier: UUID, expected_revision: int, graph: Graph, provenance: Provenance
+        self,
+        identifier: UUID,
+        expected_revision: int,
+        graph: Graph,
+        provenance: Provenance,
+        *,
+        actor: AuthenticatedActor | None = None,
     ) -> Revision:
         if expected_revision < 1:
             raise ValueError("A revisão esperada deve ser positiva.")
@@ -93,6 +108,7 @@ class BibliographicService:
                 datetime.now(UTC),
                 provenance,
                 previous.profile,
+                actor.actor_id if actor is not None else None,
             )
             await self.store.save(session, revision, document)
         return revision

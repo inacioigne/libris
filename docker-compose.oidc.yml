@@ -1,0 +1,23 @@
+# Opcional, apenas desenvolvimento. Requer credenciais administrativas no ambiente.
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0
+    command: ["start-dev", "--http-port=8081", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:?Defina KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Defina KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: http://keycloak.localhost:8081
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      - ./infrastructure/keycloak/libris-realm.json:/opt/keycloak/data/import/libris-realm.json:ro
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      default:
+        aliases: [keycloak.localhost]
+  api:
+    environment:
+      OIDC_ENABLED: "true"
+      OIDC_ISSUER_URL: http://keycloak.localhost:8081/realms/libris
+volumes:
+  keycloak_data:

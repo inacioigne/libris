@@ -44,6 +44,7 @@ class Revision:
     created_at: datetime
     provenance: Provenance
     profile: str
+    actor_id: str | None = None
 
     @property
     def concurrency_token(self) -> str:

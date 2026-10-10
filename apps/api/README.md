@@ -24,3 +24,8 @@ uv run python -m libris.modules.bibliographic ../../tests/fixtures/bibliographic
 
 [Fundação semântica](../../docs/architecture/semantic-foundation.md) descreve o
 perfil, serialização, revisões, integração PostgreSQL e limitações.
+
+A Entrega A adiciona Resource Server OIDC e `/api/v1/identity/me`. Consulte
+[configuração, Keycloak, permissões e testes](../../docs/architecture/identity.md).
+A migração `0002_revision_actor` deve ser aplicada explicitamente; preserva o
+histórico sem atribuir atores fictícios.
