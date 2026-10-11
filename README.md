@@ -25,6 +25,9 @@ Ver [diagnóstico](docs/architecture/catalogographic-contract-diagnosis.md),
 [ADRs 0009–0015](docs/decisions/) e
 [relatório de verificação](docs/architecture/catalogographic-contract-verification.md).
 A homologação institucional permanece pendente; não há novos endpoints ou editor.
+A M03.01.02 acrescenta [contratos públicos Pydantic v2](docs/architecture/catalogographic-schemas.md)
+para Work, Instance, Item, Agent e Subject, com Create/Read/Update e testes OpenAPI
+isolados; as APIs de catalogação continuam pendentes.
 
 ## Estrutura
 

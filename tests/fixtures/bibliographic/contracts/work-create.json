@@ -1,0 +1,55 @@
+{
+  "title": [
+    {
+      "main_title": [
+        {
+          "value": "Monografia sintética de teste",
+          "language": "pt"
+        }
+      ]
+    },
+    {
+      "kind": "VariantTitle",
+      "main_title": [
+        {
+          "value": "Título alternativo sintético",
+          "language": "pt"
+        }
+      ]
+    }
+  ],
+  "language": [
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/por"
+    }
+  ],
+  "contribution": [
+    {
+      "agent": {
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010"
+      },
+      "role": [
+        {
+          "uri": "http://id.loc.gov/vocabulary/relators/aut"
+        }
+      ]
+    }
+  ],
+  "subject": [
+    {
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030"
+    }
+  ],
+  "classification": [
+    {
+      "classification_portion": [
+        "TEST-001"
+      ],
+      "source": [
+        {
+          "uri": "urn:libris:test:classification"
+        }
+      ]
+    }
+  ]
+}

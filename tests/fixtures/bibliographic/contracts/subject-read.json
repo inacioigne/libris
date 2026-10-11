@@ -1,0 +1,30 @@
+{
+  "preferred_label": [
+    {
+      "value": "Assunto sintético",
+      "language": "pt"
+    },
+    {
+      "value": "Synthetic subject",
+      "language": "en"
+    }
+  ],
+  "alternative_label": [
+    {
+      "value": "Variante de assunto",
+      "language": "pt"
+    }
+  ],
+  "scheme": [
+    {
+      "uri": "urn:libris:test:subjects"
+    }
+  ],
+  "broader": [
+    {
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000031"
+    }
+  ],
+  "internal_id": "00000000-0000-4000-8000-000000000030",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030"
+}
