@@ -6,6 +6,9 @@ Release candidata institucional: **monograph-v1, release 1.1**,
 após o diagnóstico; homologação institucional e avaliação com catalogadores
 continuam pendentes. Estes artefatos não definem esquema bibliográfico definitivo.
 
+Os [contratos públicos Pydantic](catalogographic-schemas.md) da M03.01.02
+representam os campos proprietários destes perfis, sem alterar o RDF canônico.
+
 ## Artefatos e compatibilidade
 
 - `apps/api/src/libris/modules/bibliographic/resources/monograph-v1.json` e `.ttl`

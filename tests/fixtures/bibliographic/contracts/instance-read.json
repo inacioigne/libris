@@ -1,0 +1,54 @@
+{
+  "instance_of": {
+    "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001"
+  },
+  "edition_statement": [
+    {
+      "value": "Edição sintética 2",
+      "language": "pt"
+    }
+  ],
+  "identified_by": [
+    {
+      "kind": "Isbn",
+      "value": "9780000000002"
+    }
+  ],
+  "provision_activity": [
+    {
+      "agent": [
+        {
+          "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020"
+        }
+      ],
+      "place": [
+        {
+          "uri": "https://places.example.invalid/test"
+        }
+      ],
+      "date": [
+        {
+          "value": "2026",
+          "datatype": "http://www.w3.org/2001/XMLSchema#gYear"
+        }
+      ]
+    }
+  ],
+  "extent": [
+    {
+      "label": [
+        {
+          "value": "120 páginas",
+          "language": "pt"
+        }
+      ]
+    }
+  ],
+  "carrier": [
+    {
+      "uri": "http://id.loc.gov/vocabulary/carriers/nc"
+    }
+  ],
+  "internal_id": "00000000-0000-4000-8000-000000000002",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002"
+}

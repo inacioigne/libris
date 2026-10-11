@@ -1,0 +1,20 @@
+{
+  "kind": "Person",
+  "authorized_name": [
+    {
+      "value": "Autoridade fictícia 10",
+      "language": "pt"
+    }
+  ],
+  "variant_name": [
+    {
+      "value": "Variante fictícia 10",
+      "language": "pt"
+    }
+  ],
+  "provenance": [
+    {
+      "uri": "urn:libris:test:source"
+    }
+  ]
+}
