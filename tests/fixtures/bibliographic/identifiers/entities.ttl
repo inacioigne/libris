@@ -1,0 +1,27 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix res: <https://example.org/resources/> .
+
+res:00000000-0000-4000-8000-000000000001 a bf:Work ;
+    bf:title [ a bf:Title ; bf:mainTitle "Obra sintética"@pt ] ;
+    bf:contribution [ a bf:Contribution ;
+        bf:agent res:00000000-0000-4000-8000-000000000010 ;
+        bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:subject res:00000000-0000-4000-8000-000000000030 .
+res:00000000-0000-4000-8000-000000000002 a bf:Instance ;
+    bf:instanceOf res:00000000-0000-4000-8000-000000000001 ;
+    bf:identifiedBy [ a bf:Isbn ; rdf:value "978-0-00-000000-0" ] .
+res:00000000-0000-4000-8000-000000000003 a bf:Item ;
+    bf:itemOf res:00000000-0000-4000-8000-000000000002 ;
+    bf:identifiedBy [ a bf:Local ; rdf:value "TEST-3" ] .
+res:00000000-0000-4000-8000-000000000010 a bf:Person ;
+    rdfs:label "Pessoa sintética"@pt ;
+    bf:identifiedBy [ a bf:Identifier ; rdf:value "0000-0002-1825-0097" ;
+        bf:source <https://orcid.org/> ] ;
+    rdfs:seeAlso <https://orcid.org/0000-0002-1825-0097>, <https://viaf.org/viaf/123> .
+res:00000000-0000-4000-8000-000000000030 a skos:Concept ;
+    skos:prefLabel "Assunto sintético"@pt ;
+    skos:inScheme <urn:libris:test:subjects> ;
+    rdfs:seeAlso <http://www.wikidata.org/entity/Q123> .

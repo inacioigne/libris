@@ -28,6 +28,14 @@ A homologação institucional permanece pendente; não há novos endpoints ou ed
 A M03.01.02 acrescenta [contratos públicos Pydantic v2](docs/architecture/catalogographic-schemas.md)
 para Work, Instance, Item, Agent e Subject, com Create/Read/Update e testes OpenAPI
 isolados; as APIs de catalogação continuam pendentes.
+A M03.01.03 acrescenta o [contrato de relacionamentos](docs/architecture/relationships.md):
+referências locais, externas e não reconciliadas, matriz semântica, operações
+explícitas de vínculos e validação de integridade com resolvedor desacoplado.
+Ver [evidências e critérios](docs/architecture/relationships-verification.md).
+A M03.01.04 consolida a [estratégia de identificadores persistentes](docs/architecture/persistent-identifiers.md):
+UUIDv4 e URI armazenada, referências compatíveis, ciclo de vida, importação e
+resolução HTTP futura. Ver [ADR 0019](docs/decisions/0019-persistent-identifiers.md)
+e [verificação](docs/architecture/persistent-identifiers-verification.md).
 
 ## Estrutura
 

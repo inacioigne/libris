@@ -1,0 +1,42 @@
+{
+  "source": {
+    "kind": "local",
+    "entity_type": "Instance",
+    "internal_id": "00000000-0000-4000-8000-000000000002",
+    "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002"
+  },
+  "links": [
+    {
+      "kind": "direct",
+      "source": {
+        "kind": "local",
+        "entity_type": "Instance",
+        "internal_id": "00000000-0000-4000-8000-000000000002",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002"
+      },
+      "target": {
+        "kind": "local",
+        "entity_type": "Work",
+        "internal_id": "00000000-0000-4000-8000-000000000001",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001"
+      },
+      "predicate": "http://id.loc.gov/ontologies/bibframe/instanceOf"
+    },
+    {
+      "kind": "direct",
+      "source": {
+        "kind": "local",
+        "entity_type": "Instance",
+        "internal_id": "00000000-0000-4000-8000-000000000002",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002"
+      },
+      "target": {
+        "kind": "local",
+        "entity_type": "Instance",
+        "internal_id": "00000000-0000-4000-8000-000000000007",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000007"
+      },
+      "predicate": "http://id.loc.gov/ontologies/bibframe/relatedTo"
+    }
+  ]
+}

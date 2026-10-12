@@ -1,7 +1,23 @@
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from urllib.parse import urlsplit
 from uuid import UUID, uuid4
+
+
+def validate_identity_uri(value: str) -> str:
+    """Validate a stored identity/base URI without normalizing or dereferencing it."""
+    if not isinstance(value, str) or re.search(r'[\s<>"{}|\\^`\x00-\x20\x7f]', value):
+        raise ValueError("A URI semântica contém caracteres inválidos.")
+    if re.search(r"%(?![0-9a-fA-F]{2})", value):
+        raise ValueError("Escape percentual inválido na URI semântica.")
+    parts = urlsplit(value)
+    if parts.scheme not in {"http", "https"} or not parts.hostname:
+        raise ValueError("A URI semântica deve ser HTTP(S) absoluta com host.")
+    if "?" in value or "#" in value or parts.username is not None or parts.password is not None:
+        raise ValueError("A URI semântica não pode conter credenciais, query ou fragmento.")
+    _ = parts.port
+    return value
 
 
 @dataclass(frozen=True)
@@ -10,19 +26,13 @@ class ResourceIdentity:
     uri: str
 
     def __post_init__(self) -> None:
-        parts = urlsplit(self.uri)
-        if parts.scheme not in {"http", "https"} or not parts.netloc:
-            raise ValueError("A URI semântica deve ser HTTP(S) absoluta.")
-        if parts.query or parts.fragment or parts.username or parts.password:
-            raise ValueError("A URI semântica não pode conter credenciais, query ou fragmento.")
+        if not isinstance(self.internal_id, UUID):
+            raise ValueError("O identificador interno deve ser um UUID.")
+        validate_identity_uri(self.uri)
 
     @classmethod
     def create(cls, base_uri: str, internal_id: UUID | None = None) -> "ResourceIdentity":
-        parts = urlsplit(base_uri)
-        if parts.scheme not in {"http", "https"} or not parts.netloc:
-            raise ValueError("A URI base deve ser HTTP(S) absoluta.")
-        if parts.query or parts.fragment or parts.username or parts.password:
-            raise ValueError("A URI base não pode conter credenciais, query ou fragmento.")
+        validate_identity_uri(base_uri)
         identifier = internal_id or uuid4()
         return cls(identifier, f"{base_uri.rstrip('/')}/{identifier}")
 

@@ -1,0 +1,6 @@
+{
+  "kind": "external",
+  "entity_type": "Agent",
+  "uri": "urn:test:agent",
+  "internal_id": "00000000-0000-4000-8000-000000000001"
+}

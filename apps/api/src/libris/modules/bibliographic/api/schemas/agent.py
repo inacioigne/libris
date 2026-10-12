@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import Field
 
 from .common import (
+    AuthorityReference,
     Contract,
     Identifier,
     LocalizedText,
@@ -25,7 +26,7 @@ class AgentCreate(Contract):
     identified_by: list[Identifier] = Field(default_factory=list)
     external_reference: list[ResourceReference] = Field(default_factory=list)
     provenance: list[ResourceReference] = Field(default_factory=list)
-    related_authority: list[ResourceReference] = Field(default_factory=list)
+    related_authority: list[AuthorityReference] = Field(default_factory=list)
 
 
 class AgentRead(AgentCreate, ReadIdentity):
@@ -40,4 +41,4 @@ class AgentUpdate(PartialContract):
     identified_by: list[Identifier] | None = None
     external_reference: list[ResourceReference] | None = None
     provenance: list[ResourceReference] | None = None
-    related_authority: list[ResourceReference] | None = None
+    related_authority: list[AuthorityReference] | None = None

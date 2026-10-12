@@ -1,0 +1,30 @@
+{
+  "internal_id": "00000000-0000-4000-8000-000000000010",
+  "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000010",
+  "kind": "Person",
+  "authorized_name": [
+    {
+      "value": "Pessoa sintética",
+      "language": "pt"
+    }
+  ],
+  "identified_by": [
+    {
+      "kind": "Identifier",
+      "value": "0000-0002-1825-0097",
+      "source": [
+        {
+          "uri": "https://orcid.org/"
+        }
+      ]
+    }
+  ],
+  "external_reference": [
+    {
+      "uri": "https://orcid.org/0000-0002-1825-0097"
+    },
+    {
+      "uri": "https://viaf.org/viaf/123"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "operations": [
+    {
+      "op": "replace",
+      "predicate": "http://id.loc.gov/ontologies/bibframe/subject",
+      "links": []
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "internal_id": "00000000-0000-4000-8000-000000000030",
+  "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000030",
+  "preferred_label": [
+    {
+      "value": "Assunto sintético",
+      "language": "pt"
+    }
+  ],
+  "scheme": [
+    {
+      "uri": "urn:libris:test:subjects"
+    }
+  ],
+  "external_reference": [
+    {
+      "uri": "http://www.wikidata.org/entity/Q123"
+    }
+  ]
+}

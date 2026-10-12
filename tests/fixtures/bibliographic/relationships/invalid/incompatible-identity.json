@@ -1,0 +1,26 @@
+{
+  "source": {
+    "kind": "local",
+    "entity_type": "Work",
+    "internal_id": "00000000-0000-4000-8000-000000000001",
+    "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001"
+  },
+  "links": [
+    {
+      "kind": "direct",
+      "source": {
+        "kind": "local",
+        "entity_type": "Work",
+        "internal_id": "00000000-0000-4000-8000-000000000001",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001"
+      },
+      "target": {
+        "kind": "local",
+        "entity_type": "Subject",
+        "internal_id": "00000000-0000-4000-8000-000000000004",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000005"
+      },
+      "predicate": "http://id.loc.gov/ontologies/bibframe/subject"
+    }
+  ]
+}

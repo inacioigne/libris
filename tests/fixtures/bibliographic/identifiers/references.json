@@ -1,0 +1,35 @@
+[
+  {
+    "kind": "local",
+    "entity_type": "Work",
+    "internal_id": "00000000-0000-4000-8000-000000000001",
+    "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000001"
+  },
+  {
+    "kind": "local",
+    "entity_type": "Work",
+    "internal_id": "00000000-0000-4000-8000-000000000001"
+  },
+  {
+    "kind": "local",
+    "entity_type": "Work",
+    "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000001"
+  },
+  {
+    "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000001"
+  },
+  {
+    "kind": "external",
+    "entity_type": "Agent",
+    "uri": "https://viaf.org/viaf/123",
+    "namespace": "https://viaf.org/viaf/",
+    "external_id": "123"
+  },
+  {
+    "kind": "unreconciled",
+    "entity_type": "Agent",
+    "label": "Nome transcrito",
+    "namespace": "urn:libris:test:source",
+    "key": "record-42:agent-1"
+  }
+]
