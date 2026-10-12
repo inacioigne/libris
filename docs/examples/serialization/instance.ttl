@@ -1,0 +1,36 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> a bf:Instance ;
+    bf:carrier <http://id.loc.gov/vocabulary/carriers/nc> ;
+    bf:editionStatement "Edição sintética 2"@pt ;
+    bf:extent [ a bf:Extent ;
+            rdfs:label "120 páginas"@pt ] ;
+    bf:identifiedBy [ a bf:Identifier ;
+            bf:source <urn:libris:test:doi> ;
+            rdf:value "Synthetic DOI" ],
+        [ a bf:Isbn ;
+            bf:source <urn:libris:test:isbn-source> ;
+            rdf:value "9780000000002" ] ;
+    bf:instanceOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Untranslated note",
+                "Nota Unicode: ç, é, 日本語"@pt ;
+            bf:noteType "bibliography",
+                "synthetic" ] ;
+    bf:provisionActivity [ a bf:Publication ;
+            bf:agent <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> ;
+            bf:date "2026-02-28"^^xsd:date,
+                "2026"^^xsd:gYear,
+                "[2026?]"^^xsd:string ;
+            bf:place <https://places.example.invalid/test> ] ;
+    bf:title [ a bf:Title ;
+            bf:mainTitle "Título sem idioma",
+                "Synthetic monograph — 日本語"@en,
+                "Monografia sintética de teste"@pt ;
+            bf:subtitle "Ensaios em São Luís"@pt-BR ],
+        [ a bf:VariantTitle ;
+            bf:mainTitle "Título alternativo sintético"@pt ] .
+

@@ -1,0 +1,92 @@
+[
+  {
+    "file": "invalid/bad-uri.json",
+    "schema": "work",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/unknown-field.json",
+    "schema": "work",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/missing-title.json",
+    "schema": "work",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/unknown-predicate.json",
+    "schema": "work",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/bad-datatype.json",
+    "schema": "instance",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/bad-date.json",
+    "schema": "instance",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/unresolved.json",
+    "schema": "work",
+    "layer": "serialization"
+  },
+  {
+    "file": "invalid/unreconciled.json",
+    "schema": "work",
+    "layer": "serialization"
+  },
+  {
+    "file": "invalid/inconsistent.json",
+    "schema": "work",
+    "layer": "serialization"
+  },
+  {
+    "file": "invalid/missing-reference.json",
+    "schema": "work",
+    "layer": "pydantic"
+  },
+  {
+    "file": "invalid/remote-context.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/remote-import.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/unauthorized-context.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/named-graph.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/unknown-term.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/malformed.jsonld",
+    "layer": "parser",
+    "format": "json-ld"
+  },
+  {
+    "file": "invalid/malformed.ttl",
+    "layer": "parser",
+    "format": "turtle"
+  },
+  {
+    "file": "invalid/ill-typed.ttl",
+    "layer": "parser",
+    "format": "turtle"
+  }
+]

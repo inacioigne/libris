@@ -1,0 +1,38 @@
+{
+  "kind": "Organization",
+  "authorized_name": [
+    {
+      "value": "Biblioteca sintética",
+      "language": "pt"
+    }
+  ],
+  "variant_name": [],
+  "provenance": [
+    {
+      "uri": "urn:libris:test:source"
+    }
+  ],
+  "internal_id": "00000000-0000-4000-8000-000000000020",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020",
+  "identified_by": [
+    {
+      "kind": "Identifier",
+      "value": "TEST-AUTHORITY-10",
+      "source": [
+        {
+          "uri": "urn:libris:test:authorities"
+        }
+      ]
+    }
+  ],
+  "external_reference": [
+    {
+      "uri": "https://authorities.example.invalid/person/10"
+    }
+  ],
+  "related_authority": [
+    {
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030"
+    }
+  ]
+}

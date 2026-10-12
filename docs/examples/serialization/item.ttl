@@ -1,0 +1,20 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000003> a bf:Item ;
+    bf:custodialHistory "Doação sintética"@pt ;
+    bf:heldBy <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> ;
+    bf:identifiedBy [ a bf:Local ;
+            bf:source <urn:libris:test:institution> ;
+            rdf:value "TEST-3" ] ;
+    bf:itemOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Dedicatória fictícia de teste"@pt ;
+            bf:noteType "copy" ] ;
+    bf:shelfMark [ a bf:ShelfMark ;
+            bf:source <urn:libris:test:shelving> ;
+            rdf:value "TEST 001" ] ;
+    prov:wasDerivedFrom <urn:libris:test:inventory-source> .
+

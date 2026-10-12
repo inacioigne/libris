@@ -1,0 +1,22 @@
+{
+  "internal_id": "00000000-0000-4000-8000-000000000001",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001",
+  "title": [
+    {
+      "main_title": [
+        {
+          "value": "Obra isolada"
+        }
+      ]
+    }
+  ],
+  "subject": [
+    {
+      "kind": "unreconciled",
+      "entity_type": "Subject",
+      "label": "Termo transcrito",
+      "namespace": "urn:libris:test:import",
+      "key": "record:subject"
+    }
+  ]
+}

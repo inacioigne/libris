@@ -2,32 +2,14 @@
 
 import re
 from typing import Annotated, ClassVar, Literal
-from urllib.parse import urlsplit
 from uuid import UUID
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
 from pydantic.config import JsonDict
 
+from libris.modules.bibliographic.domain.iris import validate_iri
 from libris.modules.bibliographic.domain.models import ResourceIdentity
-from libris.modules.bibliographic.domain.profiles import absolute_iri
 from libris.modules.bibliographic.domain.relationships import EntityType
-
-
-def validate_iri(value: str) -> str:
-    absolute_iri(value)
-    if re.search(r'[\x00-\x20<>"{}|\\^`\x7f]', value):
-        raise ValueError("A IRI contém caracteres inválidos.")
-    if re.search(r"%(?![0-9a-fA-F]{2})", value):
-        raise ValueError("Escape percentual inválido na IRI.")
-    parts = urlsplit(value)
-    if parts.scheme in {"http", "https"}:
-        if not parts.hostname:
-            raise ValueError("A IRI HTTP(S) exige um host.")
-        # Accessing port checks its numeric form and range without rewriting the IRI.
-        _ = parts.port
-    if not value.partition(":")[2]:
-        raise ValueError("A IRI exige uma parte específica do esquema.")
-    return value
 
 
 def validate_resource_uri(value: str) -> str:

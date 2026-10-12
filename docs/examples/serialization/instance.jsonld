@@ -1,0 +1,1221 @@
+[
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Instance"
+    ],
+    "carrier": [
+      {
+        "@id": "http://id.loc.gov/vocabulary/carriers/nc"
+      }
+    ],
+    "edition_statement": [
+      {
+        "@language": "pt",
+        "@value": "Edição sintética 2"
+      }
+    ],
+    "extent": [
+      {
+        "@id": "_:N932aef83f7004ab2b5b358ed7b2892b8"
+      }
+    ],
+    "identified_by": [
+      {
+        "@id": "_:N5a4c3283848f4fd4b7e14f9aeb6b7900"
+      },
+      {
+        "@id": "_:N715af0e716d240a0adaa1ba2f036cc0a"
+      }
+    ],
+    "instance_of": [
+      {
+        "@id": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001"
+      }
+    ],
+    "note": [
+      {
+        "@id": "_:Nab0b8bdac6c044fbb17939dfb35b6521"
+      }
+    ],
+    "provision_activity": [
+      {
+        "@id": "_:N26d062ec07e24e5b92a11683ab6c451c"
+      }
+    ],
+    "title": [
+      {
+        "@id": "_:N6b439538d3a24a52979ed9392ebba9a2"
+      },
+      {
+        "@id": "_:N913380d29ece484691536c9457f55628"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N6b439538d3a24a52979ed9392ebba9a2",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Title"
+    ],
+    "main_title": [
+      {
+        "@language": "pt",
+        "@value": "Monografia sintética de teste"
+      },
+      {
+        "@language": "en",
+        "@value": "Synthetic monograph — 日本語"
+      },
+      {
+        "@value": "Título sem idioma"
+      }
+    ],
+    "subtitle": [
+      {
+        "@language": "pt-BR",
+        "@value": "Ensaios em São Luís"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N913380d29ece484691536c9457f55628",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+    ],
+    "main_title": [
+      {
+        "@language": "pt",
+        "@value": "Título alternativo sintético"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:Nab0b8bdac6c044fbb17939dfb35b6521",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Note"
+    ],
+    "note_type": [
+      {
+        "@value": "bibliography"
+      },
+      {
+        "@value": "synthetic"
+      }
+    ],
+    "label": [
+      {
+        "@language": "pt",
+        "@value": "Nota Unicode: ç, é, 日本語"
+      },
+      {
+        "@value": "Untranslated note"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N5a4c3283848f4fd4b7e14f9aeb6b7900",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Isbn"
+    ],
+    "source": [
+      {
+        "@id": "urn:libris:test:isbn-source"
+      }
+    ],
+    "value": [
+      {
+        "@value": "9780000000002"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N715af0e716d240a0adaa1ba2f036cc0a",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Identifier"
+    ],
+    "source": [
+      {
+        "@id": "urn:libris:test:doi"
+      }
+    ],
+    "value": [
+      {
+        "@value": "Synthetic DOI"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N26d062ec07e24e5b92a11683ab6c451c",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Publication"
+    ],
+    "agent": [
+      {
+        "@id": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020"
+      }
+    ],
+    "date": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#gYear",
+        "@value": "2026"
+      },
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2026-02-28"
+      },
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#string",
+        "@value": "[2026?]"
+      }
+    ],
+    "place": [
+      {
+        "@id": "https://places.example.invalid/test"
+      }
+    ]
+  },
+  {
+    "@context": {
+      "@version": 1.1,
+      "bf": "http://id.loc.gov/ontologies/bibframe/",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+      "skos": "http://www.w3.org/2004/02/skos/core#",
+      "dcterms": "http://purl.org/dc/terms/",
+      "prov": "http://www.w3.org/ns/prov#",
+      "xsd": "http://www.w3.org/2001/XMLSchema#",
+      "title": {
+        "@id": "bf:title",
+        "@type": "@id"
+      },
+      "language": {
+        "@id": "bf:language",
+        "@type": "@id"
+      },
+      "content": {
+        "@id": "bf:content",
+        "@type": "@id"
+      },
+      "contribution": {
+        "@id": "bf:contribution",
+        "@type": "@id"
+      },
+      "subject": {
+        "@id": "bf:subject",
+        "@type": "@id"
+      },
+      "classification": {
+        "@id": "bf:classification",
+        "@type": "@id"
+      },
+      "related_to": {
+        "@id": "bf:relatedTo",
+        "@type": "@id"
+      },
+      "translation_of": {
+        "@id": "bf:translationOf",
+        "@type": "@id"
+      },
+      "note": {
+        "@id": "bf:note",
+        "@type": "@id"
+      },
+      "instance_of": {
+        "@id": "bf:instanceOf",
+        "@type": "@id"
+      },
+      "provision_activity": {
+        "@id": "bf:provisionActivity",
+        "@type": "@id"
+      },
+      "identified_by": {
+        "@id": "bf:identifiedBy",
+        "@type": "@id"
+      },
+      "extent": {
+        "@id": "bf:extent",
+        "@type": "@id"
+      },
+      "carrier": {
+        "@id": "bf:carrier",
+        "@type": "@id"
+      },
+      "item_of": {
+        "@id": "bf:itemOf",
+        "@type": "@id"
+      },
+      "held_by": {
+        "@id": "bf:heldBy",
+        "@type": "@id"
+      },
+      "shelf_mark": {
+        "@id": "bf:shelfMark",
+        "@type": "@id"
+      },
+      "provenance": {
+        "@id": "prov:wasDerivedFrom",
+        "@type": "@id"
+      },
+      "external_reference": {
+        "@id": "rdfs:seeAlso",
+        "@type": "@id"
+      },
+      "related_authority": {
+        "@id": "dcterms:relation",
+        "@type": "@id"
+      },
+      "scheme": {
+        "@id": "skos:inScheme",
+        "@type": "@id"
+      },
+      "broader": {
+        "@id": "skos:broader",
+        "@type": "@id"
+      },
+      "related": {
+        "@id": "skos:related",
+        "@type": "@id"
+      },
+      "agent": {
+        "@id": "bf:agent",
+        "@type": "@id"
+      },
+      "role": {
+        "@id": "bf:role",
+        "@type": "@id"
+      },
+      "place": {
+        "@id": "bf:place",
+        "@type": "@id"
+      },
+      "source": {
+        "@id": "bf:source",
+        "@type": "@id"
+      },
+      "main_title": "bf:mainTitle",
+      "subtitle": "bf:subtitle",
+      "edition_statement": "bf:editionStatement",
+      "custodial_history": "bf:custodialHistory",
+      "label": "rdfs:label",
+      "alternative_label": "skos:altLabel",
+      "preferred_label": "skos:prefLabel",
+      "value": "rdf:value",
+      "date": "bf:date",
+      "note_type": "bf:noteType",
+      "classification_portion": "bf:classificationPortion"
+    },
+    "@id": "_:N932aef83f7004ab2b5b358ed7b2892b8",
+    "@type": [
+      "http://id.loc.gov/ontologies/bibframe/Extent"
+    ],
+    "label": [
+      {
+        "@language": "pt",
+        "@value": "120 páginas"
+      }
+    ]
+  }
+]

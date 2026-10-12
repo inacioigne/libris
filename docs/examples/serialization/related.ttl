@@ -1,0 +1,115 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> a bf:Work ;
+    bf:classification [ a bf:Classification ;
+            bf:classificationPortion "TEST-001" ;
+            bf:source <urn:libris:test:classification> ] ;
+    bf:content <http://id.loc.gov/vocabulary/contentTypes/txt> ;
+    bf:contribution [ a bf:Contribution ;
+            bf:agent <https://authorities.example.invalid/editor> ;
+            bf:role <http://id.loc.gov/vocabulary/relators/edt>,
+                <http://id.loc.gov/vocabulary/relators/trl> ],
+        [ a bf:Contribution ;
+            bf:agent <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010> ;
+            bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:hasInstance <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> ;
+    bf:language <http://id.loc.gov/vocabulary/languages/por> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Untranslated note",
+                "Nota Unicode: ç, é, 日本語"@pt ;
+            bf:noteType "bibliography",
+                "synthetic" ] ;
+    bf:relatedTo <https://catalog.example.invalid/related> ;
+    bf:subject <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> ;
+    bf:title [ a bf:VariantTitle ;
+            bf:mainTitle "Título alternativo sintético"@pt ],
+        [ a bf:Title ;
+            bf:mainTitle "Título sem idioma",
+                "Synthetic monograph — 日本語"@en,
+                "Monografia sintética de teste"@pt ;
+            bf:subtitle "Ensaios em São Luís"@pt-BR ] ;
+    bf:translationOf <https://catalog.example.invalid/original> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000003> a bf:Item ;
+    bf:custodialHistory "Doação sintética"@pt ;
+    bf:heldBy <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> ;
+    bf:identifiedBy [ a bf:Local ;
+            bf:source <urn:libris:test:institution> ;
+            rdf:value "TEST-3" ] ;
+    bf:itemOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Dedicatória fictícia de teste"@pt ;
+            bf:noteType "copy" ] ;
+    bf:shelfMark [ a bf:ShelfMark ;
+            bf:source <urn:libris:test:shelving> ;
+            rdf:value "TEST 001" ] ;
+    prov:wasDerivedFrom <urn:libris:test:inventory-source> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010> a bf:Person ;
+    rdfs:label "Synthetic person"@en,
+        "Autoridade fictícia 10"@pt ;
+    bf:identifiedBy [ a bf:Identifier ;
+            bf:source <urn:libris:test:authorities> ;
+            rdf:value "TEST-AUTHORITY-10" ] ;
+    dcterms:relation <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> ;
+    rdfs:seeAlso <https://authorities.example.invalid/person/10> ;
+    skos:altLabel "Variante fictícia 10"@pt ;
+    prov:wasDerivedFrom <urn:libris:test:source> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002> a bf:Instance ;
+    bf:carrier <http://id.loc.gov/vocabulary/carriers/nc> ;
+    bf:editionStatement "Edição sintética 2"@pt ;
+    bf:extent [ a bf:Extent ;
+            rdfs:label "120 páginas"@pt ] ;
+    bf:hasItem <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000003> ;
+    bf:identifiedBy [ a bf:Isbn ;
+            bf:source <urn:libris:test:isbn-source> ;
+            rdf:value "9780000000002" ],
+        [ a bf:Identifier ;
+            bf:source <urn:libris:test:doi> ;
+            rdf:value "Synthetic DOI" ] ;
+    bf:instanceOf <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Untranslated note",
+                "Nota Unicode: ç, é, 日本語"@pt ;
+            bf:noteType "bibliography",
+                "synthetic" ] ;
+    bf:provisionActivity [ a bf:Publication ;
+            bf:agent <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> ;
+            bf:date "2026-02-28"^^xsd:date,
+                "2026"^^xsd:gYear,
+                "[2026?]"^^xsd:string ;
+            bf:place <https://places.example.invalid/test> ] ;
+    bf:title [ a bf:VariantTitle ;
+            bf:mainTitle "Título alternativo sintético"@pt ],
+        [ a bf:Title ;
+            bf:mainTitle "Título sem idioma",
+                "Synthetic monograph — 日本語"@en,
+                "Monografia sintética de teste"@pt ;
+            bf:subtitle "Ensaios em São Luís"@pt-BR ] .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> a bf:Organization ;
+    rdfs:label "Biblioteca sintética"@pt ;
+    bf:identifiedBy [ a bf:Identifier ;
+            bf:source <urn:libris:test:authorities> ;
+            rdf:value "TEST-AUTHORITY-10" ] ;
+    dcterms:relation <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> ;
+    rdfs:seeAlso <https://authorities.example.invalid/person/10> ;
+    prov:wasDerivedFrom <urn:libris:test:source> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> a skos:Concept ;
+    rdfs:seeAlso <https://subjects.example.invalid/test> ;
+    skos:altLabel "Variante de assunto"@pt ;
+    skos:broader <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000031> ;
+    skos:inScheme <urn:libris:test:subjects> ;
+    skos:prefLabel "Synthetic subject"@en,
+        "Assunto sintético"@pt ;
+    skos:related <https://subjects.example.invalid/related> ;
+    prov:wasDerivedFrom <urn:libris:test:subject-source> .
+

@@ -37,6 +37,14 @@ UUIDv4 e URI armazenada, referências compatíveis, ciclo de vida, importação 
 resolução HTTP futura. Ver [ADR 0019](docs/decisions/0019-persistent-identifiers.md)
 e [verificação](docs/architecture/persistent-identifiers-verification.md).
 
+A M03.01.05 implementa a [representação semântica v1](docs/architecture/semantic-serialization.md):
+mapeamento dos cinco Read para Graph, JSON-LD com contexto local versionado, Turtle,
+exportação integral de snapshots e negociação Accept desacoplada. Ver
+[ADR 0020](docs/decisions/0020-jsonld-rdf-serialization.md),
+[exemplos pareados](docs/examples/serialization/) e
+[verificação](docs/architecture/semantic-serialization-verification.md).
+Não há novos endpoints ou homologação institucional.
+
 ## Estrutura
 
 ```text

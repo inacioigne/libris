@@ -1,0 +1,119 @@
+{
+  "title": [
+    {
+      "main_title": [
+        {
+          "value": "Monografia sintética de teste",
+          "language": "pt"
+        },
+        {
+          "value": "Synthetic monograph — 日本語",
+          "language": "en"
+        },
+        {
+          "value": "Título sem idioma"
+        }
+      ],
+      "subtitle": [
+        {
+          "value": "Ensaios em São Luís",
+          "language": "pt-BR"
+        }
+      ]
+    },
+    {
+      "kind": "VariantTitle",
+      "main_title": [
+        {
+          "value": "Título alternativo sintético",
+          "language": "pt"
+        }
+      ]
+    }
+  ],
+  "language": [
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/por"
+    }
+  ],
+  "contribution": [
+    {
+      "agent": {
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010"
+      },
+      "role": [
+        {
+          "uri": "http://id.loc.gov/vocabulary/relators/aut"
+        }
+      ]
+    },
+    {
+      "agent": {
+        "kind": "external",
+        "entity_type": "Agent",
+        "uri": "https://authorities.example.invalid/editor",
+        "namespace": "urn:libris:test:authority",
+        "external_id": "editor-1"
+      },
+      "role": [
+        {
+          "uri": "http://id.loc.gov/vocabulary/relators/edt"
+        },
+        {
+          "uri": "http://id.loc.gov/vocabulary/relators/trl"
+        }
+      ]
+    }
+  ],
+  "subject": [
+    {
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030"
+    }
+  ],
+  "classification": [
+    {
+      "classification_portion": [
+        "TEST-001"
+      ],
+      "source": [
+        {
+          "uri": "urn:libris:test:classification"
+        }
+      ]
+    }
+  ],
+  "internal_id": "00000000-0000-4000-8000-000000000001",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001",
+  "content": [
+    {
+      "uri": "http://id.loc.gov/vocabulary/contentTypes/txt"
+    }
+  ],
+  "related_to": [
+    {
+      "uri": "https://catalog.example.invalid/related"
+    }
+  ],
+  "translation_of": [
+    {
+      "uri": "https://catalog.example.invalid/original"
+    }
+  ],
+  "note": [
+    {
+      "label": [
+        {
+          "value": "Nota Unicode: ç, é, 日本語",
+          "language": "pt"
+        },
+        {
+          "value": "Untranslated note"
+        }
+      ],
+      "note_type": [
+        "bibliography",
+        "synthetic"
+      ]
+    }
+  ]
+}

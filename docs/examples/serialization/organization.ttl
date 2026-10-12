@@ -1,0 +1,15 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020> a bf:Organization ;
+    rdfs:label "Biblioteca sintética"@pt ;
+    bf:identifiedBy [ a bf:Identifier ;
+            bf:source <urn:libris:test:authorities> ;
+            rdf:value "TEST-AUTHORITY-10" ] ;
+    dcterms:relation <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> ;
+    rdfs:seeAlso <https://authorities.example.invalid/person/10> ;
+    prov:wasDerivedFrom <urn:libris:test:source> .
+

@@ -1,0 +1,57 @@
+{
+  "item_of": {
+    "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000002"
+  },
+  "identified_by": [
+    {
+      "kind": "Local",
+      "value": "TEST-3",
+      "source": [
+        {
+          "uri": "urn:libris:test:institution"
+        }
+      ]
+    }
+  ],
+  "held_by": [
+    {
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000020"
+    }
+  ],
+  "custodial_history": [
+    {
+      "value": "Doação sintética",
+      "language": "pt"
+    }
+  ],
+  "note": [
+    {
+      "label": [
+        {
+          "value": "Dedicatória fictícia de teste",
+          "language": "pt"
+        }
+      ],
+      "note_type": [
+        "copy"
+      ]
+    }
+  ],
+  "shelf_mark": [
+    {
+      "value": "TEST 001",
+      "source": [
+        {
+          "uri": "urn:libris:test:shelving"
+        }
+      ]
+    }
+  ],
+  "provenance": [
+    {
+      "uri": "urn:libris:test:inventory-source"
+    }
+  ],
+  "internal_id": "00000000-0000-4000-8000-000000000003",
+  "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000003"
+}

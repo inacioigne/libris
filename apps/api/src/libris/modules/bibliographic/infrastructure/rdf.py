@@ -1,12 +1,12 @@
 import json
 from typing import Literal as Format
-from urllib.parse import urlsplit
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import DCTERMS, PROV, RDF, SKOS
 
 from libris.core.config import Settings
+from libris.modules.bibliographic.domain.iris import validate_iri
 
 BF = Namespace("http://id.loc.gov/ontologies/bibframe/")
 RdfFormat = Format["json-ld", "turtle"]
@@ -48,14 +48,26 @@ def _check_json(value: object, depth: int = 0, in_context: bool = False) -> None
 
 
 def check_graph(graph: Graph) -> None:
+    if not isinstance(graph, Graph) or graph.context_aware:
+        raise RdfDocumentError("Este contrato exige Graph simples, sem Dataset/named graphs.")
     for subject, predicate, value in graph:
         if not isinstance(subject, (URIRef, BNode)) or not isinstance(predicate, URIRef):
             raise RdfDocumentError("Sujeito ou predicado RDF inválido.")
         if not isinstance(value, (URIRef, BNode, Literal)):
             raise RdfDocumentError("Objeto RDF inválido.")
+        if predicate == RDF.type and not isinstance(value, URIRef):
+            raise RdfDocumentError("rdf:type exige uma classe identificada por IRI.")
         for term in (subject, predicate, value):
-            if isinstance(term, URIRef) and not urlsplit(str(term)).scheme:
-                raise RdfDocumentError("IRIs relativas não são aceitas.")
+            if isinstance(term, URIRef):
+                try:
+                    validate_iri(str(term))
+                except ValueError as error:
+                    raise RdfDocumentError("IRI RDF inválida ou relativa.") from error
+        if isinstance(value, Literal) and value.datatype is not None:
+            try:
+                validate_iri(str(value.datatype))
+            except ValueError as error:
+                raise RdfDocumentError("IRI de datatype inválida.") from error
         if isinstance(value, Literal) and value.ill_typed:
             raise RdfDocumentError("Literal incompatível com seu datatype RDF.")
 

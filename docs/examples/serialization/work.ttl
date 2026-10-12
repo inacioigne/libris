@@ -1,0 +1,32 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000001> a bf:Work ;
+    bf:classification [ a bf:Classification ;
+            bf:classificationPortion "TEST-001" ;
+            bf:source <urn:libris:test:classification> ] ;
+    bf:content <http://id.loc.gov/vocabulary/contentTypes/txt> ;
+    bf:contribution [ a bf:Contribution ;
+            bf:agent <https://authorities.example.invalid/editor> ;
+            bf:role <http://id.loc.gov/vocabulary/relators/edt>,
+                <http://id.loc.gov/vocabulary/relators/trl> ],
+        [ a bf:Contribution ;
+            bf:agent <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000010> ;
+            bf:role <http://id.loc.gov/vocabulary/relators/aut> ] ;
+    bf:language <http://id.loc.gov/vocabulary/languages/por> ;
+    bf:note [ a bf:Note ;
+            rdfs:label "Untranslated note",
+                "Nota Unicode: ç, é, 日本語"@pt ;
+            bf:noteType "bibliography",
+                "synthetic" ] ;
+    bf:relatedTo <https://catalog.example.invalid/related> ;
+    bf:subject <https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000030> ;
+    bf:title [ a bf:Title ;
+            bf:mainTitle "Título sem idioma",
+                "Synthetic monograph — 日本語"@en,
+                "Monografia sintética de teste"@pt ;
+            bf:subtitle "Ensaios em São Luís"@pt-BR ],
+        [ a bf:VariantTitle ;
+            bf:mainTitle "Título alternativo sintético"@pt ] ;
+    bf:translationOf <https://catalog.example.invalid/original> .
+
