@@ -19,6 +19,7 @@ from libris.modules.bibliographic.api.schemas.relationships import (
     roles,
     same_reference,
 )
+from libris.modules.bibliographic.domain.errors import CatalogCode, CatalogError
 from libris.modules.bibliographic.domain.models import ResourceIdentity
 from libris.modules.bibliographic.domain.relationships import (
     BF,
@@ -60,7 +61,10 @@ async def validate_references(
     async def resolve(reference: EntityReference) -> ResolvedEntity | None:
         if isinstance(reference, UnreconciledReference):
             if not allow_unreconciled:
-                raise ValueError("Referência não reconciliada exige política de rascunho.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID,
+                    "Referência não reconciliada exige política de rascunho.",
+                )
             pending.append(reference)
             return None
         if isinstance(reference, ExternalReference):
@@ -68,16 +72,22 @@ async def validate_references(
             return None
         entity = await resolver.resolve(reference)
         if entity is None:
-            raise ValueError("Referência local inexistente.")
+            raise CatalogError(CatalogCode.REFERENCE_INVALID, "Referência local inexistente.")
         if reference.entity_type != entity.entity_type:
-            raise ValueError("Tipo real da referência é incompatível.")
+            raise CatalogError(
+                CatalogCode.REFERENCE_INVALID, "Tipo real da referência é incompatível."
+            )
         if (
             reference.internal_id is not None
             and reference.internal_id != entity.identity.internal_id
         ):
-            raise ValueError("UUID e URI identificam entidades diferentes.")
+            raise CatalogError(
+                CatalogCode.REFERENCE_INVALID, "UUID e URI identificam entidades diferentes."
+            )
         if reference.uri is not None and reference.uri != entity.identity.uri:
-            raise ValueError("URI difere da identidade armazenada.")
+            raise CatalogError(
+                CatalogCode.REFERENCE_INVALID, "URI difere da identidade armazenada."
+            )
         return entity
 
     collection = type(collection).model_validate(
@@ -89,16 +99,21 @@ async def validate_references(
     for link in collection.links:
         link_origin = await resolve(link.source)
         if link_origin != origin:
-            raise ValueError("Origem real difere da coleção.")
+            raise CatalogError(CatalogCode.REFERENCE_INVALID, "Origem real difere da coleção.")
         target = await resolve(link.target)
         if target is not None:
             if (
                 not registry.get(origin.entity_type, link.predicate).self_allowed
                 and origin.identity.internal_id == target.identity.internal_id
             ):
-                raise ValueError("Autorreferência por alias de identidade.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID, "Autorreferência por alias de identidade."
+                )
             if link.predicate == BF + "heldBy" and target.agent_kind != "Organization":
-                raise ValueError("O perfil candidato exige Organization em held_by.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID,
+                    "O perfil candidato exige Organization em held_by.",
+                )
             target_key = target.identity.uri
         elif isinstance(link.target, UnreconciledReference):
             target_key = repr((link.target.namespace, link.target.key))
@@ -111,10 +126,10 @@ async def validate_references(
             link.activity_key if isinstance(link, PublicationLink) else None,
         )
         if key in seen:
-            raise ValueError("Vínculo duplicado após resolução.")
+            raise CatalogError(CatalogCode.CONFLICT, "Vínculo duplicado após resolução.")
         seen.add(key)
         if allowed_roles is not None and not roles(link).issubset(allowed_roles):
-            raise ValueError("Papel não autorizado pelo perfil.")
+            raise CatalogError(CatalogCode.PROFILE_POLICY, "Papel não autorizado pelo perfil.")
     return IntegrityReport(tuple(pending))
 
 
@@ -137,7 +152,7 @@ def validate_cycles(
         while pending:
             node = pending.pop()
             if same_reference(node, edge.source):
-                raise ValueError("Ciclo semanticamente inválido.")
+                raise CatalogError(CatalogCode.REFERENCE_INVALID, "Ciclo semanticamente inválido.")
             if any(same_reference(node, previous) for previous in visited):
                 continue
             visited.append(node)
@@ -166,7 +181,7 @@ async def apply_resolved_relationship_update(
     async def canonical(reference: LocalReference) -> LocalReference:
         entity = await resolver.resolve(reference)
         if entity is None:
-            raise ValueError("Referência local inexistente.")
+            raise CatalogError(CatalogCode.REFERENCE_INVALID, "Referência local inexistente.")
         if (
             entity.entity_type != reference.entity_type
             or (
@@ -175,7 +190,7 @@ async def apply_resolved_relationship_update(
             )
             or (reference.uri is not None and reference.uri != entity.identity.uri)
         ):
-            raise ValueError("Identidade local incompatível.")
+            raise CatalogError(CatalogCode.REFERENCE_INVALID, "Identidade local incompatível.")
         return LocalReference(
             entity_type=entity.entity_type,
             internal_id=entity.identity.internal_id,

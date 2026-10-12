@@ -486,7 +486,11 @@ def test_revise_violation_exits_transaction_without_saving() -> None:
         asyncio.run(service.revise(identity.internal_id, 1, graph, Provenance("test", "shacl")))
     service.store.advance.assert_awaited_once()
     service.store.save.assert_not_awaited()
-    assert transaction.__aexit__.await_args.args[0] is ValueError
+    from libris.modules.bibliographic.application.diagnostics import CatalogValidationRejected
+
+    assert transaction.__aexit__.await_args.args[0] is CatalogValidationRejected
+    assert issubclass(CatalogValidationRejected, ValueError)
+    assert transaction.__aexit__.await_args.args[1].result.conforms is False
 
 
 def test_shape_registry_metadata_and_execution_registry_agree() -> None:

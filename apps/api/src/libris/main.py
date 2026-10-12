@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from libris.api.health import router as health_router
+from libris.api.problems import install_problem_handlers
 from libris.core.config import Settings
 from libris.infrastructure.database import Database
 from libris.modules.identity.api.router import router as identity_router
@@ -37,8 +38,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_origins=config.cors_origins,
         allow_credentials=False,
         allow_methods=["GET"],
-        allow_headers=["Accept", "Content-Type", "Authorization"],
+        allow_headers=["Accept", "Content-Type", "Authorization", "X-Request-ID"],
+        expose_headers=["X-Request-ID"],
     )
+    install_problem_handlers(app)
     app.include_router(health_router)
     app.include_router(identity_router)
     return app

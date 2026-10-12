@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 
 from libris.infrastructure.database import Base
+from libris.modules.bibliographic.domain.errors import ResourceNotFoundError
 from libris.modules.bibliographic.domain.models import (
     Provenance,
     ResourceIdentity,
@@ -104,7 +105,7 @@ class RevisionStore:
         )
         row = (await session.execute(statement)).one_or_none()
         if row is None:
-            raise LookupError("Recurso ou revisão não encontrado.")
+            raise ResourceNotFoundError("Recurso ou revisão não encontrado.")
         resource, stored = row
         revision = Revision(
             ResourceIdentity(resource.id, resource.uri),

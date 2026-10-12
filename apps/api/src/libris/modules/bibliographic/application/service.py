@@ -6,14 +6,19 @@ from rdflib import Graph, URIRef
 from rdflib.namespace import RDF
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from libris.modules.bibliographic.application.diagnostics import CatalogValidationRejected
+from libris.modules.bibliographic.domain.errors import CatalogCode, CatalogError
 from libris.modules.bibliographic.domain.models import (
     Provenance,
     ResourceIdentity,
     Revision,
     StaleRevisionError,
 )
+from libris.modules.bibliographic.domain.profile_registry import ProfileError
+from libris.modules.bibliographic.infrastructure.diagnostics import adapt_report
 from libris.modules.bibliographic.infrastructure.ownership import check_snapshot
 from libris.modules.bibliographic.infrastructure.persistence import RevisionStore
+from libris.modules.bibliographic.infrastructure.profiles import load_legacy_profile
 from libris.modules.bibliographic.infrastructure.rdf import BF, parse_document, serialize_document
 from libris.modules.bibliographic.infrastructure.validation import (
     AUTHORITY_PROFILE_ID,
@@ -25,24 +30,34 @@ from libris.modules.identity.domain.models import AuthenticatedActor
 
 
 def prepare_document(graph: Graph, uri: str, profile: str = PROFILE_ID) -> list[dict[str, object]]:
+    if profile not in (PROFILE_ID, INSTITUTIONAL_PROFILE_ID, AUTHORITY_PROFILE_ID):
+        raise ProfileError("unknown_profile", "Perfil local desconhecido.")
     if profile == PROFILE_ID:
         if not any(
             (URIRef(uri), RDF.type, kind) in graph for kind in (BF.Work, BF.Instance, BF.Item)
         ):
-            raise ValueError("A URI raiz deve identificar Work, Instance ou Item no grafo.")
+            raise CatalogError(
+                CatalogCode.IDENTITY_INVALID,
+                "A URI raiz deve identificar Work, Instance ou Item no grafo.",
+            )
     else:
         kind = check_snapshot(graph, URIRef(uri))
         bibliographic = kind in (BF.Work, BF.Instance, BF.Item)
         if (profile == INSTITUTIONAL_PROFILE_ID and not bibliographic) or (
             profile == AUTHORITY_PROFILE_ID and bibliographic
         ):
-            raise ValueError("Tipo da raiz incompatível com o perfil.")
+            raise CatalogError(
+                CatalogCode.PROFILE_INCOMPATIBLE, "Tipo da raiz incompatível com o perfil."
+            )
     report = validate_profile(graph, profile)
     if not report.conforms:
-        raise ValueError(f"Grafo não conforme ao perfil {profile}.")
+        raise CatalogValidationRejected(adapt_report(report, load_legacy_profile(profile), graph))
     document = serialize_document(graph, "json-ld")
     if any("\x00" in str(term) for triple in graph for term in triple):
-        raise ValueError("PostgreSQL JSONB não suporta o caractere NUL em termos RDF.")
+        raise CatalogError(
+            CatalogCode.IDENTITY_INVALID,
+            "PostgreSQL JSONB não suporta o caractere NUL em termos RDF.",
+        )
     value: object = json.loads(document)
     if not isinstance(value, list) or not all(isinstance(node, dict) for node in value):
         raise ValueError("A representação JSON-LD expandida deve ser uma lista de nós.")
@@ -101,7 +116,10 @@ class BibliographicService:
             if previous.profile != PROFILE_ID:
                 prior_graph = parse_document(json.dumps(prior_document), "json-ld")
                 if check_snapshot(prior_graph, URIRef(uri)) != check_snapshot(graph, URIRef(uri)):
-                    raise ValueError("O tipo da identidade não muda entre revisões.")
+                    raise CatalogError(
+                        CatalogCode.IDENTITY_INVALID,
+                        "O tipo da identidade não muda entre revisões.",
+                    )
             revision = Revision(
                 ResourceIdentity(identifier, uri),
                 expected_revision + 1,
