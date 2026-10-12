@@ -1,0 +1,954 @@
+{
+  "version": "1.0",
+  "namespaces": [
+    {
+      "prefix": "bf",
+      "iri": "http://id.loc.gov/ontologies/bibframe/",
+      "ontology": "http://id.loc.gov/ontologies/bibframe/",
+      "release": "2.0.1"
+    },
+    {
+      "prefix": "rdf",
+      "iri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "ontology": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "release": "1.0"
+    },
+    {
+      "prefix": "rdfs",
+      "iri": "http://www.w3.org/2000/01/rdf-schema#",
+      "ontology": "http://www.w3.org/2000/01/rdf-schema#",
+      "release": "1.0"
+    },
+    {
+      "prefix": "skos",
+      "iri": "http://www.w3.org/2004/02/skos/core#",
+      "ontology": "http://www.w3.org/2004/02/skos/core#",
+      "release": "1.0"
+    },
+    {
+      "prefix": "dcterms",
+      "iri": "http://purl.org/dc/terms/",
+      "ontology": "http://purl.org/dc/terms/",
+      "release": "1.0"
+    },
+    {
+      "prefix": "schema",
+      "iri": "https://schema.org/",
+      "ontology": "https://schema.org/",
+      "release": "1.0"
+    },
+    {
+      "prefix": "prov",
+      "iri": "http://www.w3.org/ns/prov#",
+      "ontology": "http://www.w3.org/ns/prov#",
+      "release": "1.0"
+    },
+    {
+      "prefix": "xsd",
+      "iri": "http://www.w3.org/2001/XMLSchema#",
+      "ontology": "http://www.w3.org/2001/XMLSchema#",
+      "release": "1.0"
+    }
+  ],
+  "classes": [
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Agent",
+      "entity": "Agent",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Classification",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Contribution",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Extent",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Identifier",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "entity": "Instance",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Isbn",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Item",
+      "entity": "Item",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Local",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Note",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Organization",
+      "entity": "Agent",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Person",
+      "entity": "Agent",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Publication",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/ShelfMark",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Title",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/VariantTitle",
+      "entity": null,
+      "auxiliary": true
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "auxiliary": false
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#Concept",
+      "entity": "Subject",
+      "auxiliary": false
+    }
+  ],
+  "properties": [
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/agent",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution",
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "target_entities": [
+        "Agent"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Agente"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/carrier",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Suporte"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/classification",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Classification"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Classificação"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/classificationPortion",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Classification"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Código de classificação"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/content",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conteúdo"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/contribution",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Contribuições"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/custodialHistory",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Histórico de custódia"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/date",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "typed"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [
+        "http://www.w3.org/2001/XMLSchema#date",
+        "http://www.w3.org/2001/XMLSchema#gYear",
+        "http://www.w3.org/2001/XMLSchema#string"
+      ],
+      "derived": false,
+      "label": {
+        "pt": "Data de publicação"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/editionStatement",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Indicação de edição"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/extent",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Extent"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Extensão"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/frequency",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work",
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "label": {
+        "pt": "Periodicidade"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/hasInstance",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "target_entities": [
+        "Instance"
+      ],
+      "datatypes": [],
+      "derived": true,
+      "label": {
+        "pt": "Manifestações"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/hasItem",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "target_entities": [
+        "Item"
+      ],
+      "datatypes": [],
+      "derived": true,
+      "label": {
+        "pt": "Exemplares"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/heldBy",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Organization"
+      ],
+      "target_entities": [
+        "Agent"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Instituição detentora"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Identificadores"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Obra"
+      },
+      "maximum": 1
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/itemOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "target_entities": [
+        "Instance"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Manifestação"
+      },
+      "maximum": 1
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/language",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Idioma"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Título principal"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/note",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Note"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Notas"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/noteType",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Note"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Tipo da nota"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/place",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Local de publicação"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Publicação"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/relatedTo",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Obras relacionadas"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/role",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Papel"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/shelfMark",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Marca de estante bibliográfica"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/source",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Classification",
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local",
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Fonte"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/subject",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "target_entities": [
+        "Subject"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Assuntos"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/subtitle",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Subtítulo"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/title",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Títulos principal e alternativos"
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/translationOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Tradução de"
+      }
+    },
+    {
+      "iri": "http://purl.org/dc/terms/relation",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [],
+      "target_entities": [
+        "Agent",
+        "Subject"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Autoridade relacionada"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local",
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Valor"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2000/01/rdf-schema#label",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Extent",
+        "http://id.loc.gov/ontologies/bibframe/Note",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Descrição"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Referências externas"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#altLabel",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Formas variantes"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#broader",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conceito mais amplo"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#inScheme",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Vocabulário"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#prefLabel",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Termo autorizado"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#related",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conceito relacionado"
+      }
+    },
+    {
+      "iri": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Proveniência semântica"
+      }
+    },
+    {
+      "iri": "https://schema.org/dateCreated",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "typed"
+      ],
+      "datatypes": [
+        "http://www.w3.org/2001/XMLSchema#date",
+        "http://www.w3.org/2001/XMLSchema#dateTime"
+      ],
+      "label": {
+        "pt": "Data de criação"
+      }
+    },
+    {
+      "iri": "https://schema.org/encodingFormat",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "label": {
+        "pt": "Formato digital"
+      }
+    },
+    {
+      "iri": "https://schema.org/fileFormat",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "status": "deprecated",
+      "label": {
+        "pt": "Formato digital obsoleto; usar encodingFormat"
+      }
+    }
+  ]
+}

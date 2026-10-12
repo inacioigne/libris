@@ -1,0 +1,82 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:monograph",
+  "release_id": "urn:libris:profile:monograph:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "institutional",
+  "label": {
+    "pt": "Monografia — exemplo institucional"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "institution": "urn:libris:institution:example",
+  "resource_types": [
+    "urn:libris:resource-type:monograph"
+  ],
+  "priority": 10,
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "fields": [
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Títulos principal e alternativos"
+          },
+          "description": {
+            "pt": "Ao menos um título não variante; um mainTitle por idioma em cada nó."
+          },
+          "value": {
+            "kind": "structured",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title",
+              "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "editable": true,
+            "required_in_form": true,
+            "help": {
+              "pt": "Registrar um título não variante."
+            }
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1"
+            }
+          ],
+          "overrides": true
+        }
+      ]
+    }
+  ]
+}

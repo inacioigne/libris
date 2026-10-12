@@ -3,11 +3,10 @@
 import re
 from urllib.parse import urlsplit
 
-from .profiles import absolute_iri
-
 
 def validate_iri(value: str) -> str:
-    absolute_iri(value)
+    if not urlsplit(value).scheme or any(character.isspace() for character in value):
+        raise ValueError("A IRI deve ser absoluta sem espaços.")
     if re.search(r'[\x00-\x20<>"{}|\\^`\x7f]', value):
         raise ValueError("A IRI contém caracteres inválidos.")
     if re.search(r"%(?![0-9a-fA-F]{2})", value):

@@ -1,0 +1,104 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:digital",
+  "release_id": "urn:libris:profile:digital:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Recurso digital"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "institution": "urn:libris:institution:example",
+  "resource_types": [
+    "urn:libris:resource-type:digital"
+  ],
+  "priority": 10,
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "entity": "Instance",
+      "label": {
+        "pt": "Manifestação"
+      },
+      "fields": [
+        {
+          "name": "encoding_format",
+          "property": "https://schema.org/encodingFormat",
+          "namespace": "schema",
+          "label": {
+            "pt": "Formato digital"
+          },
+          "value": {
+            "kind": "text"
+          },
+          "policy": {
+            "allowed_values": [
+              {
+                "kind": "literal",
+                "value": "application/pdf"
+              },
+              {
+                "kind": "literal",
+                "value": "application/epub+zip"
+              }
+            ]
+          },
+          "presentation": {
+            "input": "select",
+            "section": "description",
+            "group": "main",
+            "order": 20,
+            "conditions": [
+              {
+                "field": "carrier",
+                "operator": "present",
+                "effect": "visible"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "fields": [
+        {
+          "name": "creation_date",
+          "property": "https://schema.org/dateCreated",
+          "namespace": "schema",
+          "label": {
+            "pt": "Data de criação"
+          },
+          "value": {
+            "kind": "typed",
+            "datatypes": [
+              "http://www.w3.org/2001/XMLSchema#date",
+              "http://www.w3.org/2001/XMLSchema#dateTime"
+            ]
+          },
+          "presentation": {
+            "input": "date",
+            "section": "description",
+            "group": "main",
+            "order": 30
+          }
+        }
+      ]
+    }
+  ]
+}

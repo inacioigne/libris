@@ -1,15 +1,16 @@
 """Local form descriptors; SHACL remains the semantic validator."""
 
 from typing import Literal
-from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .iris import validate_iri
+from .profile_contract import ProfileDefinition as ProfileDefinition
+from .profile_contract import ResolvedProfile as ResolvedProfile
+
 
 def absolute_iri(value: str) -> str:
-    if not urlsplit(value).scheme or any(character.isspace() for character in value):
-        raise ValueError("O descritor deve usar uma IRI absoluta sem espaços.")
-    return value
+    return validate_iri(value)
 
 
 class ProfileField(BaseModel):

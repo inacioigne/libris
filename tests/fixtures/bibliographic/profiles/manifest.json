@@ -1,0 +1,27 @@
+[
+  {
+    "file": "invalid/relative-iri.json",
+    "layer": "structural",
+    "code": null
+  },
+  {
+    "file": "invalid/duplicate-field.json",
+    "layer": "structural",
+    "code": null
+  },
+  {
+    "file": "invalid/unknown-namespace.json",
+    "layer": "resolution",
+    "code": "unknown_namespace"
+  },
+  {
+    "file": "invalid/cyclic-base.json",
+    "layer": "resolution",
+    "code": "composition_cycle"
+  },
+  {
+    "file": "invalid/unknown-shapes.json",
+    "layer": "resolution",
+    "code": "unknown_shapes"
+  }
+]

@@ -1,0 +1,4163 @@
+{
+  "id": "urn:libris:profile:monograph",
+  "release_id": "urn:libris:profile:monograph:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "institutional",
+  "label": {
+    "pt": "Monografia — exemplo institucional"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "resource_types": [
+    "urn:libris:resource-type:monograph"
+  ],
+  "purpose": "cataloging",
+  "institution": "urn:libris:institution:example",
+  "priority": 10,
+  "replacement": null,
+  "format": "libris.resolved-profile",
+  "format_version": "2.0",
+  "lineage": [
+    "urn:libris:profile:core:2.0.0",
+    "urn:libris:profile:monograph:2.0.0"
+  ],
+  "validation": [
+    {
+      "id": "urn:libris:shapes:institutional",
+      "release": "1.1",
+      "context": "snapshot"
+    }
+  ],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Agent",
+      "entity": "Agent",
+      "label": {
+        "pt": "Agente"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "authorizedName",
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "description": {
+            "pt": "Uma forma autorizada por idioma; preservar forma transcrita."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "variantName",
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "namespace": "skos",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "identifiedBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Identifier",
+              "http://id.loc.gov/ontologies/bibframe/Local",
+              "http://id.loc.gov/ontologies/bibframe/Isbn"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "externalReference",
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provenance",
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "namespace": "prov",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "relatedAuthority",
+          "property": "http://purl.org/dc/terms/relation",
+          "namespace": "dcterms",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent",
+              "Subject"
+            ],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Classification",
+      "entity": null,
+      "label": {
+        "pt": "Classificação"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "classificationPortion",
+          "property": "http://id.loc.gov/ontologies/bibframe/classificationPortion",
+          "namespace": "bf",
+          "label": {
+            "pt": "Código de classificação"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "source",
+          "property": "http://id.loc.gov/ontologies/bibframe/source",
+          "namespace": "bf",
+          "label": {
+            "pt": "Esquema de classificação"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Contribution",
+      "entity": null,
+      "label": {
+        "pt": "Contribuição"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "agent",
+          "property": "http://id.loc.gov/ontologies/bibframe/agent",
+          "namespace": "bf",
+          "label": {
+            "pt": "Agente"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Agent",
+              "http://id.loc.gov/ontologies/bibframe/Person",
+              "http://id.loc.gov/ontologies/bibframe/Organization"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "role",
+          "property": "http://id.loc.gov/ontologies/bibframe/role",
+          "namespace": "bf",
+          "label": {
+            "pt": "Papel"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "vocabulary",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": "http://id.loc.gov/vocabulary/relators/",
+            "authority": null
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Extent",
+      "entity": null,
+      "label": {
+        "pt": "Extensão"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "label",
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Descrição"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Identifier",
+      "entity": null,
+      "label": {
+        "pt": "Identificador"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+          "namespace": "rdf",
+          "label": {
+            "pt": "Valor"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "source",
+          "property": "http://id.loc.gov/ontologies/bibframe/source",
+          "namespace": "bf",
+          "label": {
+            "pt": "Fonte"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "entity": "Instance",
+      "label": {
+        "pt": "Manifestação"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title",
+              "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "editionStatement",
+          "property": "http://id.loc.gov/ontologies/bibframe/editionStatement",
+          "namespace": "bf",
+          "label": {
+            "pt": "Indicação de edição"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provisionActivity",
+          "property": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+          "namespace": "bf",
+          "label": {
+            "pt": "Publicação"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Publication"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "identifiedBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Identifier",
+              "http://id.loc.gov/ontologies/bibframe/Local",
+              "http://id.loc.gov/ontologies/bibframe/Isbn"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "extent",
+          "property": "http://id.loc.gov/ontologies/bibframe/extent",
+          "namespace": "bf",
+          "label": {
+            "pt": "Extensão"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Extent"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "carrier",
+          "property": "http://id.loc.gov/ontologies/bibframe/carrier",
+          "namespace": "bf",
+          "label": {
+            "pt": "Suporte"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "vocabulary",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": "http://id.loc.gov/vocabulary/carriers/",
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "instanceOf",
+          "property": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+          "namespace": "bf",
+          "label": {
+            "pt": "Obra"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Work"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Work"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 6,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "hasItem",
+          "property": "http://id.loc.gov/ontologies/bibframe/hasItem",
+          "namespace": "bf",
+          "label": {
+            "pt": "Exemplares"
+          },
+          "description": {
+            "pt": "Derivada de itemOf; não gravar no snapshot proprietário."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Item"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Item"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 7,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": false,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": true,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "note",
+          "property": "http://id.loc.gov/ontologies/bibframe/note",
+          "namespace": "bf",
+          "label": {
+            "pt": "Notas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Note"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 8,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Isbn",
+      "entity": null,
+      "label": {
+        "pt": "ISBN"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+          "namespace": "rdf",
+          "label": {
+            "pt": "Valor"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "source",
+          "property": "http://id.loc.gov/ontologies/bibframe/source",
+          "namespace": "bf",
+          "label": {
+            "pt": "Fonte"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Item",
+      "entity": "Item",
+      "label": {
+        "pt": "Exemplar bibliográfico"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "itemOf",
+          "property": "http://id.loc.gov/ontologies/bibframe/itemOf",
+          "namespace": "bf",
+          "label": {
+            "pt": "Manifestação"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Instance"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Instance"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "identifiedBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Identificador institucional"
+          },
+          "description": {
+            "pt": "Ao menos um bf:Local com rdf:value não vazio; barcode/inventário são atributos."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Identifier",
+              "http://id.loc.gov/ontologies/bibframe/Local"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "heldBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/heldBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Instituição detentora"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Organization"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "note",
+          "property": "http://id.loc.gov/ontologies/bibframe/note",
+          "namespace": "bf",
+          "label": {
+            "pt": "Notas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Note"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "custodialHistory",
+          "property": "http://id.loc.gov/ontologies/bibframe/custodialHistory",
+          "namespace": "bf",
+          "label": {
+            "pt": "Histórico de custódia"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "shelfMark",
+          "property": "http://id.loc.gov/ontologies/bibframe/shelfMark",
+          "namespace": "bf",
+          "label": {
+            "pt": "Marca de estante bibliográfica"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provenance",
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "namespace": "prov",
+          "label": {
+            "pt": "Proveniência semântica"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 6,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Local",
+      "entity": null,
+      "label": {
+        "pt": "Identificador local"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+          "namespace": "rdf",
+          "label": {
+            "pt": "Valor"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "source",
+          "property": "http://id.loc.gov/ontologies/bibframe/source",
+          "namespace": "bf",
+          "label": {
+            "pt": "Fonte"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Note",
+      "entity": null,
+      "label": {
+        "pt": "Nota"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "label",
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Texto"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "noteType",
+          "property": "http://id.loc.gov/ontologies/bibframe/noteType",
+          "namespace": "bf",
+          "label": {
+            "pt": "Tipo da nota"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Organization",
+      "entity": "Agent",
+      "label": {
+        "pt": "Entidade coletiva"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "authorizedName",
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "description": {
+            "pt": "Uma forma autorizada por idioma; preservar forma transcrita."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "variantName",
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "namespace": "skos",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "identifiedBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Identifier",
+              "http://id.loc.gov/ontologies/bibframe/Local",
+              "http://id.loc.gov/ontologies/bibframe/Isbn"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "externalReference",
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provenance",
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "namespace": "prov",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "relatedAuthority",
+          "property": "http://purl.org/dc/terms/relation",
+          "namespace": "dcterms",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent",
+              "Subject"
+            ],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Person",
+      "entity": "Agent",
+      "label": {
+        "pt": "Pessoa"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "authorizedName",
+          "property": "http://www.w3.org/2000/01/rdf-schema#label",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Forma autorizada"
+          },
+          "description": {
+            "pt": "Uma forma autorizada por idioma; preservar forma transcrita."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "variantName",
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "namespace": "skos",
+          "label": {
+            "pt": "Formas variantes"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "identifiedBy",
+          "property": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+          "namespace": "bf",
+          "label": {
+            "pt": "Identificadores"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Identifier",
+              "http://id.loc.gov/ontologies/bibframe/Local",
+              "http://id.loc.gov/ontologies/bibframe/Isbn"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "externalReference",
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provenance",
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "namespace": "prov",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "relatedAuthority",
+          "property": "http://purl.org/dc/terms/relation",
+          "namespace": "dcterms",
+          "label": {
+            "pt": "Autoridade relacionada"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent",
+              "Subject"
+            ],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Publication",
+      "entity": null,
+      "label": {
+        "pt": "Publicação"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "agent",
+          "property": "http://id.loc.gov/ontologies/bibframe/agent",
+          "namespace": "bf",
+          "label": {
+            "pt": "Publicador"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Agent"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Agent",
+              "http://id.loc.gov/ontologies/bibframe/Person",
+              "http://id.loc.gov/ontologies/bibframe/Organization"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "place",
+          "property": "http://id.loc.gov/ontologies/bibframe/place",
+          "namespace": "bf",
+          "label": {
+            "pt": "Local de publicação"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "date",
+          "property": "http://id.loc.gov/ontologies/bibframe/date",
+          "namespace": "bf",
+          "label": {
+            "pt": "Data de publicação"
+          },
+          "description": {
+            "pt": "Texto transcrito ou data/gYear bem tipados; conservar incerteza como texto."
+          },
+          "value": {
+            "kind": "typed",
+            "node_kind": "Literal",
+            "datatypes": [
+              "http://www.w3.org/2001/XMLSchema#string",
+              "http://www.w3.org/2001/XMLSchema#gYear",
+              "http://www.w3.org/2001/XMLSchema#date"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/ShelfMark",
+      "entity": null,
+      "label": {
+        "pt": "Marca de estante"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "value",
+          "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+          "namespace": "rdf",
+          "label": {
+            "pt": "Valor"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": 1,
+            "repeatable": false,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "source",
+          "property": "http://id.loc.gov/ontologies/bibframe/source",
+          "namespace": "bf",
+          "label": {
+            "pt": "Fonte"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Title",
+      "entity": null,
+      "label": {
+        "pt": "Título"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "mainTitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título principal"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "subtitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/subtitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Subtítulo"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/VariantTitle",
+      "entity": null,
+      "label": {
+        "pt": "Título alternativo"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "mainTitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título principal"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "subtitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/subtitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Subtítulo"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "language",
+          "property": "http://id.loc.gov/ontologies/bibframe/language",
+          "namespace": "bf",
+          "label": {
+            "pt": "Idioma"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "vocabulary",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": "http://id.loc.gov/vocabulary/languages/",
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "content",
+          "property": "http://id.loc.gov/ontologies/bibframe/content",
+          "namespace": "bf",
+          "label": {
+            "pt": "Conteúdo"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "vocabulary",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": "http://id.loc.gov/vocabulary/contentTypes/",
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "contribution",
+          "property": "http://id.loc.gov/ontologies/bibframe/contribution",
+          "namespace": "bf",
+          "label": {
+            "pt": "Contribuições"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Contribution"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "subject",
+          "property": "http://id.loc.gov/ontologies/bibframe/subject",
+          "namespace": "bf",
+          "label": {
+            "pt": "Assuntos"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Subject"
+            ],
+            "target_classes": [
+              "http://www.w3.org/2004/02/skos/core#Concept"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "classification",
+          "property": "http://id.loc.gov/ontologies/bibframe/classification",
+          "namespace": "bf",
+          "label": {
+            "pt": "Classificação"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Classification"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Títulos principal e alternativos"
+          },
+          "description": {
+            "pt": "Ao menos um título não variante; um mainTitle por idioma em cada nó."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title",
+              "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {
+              "pt": "Registrar um título não variante."
+            },
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "relatedTo",
+          "property": "http://id.loc.gov/ontologies/bibframe/relatedTo",
+          "namespace": "bf",
+          "label": {
+            "pt": "Obras relacionadas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Work"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Work"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 6,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "translationOf",
+          "property": "http://id.loc.gov/ontologies/bibframe/translationOf",
+          "namespace": "bf",
+          "label": {
+            "pt": "Tradução de"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Work"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Work"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 7,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "hasInstance",
+          "property": "http://id.loc.gov/ontologies/bibframe/hasInstance",
+          "namespace": "bf",
+          "label": {
+            "pt": "Manifestações"
+          },
+          "description": {
+            "pt": "Derivada de instanceOf; não gravar no snapshot proprietário."
+          },
+          "value": {
+            "kind": "entity",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Instance"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Instance"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 8,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": false,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": true,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "note",
+          "property": "http://id.loc.gov/ontologies/bibframe/note",
+          "namespace": "bf",
+          "label": {
+            "pt": "Notas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Note"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 9,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://www.w3.org/2004/02/skos/core#Concept",
+      "entity": "Subject",
+      "label": {
+        "pt": "Conceito controlado"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição",
+            "en": "Description"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [
+        {
+          "id": "main",
+          "label": {
+            "pt": "Dados bibliográficos"
+          },
+          "order": 0,
+          "section": "description"
+        }
+      ],
+      "fields": [
+        {
+          "name": "preferredLabel",
+          "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+          "namespace": "skos",
+          "label": {
+            "pt": "Termo autorizado"
+          },
+          "description": {
+            "pt": "Um prefLabel por idioma; disjunto de altLabel."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "alternativeLabel",
+          "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+          "namespace": "skos",
+          "label": {
+            "pt": "Termos variantes"
+          },
+          "description": {
+            "pt": "Literal não vazio; preservar idioma/datatype."
+          },
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "text",
+            "order": 1,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "scheme",
+          "property": "http://www.w3.org/2004/02/skos/core#inScheme",
+          "namespace": "skos",
+          "label": {
+            "pt": "Vocabulário"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 2,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "broader",
+          "property": "http://www.w3.org/2004/02/skos/core#broader",
+          "namespace": "skos",
+          "label": {
+            "pt": "Conceito mais amplo"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 3,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "related",
+          "property": "http://www.w3.org/2004/02/skos/core#related",
+          "namespace": "skos",
+          "label": {
+            "pt": "Conceito relacionado"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 4,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "externalReference",
+          "property": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "namespace": "rdfs",
+          "label": {
+            "pt": "Referências externas"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        },
+        {
+          "name": "provenance",
+          "property": "http://www.w3.org/ns/prov#wasDerivedFrom",
+          "namespace": "prov",
+          "label": {
+            "pt": "Proveniência"
+          },
+          "description": {
+            "pt": "Referência RDF explícita; sem resolução remota."
+          },
+          "value": {
+            "kind": "iri",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 6,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": false
+        }
+      ]
+    }
+  ]
+}

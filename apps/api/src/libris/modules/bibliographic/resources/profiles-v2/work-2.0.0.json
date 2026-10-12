@@ -1,0 +1,21 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:work",
+  "release_id": "urn:libris:profile:work:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Perfil Work",
+    "en": "Work profile"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work"
+  ],
+  "base_release": "urn:libris:profile:core:2.0.0"
+}

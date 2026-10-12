@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "ShapeSetDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "release": {
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Release",
+          "type": "string"
+        },
+        "contexts": {
+          "items": {
+            "enum": [
+              "snapshot",
+              "composed"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Contexts",
+          "type": "array"
+        },
+        "classes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Classes",
+          "type": "array"
+        },
+        "bibliographic_contract": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Bibliographic Contract",
+          "type": "string"
+        },
+        "property_shapes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Property Shapes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "release",
+        "contexts",
+        "classes"
+      ],
+      "title": "ShapeSetDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "sets": {
+      "items": {
+        "$ref": "#/$defs/ShapeSetDefinition"
+      },
+      "title": "Sets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "sets"
+  ],
+  "title": "ShapeRegistry",
+  "type": "object"
+}

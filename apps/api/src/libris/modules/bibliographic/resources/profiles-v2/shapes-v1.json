@@ -1,0 +1,47 @@
+{
+  "sets": [
+    {
+      "id": "urn:libris:shapes:institutional",
+      "release": "1.1",
+      "contexts": [
+        "snapshot",
+        "composed"
+      ],
+      "classes": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Classification",
+        "http://id.loc.gov/ontologies/bibframe/Contribution",
+        "http://id.loc.gov/ontologies/bibframe/Extent",
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Local",
+        "http://id.loc.gov/ontologies/bibframe/Note",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://id.loc.gov/ontologies/bibframe/Publication",
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark",
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle",
+        "http://id.loc.gov/ontologies/bibframe/Work",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ]
+    },
+    {
+      "id": "urn:libris:shapes:experimental",
+      "release": "1.0",
+      "contexts": [
+        "snapshot"
+      ],
+      "classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work",
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/Contribution",
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ]
+    }
+  ]
+}

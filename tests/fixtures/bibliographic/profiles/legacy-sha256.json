@@ -1,0 +1,10 @@
+{
+  "monograph-v1.json": "3f1cc9c8c8177141b9f472b9e993955ea75eb1bbf97186e9112ecbd8f8a9ea50",
+  "monograph-v1.ttl": "d9124842bc0f8e29fb0d87c12601220fc964d037a069892eb8ef3ae9859d7b08",
+  "monograph-v1.1.json": "a81ee2ce37a53507bb1653210e8a23b5163c90f9bb0a035ff786a058e94323c2",
+  "monograph-v1.1.ttl": "7312ba3214d0fbc828d362341d9bb65fcf15275c6f095b45cba979cb22e7e042",
+  "monograph-v1.1-composed.ttl": "684e178d645cff4402e24aaa530ec377abe2738620cd3116dad023a52dbb8a1b",
+  "authority-v1.json": "5221396f500ccd207823afcd2a07414ae7d3d69c9207976baf6c9b4abd2757f7",
+  "authority-v1.ttl": "68fea85ad53b18f4fb8d043571f597988927b252cceedd850ea2f3ca148f9f66",
+  "catalog-profile.schema.json": "2f33e69c48cce219ff93873d0c307f2382a8e1b33b2840940128b70047a18fe1"
+}

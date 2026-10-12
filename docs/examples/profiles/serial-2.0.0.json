@@ -1,0 +1,83 @@
+{
+  "id": "urn:libris:profile:serial",
+  "release_id": "urn:libris:profile:serial:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Publicação seriada"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "resource_types": [
+    "urn:libris:resource-type:serial"
+  ],
+  "purpose": "cataloging",
+  "institution": "urn:libris:institution:example",
+  "priority": 10,
+  "replacement": null,
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "validation": [],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [],
+      "groups": [],
+      "fields": [
+        {
+          "name": "frequency",
+          "property": "http://id.loc.gov/ontologies/bibframe/frequency",
+          "namespace": "bf",
+          "label": {
+            "pt": "Periodicidade"
+          },
+          "description": {},
+          "value": {
+            "kind": "vocabulary",
+            "node_kind": "IRI",
+            "target_entities": [],
+            "target_classes": [],
+            "vocabulary": "http://id.loc.gov/vocabulary/frequencies/",
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "select",
+            "order": 20,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        }
+      ]
+    }
+  ]
+}

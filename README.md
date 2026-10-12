@@ -45,6 +45,14 @@ exportação integral de snapshots e negociação Accept desacoplada. Ver
 [verificação](docs/architecture/semantic-serialization-verification.md).
 Não há novos endpoints ou homologação institucional.
 
+
+A M03.02.01 acrescenta o [contrato de perfis declarativos 2.0](docs/architecture/catalog-profiles.md):
+configurações Pydantic/JSON, herança por release, seleção determinística, registro
+semântico local e associação SHACL versionada, preservando todos os perfis históricos.
+Ver [ADR 0021](docs/decisions/0021-declarative-catalog-profiles.md),
+[exemplos](docs/examples/profiles/) e [verificação](docs/architecture/catalog-profiles-verification.md).
+O contrato prepara formulários futuros; não acrescenta CRUD, editor ou tabelas.
+
 ## Estrutura
 
 ```text

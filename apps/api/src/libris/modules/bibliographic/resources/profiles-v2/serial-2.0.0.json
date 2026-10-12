@@ -1,0 +1,56 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:serial",
+  "release_id": "urn:libris:profile:serial:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Publicação seriada"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "institution": "urn:libris:institution:example",
+  "resource_types": [
+    "urn:libris:resource-type:serial"
+  ],
+  "priority": 10,
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "fields": [
+        {
+          "name": "frequency",
+          "property": "http://id.loc.gov/ontologies/bibframe/frequency",
+          "namespace": "bf",
+          "label": {
+            "pt": "Periodicidade"
+          },
+          "value": {
+            "kind": "vocabulary",
+            "vocabulary": "http://id.loc.gov/vocabulary/frequencies/"
+          },
+          "presentation": {
+            "input": "select",
+            "section": "description",
+            "group": "main",
+            "order": 20
+          }
+        }
+      ]
+    }
+  ]
+}

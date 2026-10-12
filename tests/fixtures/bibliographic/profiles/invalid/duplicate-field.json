@@ -1,0 +1,128 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:work-minimal",
+  "release_id": "urn:libris:profile:work-minimal:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "draft",
+  "category": "system",
+  "label": {
+    "pt": "Obra mínima"
+  },
+  "description": {
+    "pt": "Exemplo independente com título estruturado e idioma."
+  },
+  "applies_to": [
+    "Work"
+  ],
+  "validation": [
+    {
+      "id": "urn:libris:shapes:institutional",
+      "release": "1.1",
+      "context": "snapshot"
+    }
+  ],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição"
+          },
+          "order": 0
+        }
+      ],
+      "fields": [
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título"
+          },
+          "value": {
+            "kind": "structured",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "required": true,
+            "repeatable": true,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "section": "description",
+            "required_in_form": true
+          }
+        },
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título"
+          },
+          "value": {
+            "kind": "structured",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "required": true,
+            "repeatable": true,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "section": "description",
+            "required_in_form": true
+          }
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Title",
+      "label": {
+        "pt": "Título"
+      },
+      "fields": [
+        {
+          "name": "mainTitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título principal"
+          },
+          "value": {
+            "kind": "text",
+            "language": {
+              "enabled": true,
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "required": true,
+            "repeatable": true
+          },
+          "presentation": {
+            "input": "text",
+            "required_in_form": true
+          }
+        }
+      ]
+    }
+  ]
+}

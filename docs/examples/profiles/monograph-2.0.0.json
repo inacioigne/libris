@@ -1,0 +1,93 @@
+{
+  "id": "urn:libris:profile:monograph",
+  "release_id": "urn:libris:profile:monograph:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "institutional",
+  "label": {
+    "pt": "Monografia — exemplo institucional"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "resource_types": [
+    "urn:libris:resource-type:monograph"
+  ],
+  "purpose": "cataloging",
+  "institution": "urn:libris:institution:example",
+  "priority": 10,
+  "replacement": null,
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "validation": [],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [],
+      "groups": [],
+      "fields": [
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Títulos principal e alternativos"
+          },
+          "description": {
+            "pt": "Ao menos um título não variante; um mainTitle por idioma em cada nó."
+          },
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title",
+              "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 5,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {
+              "pt": "Registrar um título não variante."
+            },
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [
+            {
+              "shape_id": "urn:libris:shapes:institutional",
+              "shape_release": "1.1",
+              "property_shape": null
+            }
+          ],
+          "overrides": true
+        }
+      ]
+    }
+  ]
+}

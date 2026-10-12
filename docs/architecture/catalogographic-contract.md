@@ -9,6 +9,10 @@ continuam pendentes. Estes artefatos não definem esquema bibliográfico definit
 Os [contratos públicos Pydantic](catalogographic-schemas.md) da M03.01.02
 representam os campos proprietários destes perfis, sem alterar o RDF canônico.
 
+A evolução configurável da #20 está em [perfis declarativos 2.0](catalog-profiles.md)
+e [ADR 0021](../decisions/0021-declarative-catalog-profiles.md), com adaptação explícita
+sem reescrever os artefatos descritos abaixo.
+
 ## Artefatos e compatibilidade
 
 - `apps/api/src/libris/modules/bibliographic/resources/monograph-v1.json` e `.ttl`

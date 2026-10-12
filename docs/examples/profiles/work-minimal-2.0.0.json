@@ -1,0 +1,233 @@
+{
+  "id": "urn:libris:profile:work-minimal",
+  "release_id": "urn:libris:profile:work-minimal:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "draft",
+  "category": "system",
+  "label": {
+    "pt": "Obra mínima"
+  },
+  "description": {
+    "pt": "Exemplo independente com título estruturado e idioma."
+  },
+  "applies_to": [
+    "Work"
+  ],
+  "resource_types": [],
+  "purpose": "cataloging",
+  "institution": null,
+  "priority": 0,
+  "replacement": null,
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "base_release": null,
+  "validation": [
+    {
+      "id": "urn:libris:shapes:institutional",
+      "release": "1.1",
+      "context": "snapshot"
+    }
+  ],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [
+        {
+          "id": "description",
+          "label": {
+            "pt": "Descrição"
+          },
+          "order": 0
+        }
+      ],
+      "groups": [],
+      "fields": [
+        {
+          "name": "title",
+          "property": "http://id.loc.gov/ontologies/bibframe/title",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título"
+          },
+          "description": {},
+          "value": {
+            "kind": "structured",
+            "node_kind": "BlankNodeOrIRI",
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Title"
+            ]
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "structured",
+            "order": 0,
+            "section": "description",
+            "group": null,
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        },
+        {
+          "name": "subject",
+          "property": "http://id.loc.gov/ontologies/bibframe/subject",
+          "namespace": "bf",
+          "label": {
+            "pt": "Assuntos controlados"
+          },
+          "description": {},
+          "value": {
+            "kind": "authority",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Subject"
+            ],
+            "target_classes": [
+              "http://www.w3.org/2004/02/skos/core#Concept"
+            ],
+            "vocabulary": null,
+            "authority": "urn:example:authority:subjects"
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 1,
+            "section": "description",
+            "group": null,
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        },
+        {
+          "name": "related",
+          "property": "http://id.loc.gov/ontologies/bibframe/relatedTo",
+          "namespace": "bf",
+          "label": {
+            "pt": "Obras relacionadas"
+          },
+          "description": {},
+          "value": {
+            "kind": "relationship",
+            "node_kind": "IRI",
+            "target_entities": [
+              "Work"
+            ],
+            "target_classes": [
+              "http://id.loc.gov/ontologies/bibframe/Work"
+            ],
+            "vocabulary": null,
+            "authority": null
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "reference",
+            "order": 2,
+            "section": "description",
+            "group": null,
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Title",
+      "entity": null,
+      "label": {
+        "pt": "Título"
+      },
+      "sections": [],
+      "groups": [],
+      "fields": [
+        {
+          "name": "mainTitle",
+          "property": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+          "namespace": "bf",
+          "label": {
+            "pt": "Título principal"
+          },
+          "description": {},
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": true,
+              "required": false,
+              "allowed": [],
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 1,
+            "max_count": null,
+            "repeatable": true,
+            "required": true,
+            "allowed_values": [],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "text",
+            "order": 0,
+            "section": null,
+            "group": null,
+            "visible": true,
+            "editable": true,
+            "required_in_form": true,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        }
+      ]
+    }
+  ]
+}

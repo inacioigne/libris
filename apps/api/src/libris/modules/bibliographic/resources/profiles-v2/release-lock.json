@@ -1,0 +1,11 @@
+{
+  "urn:libris:profile:agent:2.0.0": "86df9d9aefe4e5541325f3b87b1b6fbadb1892862e4532ae204e9abfc6e58efa",
+  "urn:libris:profile:core:2.0.0": "d03a33d55d844317b85ce29141fd558b2de13ef2d5d4de9ea45b7be9d0b431cc",
+  "urn:libris:profile:digital:2.0.0": "4bb0b23c887052683465becac5ba93670cd63f3968b360dc556315084675b4ce",
+  "urn:libris:profile:instance:2.0.0": "323a92bde1159862c2757e928619c9d349b1cdb8f02ca532283872c317007d0c",
+  "urn:libris:profile:item:2.0.0": "9865dcd2a2b44b17d13541c708e2db514c8073a37969dca8084b4f02dd6e16c5",
+  "urn:libris:profile:monograph:2.0.0": "170a4cf305cf7062ddeb9f9ee36527b25e0fca50f722b2cfec5cd340517c28d5",
+  "urn:libris:profile:serial:2.0.0": "34f75bde91fff17bdd071c8f19bd92de16da5a0a8503588d85eafc4ecfb7686b",
+  "urn:libris:profile:subject:2.0.0": "2d228e4e430efb41e077140cb1ea454648f297a6f7301944755fe4e8b6de0ac9",
+  "urn:libris:profile:work:2.0.0": "d68cc5ebc1a3f1f4ccce53e34b999d0fd021158ba7d05736b48466a4c8e91c75"
+}

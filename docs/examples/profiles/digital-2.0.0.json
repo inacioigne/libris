@@ -1,0 +1,156 @@
+{
+  "id": "urn:libris:profile:digital",
+  "release_id": "urn:libris:profile:digital:2.0.0",
+  "release": "2.0.0",
+  "bibliographic_contract": "1.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Recurso digital"
+  },
+  "description": {
+    "pt": "Configuração candidata sobre o contrato bibliográfico 1.0; não é ontologia."
+  },
+  "applies_to": [
+    "Work",
+    "Instance",
+    "Item"
+  ],
+  "resource_types": [
+    "urn:libris:resource-type:digital"
+  ],
+  "purpose": "cataloging",
+  "institution": "urn:libris:institution:example",
+  "priority": 10,
+  "replacement": null,
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "base_release": "urn:libris:profile:core:2.0.0",
+  "validation": [],
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "entity": "Instance",
+      "label": {
+        "pt": "Manifestação"
+      },
+      "sections": [],
+      "groups": [],
+      "fields": [
+        {
+          "name": "encoding_format",
+          "property": "https://schema.org/encodingFormat",
+          "namespace": "schema",
+          "label": {
+            "pt": "Formato digital"
+          },
+          "description": {},
+          "value": {
+            "kind": "text",
+            "node_kind": "Literal",
+            "language": {
+              "enabled": false,
+              "required": false,
+              "allowed": [],
+              "unique": false
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [
+              {
+                "kind": "literal",
+                "value": "application/pdf",
+                "language": null,
+                "datatype": null
+              },
+              {
+                "kind": "literal",
+                "value": "application/epub+zip",
+                "language": null,
+                "datatype": null
+              }
+            ],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "select",
+            "order": 20,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": [
+              {
+                "field": "carrier",
+                "operator": "present",
+                "value": null,
+                "effect": "visible"
+              }
+            ]
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        }
+      ]
+    },
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "sections": [],
+      "groups": [],
+      "fields": [
+        {
+          "name": "creation_date",
+          "property": "https://schema.org/dateCreated",
+          "namespace": "schema",
+          "label": {
+            "pt": "Data de criação"
+          },
+          "description": {},
+          "value": {
+            "kind": "typed",
+            "node_kind": "Literal",
+            "datatypes": [
+              "http://www.w3.org/2001/XMLSchema#date",
+              "http://www.w3.org/2001/XMLSchema#dateTime"
+            ]
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": null,
+            "repeatable": true,
+            "required": false,
+            "allowed_values": [],
+            "default": null,
+            "specializable": false
+          },
+          "presentation": {
+            "input": "date",
+            "order": 30,
+            "section": "description",
+            "group": "main",
+            "visible": true,
+            "editable": true,
+            "required_in_form": false,
+            "help": {},
+            "conditions": []
+          },
+          "derived": false,
+          "validation": [],
+          "overrides": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,962 @@
+{
+  "$defs": {
+    "CatalogPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "min_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Min Count",
+          "type": "integer"
+        },
+        "max_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Count"
+        },
+        "repeatable": {
+          "default": true,
+          "title": "Repeatable",
+          "type": "boolean"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "allowed_values": {
+          "default": [],
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "iri": "#/$defs/IRIDefault",
+                "literal": "#/$defs/LiteralDefault"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/LiteralDefault"
+              },
+              {
+                "$ref": "#/$defs/IRIDefault"
+              }
+            ]
+          },
+          "title": "Allowed Values",
+          "type": "array"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "iri": "#/$defs/IRIDefault",
+                  "literal": "#/$defs/LiteralDefault"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LiteralDefault"
+                },
+                {
+                  "$ref": "#/$defs/IRIDefault"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default"
+        },
+        "specializable": {
+          "default": false,
+          "title": "Specializable",
+          "type": "boolean"
+        }
+      },
+      "title": "CatalogPolicy",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "present",
+            "absent",
+            "equals"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "iri": "#/$defs/IRIDefault",
+                  "literal": "#/$defs/LiteralDefault"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LiteralDefault"
+                },
+                {
+                  "$ref": "#/$defs/IRIDefault"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "effect": {
+          "enum": [
+            "visible",
+            "editable",
+            "required"
+          ],
+          "title": "Effect",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "operator",
+        "effect"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "DeclarativeField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "property": {
+          "title": "Property",
+          "type": "string"
+        },
+        "namespace": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "label": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "description": {
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Description",
+          "type": "object"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "authority": "#/$defs/ReferenceValue",
+              "entity": "#/$defs/ReferenceValue",
+              "iri": "#/$defs/ReferenceValue",
+              "relationship": "#/$defs/ReferenceValue",
+              "structured": "#/$defs/StructuredValue",
+              "text": "#/$defs/TextValue",
+              "typed": "#/$defs/TypedValue",
+              "vocabulary": "#/$defs/ReferenceValue"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/TextValue"
+            },
+            {
+              "$ref": "#/$defs/TypedValue"
+            },
+            {
+              "$ref": "#/$defs/ReferenceValue"
+            },
+            {
+              "$ref": "#/$defs/StructuredValue"
+            }
+          ],
+          "title": "Value"
+        },
+        "policy": {
+          "$ref": "#/$defs/CatalogPolicy"
+        },
+        "presentation": {
+          "$ref": "#/$defs/Presentation"
+        },
+        "derived": {
+          "default": false,
+          "title": "Derived",
+          "type": "boolean"
+        },
+        "validation": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FieldConstraint"
+          },
+          "title": "Validation",
+          "type": "array"
+        },
+        "overrides": {
+          "default": false,
+          "title": "Overrides",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "property",
+        "namespace",
+        "label",
+        "value"
+      ],
+      "title": "DeclarativeField",
+      "type": "object"
+    },
+    "DeclarativeResource": {
+      "additionalProperties": false,
+      "properties": {
+        "rdf_class": {
+          "title": "Rdf Class",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EntityType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "label": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "sections": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Section"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "groups": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Group"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DeclarativeField"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rdf_class",
+        "label"
+      ],
+      "title": "DeclarativeResource",
+      "type": "object"
+    },
+    "EntityType": {
+      "enum": [
+        "Work",
+        "Instance",
+        "Item",
+        "Agent",
+        "Subject"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "FieldConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "shape_id": {
+          "title": "Shape Id",
+          "type": "string"
+        },
+        "shape_release": {
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Shape Release",
+          "type": "string"
+        },
+        "property_shape": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Shape"
+        }
+      },
+      "required": [
+        "shape_id",
+        "shape_release"
+      ],
+      "title": "FieldConstraint",
+      "type": "object"
+    },
+    "Group": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "order": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "section": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Section",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "section"
+      ],
+      "title": "Group",
+      "type": "object"
+    },
+    "IRIDefault": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "iri",
+          "title": "Kind",
+          "type": "string"
+        },
+        "iri": {
+          "title": "Iri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "iri"
+      ],
+      "title": "IRIDefault",
+      "type": "object"
+    },
+    "LanguagePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "allowed": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+            "type": "string"
+          },
+          "title": "Allowed",
+          "type": "array"
+        },
+        "unique": {
+          "default": false,
+          "title": "Unique",
+          "type": "boolean"
+        }
+      },
+      "title": "LanguagePolicy",
+      "type": "object"
+    },
+    "LiteralDefault": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "literal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "datatype": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datatype"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "LiteralDefault",
+      "type": "object"
+    },
+    "Presentation": {
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "default": "text",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "boolean",
+            "date",
+            "select",
+            "reference",
+            "structured"
+          ],
+          "title": "Input",
+          "type": "string"
+        },
+        "order": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "visible": {
+          "default": true,
+          "title": "Visible",
+          "type": "boolean"
+        },
+        "editable": {
+          "default": true,
+          "title": "Editable",
+          "type": "boolean"
+        },
+        "required_in_form": {
+          "default": false,
+          "title": "Required In Form",
+          "type": "boolean"
+        },
+        "help": {
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Help",
+          "type": "object"
+        },
+        "conditions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "title": "Conditions",
+          "type": "array"
+        }
+      },
+      "title": "Presentation",
+      "type": "object"
+    },
+    "ReferenceValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "iri",
+            "entity",
+            "authority",
+            "vocabulary",
+            "relationship"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "node_kind": {
+          "const": "IRI",
+          "default": "IRI",
+          "title": "Node Kind",
+          "type": "string"
+        },
+        "target_entities": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EntityType"
+          },
+          "title": "Target Entities",
+          "type": "array"
+        },
+        "target_classes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Classes",
+          "type": "array"
+        },
+        "vocabulary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vocabulary"
+        },
+        "authority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authority"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "ReferenceValue",
+      "type": "object"
+    },
+    "Section": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "order": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "Section",
+      "type": "object"
+    },
+    "ShapeReference": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "release": {
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Release",
+          "type": "string"
+        },
+        "context": {
+          "default": "snapshot",
+          "enum": [
+            "snapshot",
+            "composed"
+          ],
+          "title": "Context",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "release"
+      ],
+      "title": "ShapeReference",
+      "type": "object"
+    },
+    "StructuredValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "structured",
+          "title": "Kind",
+          "type": "string"
+        },
+        "node_kind": {
+          "const": "BlankNodeOrIRI",
+          "default": "BlankNodeOrIRI",
+          "title": "Node Kind",
+          "type": "string"
+        },
+        "target_classes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Classes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "target_classes"
+      ],
+      "title": "StructuredValue",
+      "type": "object"
+    },
+    "TextValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "node_kind": {
+          "const": "Literal",
+          "default": "Literal",
+          "title": "Node Kind",
+          "type": "string"
+        },
+        "language": {
+          "$ref": "#/$defs/LanguagePolicy"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "TextValue",
+      "type": "object"
+    },
+    "TypedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "typed",
+          "title": "Kind",
+          "type": "string"
+        },
+        "node_kind": {
+          "const": "Literal",
+          "default": "Literal",
+          "title": "Node Kind",
+          "type": "string"
+        },
+        "datatypes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Datatypes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "datatypes"
+      ],
+      "title": "TypedValue",
+      "type": "object"
+    }
+  },
+  "$id": "urn:libris:schema:resolved-profile:2.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "release_id": {
+      "title": "Release Id",
+      "type": "string"
+    },
+    "release": {
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+      "title": "Release",
+      "type": "string"
+    },
+    "bibliographic_contract": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Bibliographic Contract",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "candidate",
+        "published",
+        "deprecated"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "category": {
+      "enum": [
+        "system",
+        "institutional",
+        "specialization"
+      ],
+      "title": "Category",
+      "type": "string"
+    },
+    "label": {
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Label",
+      "type": "object"
+    },
+    "description": {
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Description",
+      "type": "object"
+    },
+    "applies_to": {
+      "items": {
+        "$ref": "#/$defs/EntityType"
+      },
+      "minItems": 1,
+      "title": "Applies To",
+      "type": "array"
+    },
+    "resource_types": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Resource Types",
+      "type": "array"
+    },
+    "purpose": {
+      "default": "cataloging",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+      "title": "Purpose",
+      "type": "string"
+    },
+    "institution": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Institution"
+    },
+    "priority": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Priority",
+      "type": "integer"
+    },
+    "replacement": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replacement"
+    },
+    "format": {
+      "const": "libris.resolved-profile",
+      "default": "libris.resolved-profile",
+      "title": "Format",
+      "type": "string"
+    },
+    "format_version": {
+      "const": "2.0",
+      "default": "2.0",
+      "title": "Format Version",
+      "type": "string"
+    },
+    "lineage": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Lineage",
+      "type": "array"
+    },
+    "validation": {
+      "items": {
+        "$ref": "#/$defs/ShapeReference"
+      },
+      "title": "Validation",
+      "type": "array"
+    },
+    "resources": {
+      "items": {
+        "$ref": "#/$defs/DeclarativeResource"
+      },
+      "title": "Resources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "release_id",
+    "release",
+    "status",
+    "category",
+    "label",
+    "description",
+    "applies_to",
+    "lineage",
+    "validation",
+    "resources"
+  ],
+  "title": "ResolvedProfile",
+  "type": "object"
+}
