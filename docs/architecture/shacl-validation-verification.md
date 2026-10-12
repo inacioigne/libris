@@ -137,3 +137,13 @@ não substitui homologação catalográfica, prova de identidade externa ou equi
 
 A aprovação final e homologação continuam humanas. A issue não foi fechada nem
 houve merge automático. Descrição do PR preparada para revisão e referenciando #21.
+
+## Publicação do Pull Request
+
+Implementação registrada na branch da tarefa, commit `6410a95` (código/testes).
+A publicação por `git push -u origin feat/21-shacl-validation` foi recusada pela
+revisão automática de aprovação: envio do conteúdo ao GitHub externo sem autorização
+explícita considerada suficiente pelo revisor. Nenhum código foi enviado e nenhum
+PR foi aberto. A [proposta completa do PR](shacl-validation-pr.md) está pronta para
+revisão local; publicar branch/abrir PR depende de autorização explícita do usuário.
+A issue permanece aberta. Não houve merge nem encerramento da issue.
