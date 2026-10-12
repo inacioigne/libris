@@ -1,0 +1,56 @@
+{
+  "conforms": false,
+  "context": "snapshot",
+  "contract_version": "1.0",
+  "issues": [
+    {
+      "category": "semantic",
+      "code": "shacl.min_count",
+      "constraint": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+      "field_ids": [
+        "http://id.loc.gov/ontologies/bibframe/Work/title"
+      ],
+      "focus_node": "urn:example:work",
+      "message": "Quantidade mínima de valores não satisfeita.",
+      "messages": [
+        "Títulos principal e alternativos: Ao menos um título não variante; um mainTitle por idioma em cada nó."
+      ],
+      "parameters": {
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
+      },
+      "path": {
+        "iri": "http://id.loc.gov/ontologies/bibframe/title",
+        "items": [],
+        "kind": "iri"
+      },
+      "severity": "Violation",
+      "source_shape": "_:sha256-73b28dbaebbfc8aa91e8fe4fcb7ec39c77455bcfde6d7c225295ae0771581da5"
+    },
+    {
+      "category": "semantic",
+      "code": "shacl.qualified_min_count",
+      "constraint": "http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent",
+      "field_ids": [
+        "http://id.loc.gov/ontologies/bibframe/Work/title"
+      ],
+      "focus_node": "urn:example:work",
+      "message": "Quantidade mínima de valores qualificados não satisfeita.",
+      "messages": [],
+      "parameters": {
+        "component": "http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent"
+      },
+      "path": {
+        "iri": "http://id.loc.gov/ontologies/bibframe/title",
+        "items": [],
+        "kind": "iri"
+      },
+      "severity": "Violation",
+      "source_shape": "_:sha256-e19222cd53784786b360930eb9d56987375c4892e1f22929fbdb1b417d4e9cd2"
+    }
+  ],
+  "profile_id": "urn:libris:profile:monograph:v1:1",
+  "profile_release": "urn:libris:profile:monograph:v1:1",
+  "profile_version": "1.1",
+  "request_id": "00000000-0000-4000-8000-000000000022",
+  "state": "completed"
+}

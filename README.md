@@ -60,6 +60,13 @@ Ver [inventário](docs/architecture/shacl-inventory.md),
 [ADR 0022](docs/decisions/0022-shacl-profile-policies.md) e
 [evidências](docs/architecture/shacl-validation-verification.md).
 
+A M03.02.03 implementa [diagnósticos e erros catalográficos 1.0](docs/architecture/catalogographic-errors.md):
+contratos Pydantic, códigos estáveis, adaptação SHACL/perfis, correlação por request ID
+e Problem Details na aplicação FastAPI. Rejeições persistentes carregam diagnósticos,
+preservando transações e perfis históricos. Ver [ADR 0023](docs/decisions/0023-catalogographic-diagnostics.md)
+e [verificação](docs/architecture/catalogographic-errors-verification.md).
+Pré-validação HTTP, ETags de edição e editor continuam futuros.
+
 ## Estrutura
 
 ```text

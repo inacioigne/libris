@@ -1,0 +1,35 @@
+{
+  "conforms": true,
+  "context": "composed",
+  "contract_version": "1.0",
+  "issues": [
+    {
+      "category": "semantic",
+      "code": "shacl.min_count",
+      "constraint": "http://www.w3.org/ns/shacl#MinCountConstraintComponent",
+      "field_ids": [
+        "http://id.loc.gov/ontologies/bibframe/Item/identifiedBy"
+      ],
+      "focus_node": "http://localhost:8000/resources/00000000-0000-4000-8000-000000000003",
+      "message": "Quantidade mínima de valores não satisfeita.",
+      "messages": [
+        "Recomenda-se um identificador bibliográfico para o Item."
+      ],
+      "parameters": {
+        "component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
+      },
+      "path": {
+        "iri": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+        "items": [],
+        "kind": "iri"
+      },
+      "severity": "Warning",
+      "source_shape": "_:sha256-800c173c835232460df420dd364de288c96f087995ed34157a152ab803bb255e"
+    }
+  ],
+  "profile_id": "urn:libris:profile:monograph:v1",
+  "profile_release": "urn:libris:profile:monograph:v1",
+  "profile_version": "1.0",
+  "request_id": "00000000-0000-4000-8000-000000000022",
+  "state": "completed"
+}

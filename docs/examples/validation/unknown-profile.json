@@ -1,0 +1,11 @@
+{
+  "code": "profile.unknown",
+  "contract_version": "1.0",
+  "detail": "Perfil ou release inexistente.",
+  "instance": "urn:uuid:00000000-0000-4000-8000-000000000022",
+  "issues": [],
+  "request_id": "00000000-0000-4000-8000-000000000022",
+  "status": 404,
+  "title": "Not Found",
+  "type": "urn:libris:problem:v1:profile.unknown"
+}

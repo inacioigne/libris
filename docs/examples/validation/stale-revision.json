@@ -1,0 +1,11 @@
+{
+  "code": "revision.stale",
+  "contract_version": "1.0",
+  "detail": "Precondição obsoleta; recarregue a representação.",
+  "instance": "urn:uuid:00000000-0000-4000-8000-000000000022",
+  "issues": [],
+  "request_id": "00000000-0000-4000-8000-000000000022",
+  "status": 412,
+  "title": "Precondition Failed",
+  "type": "urn:libris:problem:v1:revision.stale"
+}

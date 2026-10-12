@@ -1,0 +1,23 @@
+{
+  "code": "schema.invalid",
+  "contract_version": "1.0",
+  "detail": "Dados estruturalmente inválidos.",
+  "instance": "urn:uuid:00000000-0000-4000-8000-000000000022",
+  "issues": [
+    {
+      "category": "schema",
+      "code": "schema.required",
+      "field_ids": [
+        "/title"
+      ],
+      "message": "Campo obrigatório ausente.",
+      "messages": [],
+      "parameters": {},
+      "severity": "Violation"
+    }
+  ],
+  "request_id": "00000000-0000-4000-8000-000000000022",
+  "status": 422,
+  "title": "Unprocessable Content",
+  "type": "urn:libris:problem:v1:schema.invalid"
+}
