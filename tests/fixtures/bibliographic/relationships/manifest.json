@@ -1,0 +1,224 @@
+{
+  "version": "1.0",
+  "examples": [
+    {
+      "file": "valid/work-create.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/instance-create.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/item-create.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/work-instance-read.json",
+      "schema": "RelationshipRead",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/instance-items-read.json",
+      "schema": "RelationshipRead",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/work-agents.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/work-related.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/external-subject.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/unreconciled-agent.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/publication.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/work-replace.json",
+      "schema": "RelationshipReplace",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/patch-absent.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 2
+    },
+    {
+      "file": "valid/patch-empty.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 2
+    },
+    {
+      "file": "valid/patch-add.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 3
+    },
+    {
+      "file": "valid/patch-remove.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 1
+    },
+    {
+      "file": "valid/patch-replace.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 1
+    },
+    {
+      "file": "valid/patch-clear.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json",
+      "count": 0
+    },
+    {
+      "file": "invalid/wrong-target.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/missing-identity.json",
+      "schema": "EntityReference",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/bad-uri.json",
+      "schema": "EntityReference",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/bad-identifiers.json",
+      "schema": "EntityReference",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/unknown-predicate.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/duplicate.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/minimum.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/maximum.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/self.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/missing-role.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/direct-role.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/derived-write.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/wrong-origin.json",
+      "schema": "RelationshipCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/null.json",
+      "schema": "RelationshipUpdate",
+      "stage": "structure"
+    },
+    {
+      "file": "invalid/nonexistent.json",
+      "schema": "RelationshipCreate",
+      "stage": "integrity"
+    },
+    {
+      "file": "invalid/incompatible-identity.json",
+      "schema": "RelationshipCreate",
+      "stage": "integrity"
+    },
+    {
+      "file": "invalid/remove-absent.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json"
+    },
+    {
+      "file": "invalid/add-duplicate.json",
+      "schema": "RelationshipUpdate",
+      "stage": "update",
+      "current": "valid/work-create.json"
+    },
+    {
+      "file": "valid/resource-work-create.json",
+      "schema": "WorkCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/resource-instance-create.json",
+      "schema": "InstanceCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/resource-item-create.json",
+      "schema": "ItemCreate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/resource-work-read.json",
+      "schema": "WorkRead",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/resource-work-update.json",
+      "schema": "WorkUpdate",
+      "stage": "structure"
+    },
+    {
+      "file": "valid/resource-work-null.json",
+      "schema": "WorkUpdate",
+      "stage": "structure"
+    }
+  ]
+}

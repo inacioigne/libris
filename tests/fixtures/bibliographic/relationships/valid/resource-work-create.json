@@ -1,0 +1,40 @@
+{
+  "title": [
+    {
+      "main_title": [
+        {
+          "value": "Obra sintética vinculada"
+        }
+      ]
+    }
+  ],
+  "subject": [
+    {
+      "kind": "local",
+      "entity_type": "Subject",
+      "internal_id": "00000000-0000-4000-8000-000000000005",
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000005"
+    },
+    {
+      "kind": "local",
+      "entity_type": "Subject",
+      "internal_id": "00000000-0000-4000-8000-000000000008",
+      "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000008"
+    }
+  ],
+  "contribution": [
+    {
+      "agent": {
+        "kind": "local",
+        "entity_type": "Agent",
+        "internal_id": "00000000-0000-4000-8000-000000000004",
+        "uri": "https://catalog.example.invalid/resources/00000000-0000-4000-8000-000000000004"
+      },
+      "role": [
+        {
+          "uri": "http://id.loc.gov/vocabulary/relators/aut"
+        }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,8 @@ from .common import (
     PartialContract,
     ReadIdentity,
     ResourceReference,
+    SubjectReference,
+    WorkReference,
     WorkTitles,
     non_nullable_schema,
 )
@@ -20,10 +22,10 @@ class WorkCreate(Contract):
     language: list[ResourceReference] = Field(default_factory=list)
     content: list[ResourceReference] = Field(default_factory=list)
     contribution: list[Contribution] = Field(default_factory=list)
-    subject: list[ResourceReference] = Field(default_factory=list)
+    subject: list[SubjectReference] = Field(default_factory=list)
     classification: list[Classification] = Field(default_factory=list)
-    related_to: list[ResourceReference] = Field(default_factory=list)
-    translation_of: list[ResourceReference] = Field(default_factory=list)
+    related_to: list[WorkReference] = Field(default_factory=list)
+    translation_of: list[WorkReference] = Field(default_factory=list)
     note: list[Note] = Field(default_factory=list)
 
 
@@ -38,8 +40,8 @@ class WorkUpdate(PartialContract):
     language: list[ResourceReference] | None = None
     content: list[ResourceReference] | None = None
     contribution: list[Contribution] | None = None
-    subject: list[ResourceReference] | None = None
+    subject: list[SubjectReference] | None = None
     classification: list[Classification] | None = None
-    related_to: list[ResourceReference] | None = None
-    translation_of: list[ResourceReference] | None = None
+    related_to: list[WorkReference] | None = None
+    translation_of: list[WorkReference] | None = None
     note: list[Note] | None = None

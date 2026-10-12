@@ -23,3 +23,17 @@ __all__ = [
     "SubjectRead",
     "SubjectUpdate",
 ]
+
+from .relationships import (
+    RelationshipCreate,
+    RelationshipRead,
+    RelationshipReplace,
+    RelationshipUpdate,
+)
+
+__all__ += [
+    "RelationshipCreate",
+    "RelationshipRead",
+    "RelationshipReplace",
+    "RelationshipUpdate",
+]

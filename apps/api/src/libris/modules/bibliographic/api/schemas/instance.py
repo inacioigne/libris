@@ -13,12 +13,13 @@ from .common import (
     ReadIdentity,
     ResourceReference,
     Title,
+    WorkReference,
     non_nullable_schema,
 )
 
 
 class InstanceCreate(Contract):
-    instance_of: ResourceReference
+    instance_of: WorkReference
     title: list[Title] = Field(default_factory=list)
     edition_statement: list[LocalizedText] = Field(default_factory=list)
     provision_activity: list[Publication] = Field(default_factory=list)
@@ -35,9 +36,7 @@ class InstanceRead(InstanceCreate, ReadIdentity):
 class InstanceUpdate(PartialContract):
     required_fields = frozenset(["instance_of"])
 
-    instance_of: ResourceReference | None = Field(
-        default=None, json_schema_extra=non_nullable_schema
-    )
+    instance_of: WorkReference | None = Field(default=None, json_schema_extra=non_nullable_schema)
     title: list[Title] | None = None
     edition_statement: list[LocalizedText] | None = None
     provision_activity: list[Publication] | None = None
