@@ -1,0 +1,498 @@
+{
+  "$defs": {
+    "ControlledConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "kind": {
+          "const": "controlled_concept",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind"
+      ],
+      "title": "ControlledConcept",
+      "type": "object"
+    },
+    "EntityType": {
+      "enum": [
+        "Work",
+        "Instance",
+        "Item",
+        "Agent",
+        "Subject"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "EntityValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "entity_reference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EntityValue",
+      "type": "object"
+    },
+    "ExternalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "external",
+          "default": "external",
+          "title": "Kind",
+          "type": "string"
+        },
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "entity_type",
+        "uri"
+      ],
+      "title": "ExternalReference",
+      "type": "object"
+    },
+    "LiteralValue": {
+      "additionalProperties": false,
+      "description": "RDF lexical value: numeric/date lexicals remain strings, without coercion.",
+      "properties": {
+        "kind": {
+          "const": "literal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "datatype": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datatype"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "LiteralValue",
+      "type": "object"
+    },
+    "LocalConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "kind": {
+          "const": "local_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind",
+        "internal_id"
+      ],
+      "title": "LocalConcept",
+      "type": "object"
+    },
+    "LocalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local",
+          "default": "local",
+          "title": "Kind",
+          "type": "string"
+        },
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "internal_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internal Id"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "entity_type"
+      ],
+      "title": "LocalReference",
+      "type": "object"
+    },
+    "LocalizedText": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "LocalizedText",
+      "type": "object"
+    },
+    "UnreconciledReference": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unreconciled",
+          "default": "unreconciled",
+          "title": "Kind",
+          "type": "string"
+        },
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_type",
+        "label",
+        "namespace",
+        "key"
+      ],
+      "title": "UnreconciledReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Versioned operational envelope, not a bibliographic snapshot.",
+  "properties": {
+    "format": {
+      "const": "libris.catalog-value",
+      "default": "libris.catalog-value",
+      "title": "Format",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "value": {
+      "discriminator": {
+        "mapping": {
+          "controlled_concept": "#/$defs/ControlledConcept",
+          "entity_reference": "#/$defs/EntityValue",
+          "literal": "#/$defs/LiteralValue",
+          "local_concept": "#/$defs/LocalConcept"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LiteralValue"
+        },
+        {
+          "$ref": "#/$defs/ControlledConcept"
+        },
+        {
+          "$ref": "#/$defs/LocalConcept"
+        },
+        {
+          "$ref": "#/$defs/EntityValue"
+        }
+      ],
+      "title": "Value"
+    }
+  },
+  "required": [
+    "value"
+  ],
+  "title": "CatalogValueDocument",
+  "type": "object"
+}

@@ -1,0 +1,392 @@
+{
+  "$defs": {
+    "ControlledConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "kind": {
+          "const": "controlled_concept",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind"
+      ],
+      "title": "ControlledConcept",
+      "type": "object"
+    },
+    "LocalConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "kind": {
+          "const": "local_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind",
+        "internal_id"
+      ],
+      "title": "LocalConcept",
+      "type": "object"
+    },
+    "LocalizedText": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "LocalizedText",
+      "type": "object"
+    },
+    "ResolutionFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "enum": [
+            "temporary_failure",
+            "permanent_failure"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/ResolutionProvenance"
+        },
+        "reason": {
+          "enum": [
+            "unavailable",
+            "not_found",
+            "unsupported",
+            "access_denied"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "retry_after_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry After Seconds"
+        }
+      },
+      "required": [
+        "outcome",
+        "uri",
+        "provenance",
+        "reason"
+      ],
+      "title": "ResolutionFailure",
+      "type": "object"
+    },
+    "ResolutionProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Version"
+        }
+      },
+      "required": [
+        "provider",
+        "source",
+        "retrieved_at"
+      ],
+      "title": "ResolutionProvenance",
+      "type": "object"
+    },
+    "ResolutionSuccess": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "const": "success",
+          "title": "Outcome",
+          "type": "string"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/ResolutionProvenance"
+        },
+        "concept": {
+          "$ref": "#/$defs/ControlledConcept"
+        }
+      },
+      "required": [
+        "outcome",
+        "uri",
+        "provenance",
+        "concept"
+      ],
+      "title": "ResolutionSuccess",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "cataloged": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ControlledConcept"
+        },
+        {
+          "$ref": "#/$defs/LocalConcept"
+        }
+      ],
+      "title": "Cataloged"
+    },
+    "attempt": {
+      "discriminator": {
+        "mapping": {
+          "permanent_failure": "#/$defs/ResolutionFailure",
+          "success": "#/$defs/ResolutionSuccess",
+          "temporary_failure": "#/$defs/ResolutionFailure"
+        },
+        "propertyName": "outcome"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ResolutionSuccess"
+        },
+        {
+          "$ref": "#/$defs/ResolutionFailure"
+        }
+      ],
+      "title": "Attempt"
+    },
+    "previous_success": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResolutionSuccess"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "cataloged",
+    "attempt"
+  ],
+  "title": "EnrichedConcept",
+  "type": "object"
+}

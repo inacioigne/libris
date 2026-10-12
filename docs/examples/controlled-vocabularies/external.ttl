@@ -1,0 +1,4 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+
+<https://example.org/resources/00000000-0000-4000-8000-000000000001> bf:language <http://id.loc.gov/vocabulary/languages/por> .
+

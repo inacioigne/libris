@@ -1,0 +1,42 @@
+"""Trusted vocabulary membership evidence, independent of labels and URI prefixes."""
+
+from typing import Literal
+
+from pydantic import model_validator
+
+from .profile_contract import IRI, Contract, Version
+
+
+class VocabularyDefinition(Contract):
+    uri: IRI
+    release: Version
+    source: IRI
+    members: tuple[IRI, ...] = ()
+    complete: bool = False
+
+    @model_validator(mode="after")
+    def unique(self) -> "VocabularyDefinition":
+        if len(set(self.members)) != len(self.members):
+            raise ValueError("Conceito duplicado no vocabulário.")
+        return self
+
+
+class VocabularyRegistry(Contract):
+    """Caller-selected immutable evidence snapshot; absence in a partial set is unknown."""
+
+    contract_version: Literal["1.0"] = "1.0"
+    vocabularies: tuple[VocabularyDefinition, ...] = ()
+
+    @model_validator(mode="after")
+    def unique(self) -> "VocabularyRegistry":
+        if len({entry.uri for entry in self.vocabularies}) != len(self.vocabularies):
+            raise ValueError("Selecione uma única release por vocabulário.")
+        return self
+
+    def membership(self, uri: str, vocabulary: str) -> bool | None:
+        entry = next((entry for entry in self.vocabularies if entry.uri == vocabulary), None)
+        if entry is None:
+            return None
+        if uri in entry.members:
+            return True
+        return False if entry.complete else None

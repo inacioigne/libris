@@ -1,0 +1,62 @@
+{
+  "$defs": {
+    "VocabularyDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "release": {
+          "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Release",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "members": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Members",
+          "type": "array"
+        },
+        "complete": {
+          "default": false,
+          "title": "Complete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uri",
+        "release",
+        "source"
+      ],
+      "title": "VocabularyDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Caller-selected immutable evidence snapshot; absence in a partial set is unknown.",
+  "properties": {
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "vocabularies": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/VocabularyDefinition"
+      },
+      "title": "Vocabularies",
+      "type": "array"
+    }
+  },
+  "title": "VocabularyRegistry",
+  "type": "object"
+}

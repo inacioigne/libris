@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "description": "Defaults for future bounded caches, not an implemented store.",
+  "properties": {
+    "success_ttl_seconds": {
+      "default": 86400,
+      "minimum": 0,
+      "title": "Success Ttl Seconds",
+      "type": "integer"
+    },
+    "negative_ttl_seconds": {
+      "default": 300,
+      "minimum": 0,
+      "title": "Negative Ttl Seconds",
+      "type": "integer"
+    },
+    "temporary_retry_seconds": {
+      "default": 60,
+      "minimum": 0,
+      "title": "Temporary Retry Seconds",
+      "type": "integer"
+    },
+    "stale_if_unavailable_seconds": {
+      "default": 604800,
+      "minimum": 0,
+      "title": "Stale If Unavailable Seconds",
+      "type": "integer"
+    },
+    "label_update": {
+      "const": "explicit_revision",
+      "default": "explicit_revision",
+      "title": "Label Update",
+      "type": "string"
+    }
+  },
+  "title": "ResolutionCachePolicy",
+  "type": "object"
+}

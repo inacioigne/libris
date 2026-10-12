@@ -1,0 +1,13 @@
+{
+  "format": "libris.catalog-value",
+  "contract_version": "1.0",
+  "value": {
+    "kind": "controlled_concept",
+    "uri": "http://id.loc.gov/vocabulary/languages/por",
+    "vocabulary": "http://id.loc.gov/vocabulary/languages/",
+    "label": [{"value": "Português", "language": "pt"}, {"value": "Portuguese", "language": "en"}],
+    "alternative_labels": [{"value": "Língua portuguesa", "language": "pt"}],
+    "notation": "por",
+    "status": "unverified"
+  }
+}

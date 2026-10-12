@@ -67,6 +67,13 @@ preservando transações e perfis históricos. Ver [ADR 0023](docs/decisions/002
 e [verificação](docs/architecture/catalogographic-errors-verification.md).
 Pré-validação HTTP, ETags de edição e editor continuam futuros.
 
+A M03.03.01 acrescenta o [contrato de valores controlados e vocabulários](docs/architecture/controlled-vocabularies.md):
+valores discriminados 1.0, conceitos locais/externos, evidência de pertença, estados,
+provedores desacoplados e política de cache, com exemplos RDF/JSON-LD verificáveis.
+Ver [ADR 0024](docs/decisions/0024-controlled-vocabularies.md) e
+[verificação](docs/architecture/controlled-vocabularies-verification.md).
+Não há conectores remotos, cache persistente ou adoção automática nos DTOs históricos.
+
 ## Estrutura
 
 ```text

@@ -29,6 +29,37 @@ ReferenceMapping = Mapping[UUID | str, ResolvedEntity]
 READ_TYPES = (WorkRead, InstanceRead, ItemRead, AgentRead, SubjectRead)
 
 
+def reference_to_uri(
+    value: CompatibleReference, *, references: ReferenceMapping | None = None
+) -> URIRef:
+    if isinstance(value, UnreconciledReference):
+        raise RdfDocumentError("Referência não reconciliada não é publicável.")
+    if isinstance(value, LocalReference):
+        if value.internal_id is not None or references is not None:
+            candidates = [
+                references[key]
+                for key in (value.internal_id, value.uri)
+                if key is not None and references is not None and key in references
+            ]
+            if not candidates or any(entity != candidates[0] for entity in candidates):
+                raise RdfDocumentError("Referência local sem resolução consistente.")
+            entity = candidates[0]
+            if (
+                value.entity_type != entity.entity_type
+                or (
+                    value.internal_id is not None
+                    and value.internal_id != entity.identity.internal_id
+                )
+                or (value.uri is not None and value.uri != entity.identity.uri)
+            ):
+                raise RdfDocumentError("Identidade local incompatível com o resolvedor.")
+            return URIRef(entity.identity.uri)
+        if value.uri is None:
+            raise RdfDocumentError("Referência local sem URI armazenada.")
+    assert value.uri is not None
+    return URIRef(value.uri)
+
+
 def resource_to_graph(
     resource: ResourceRead, *, references: ReferenceMapping | None = None
 ) -> Graph:
@@ -60,32 +91,7 @@ def resource_to_graph(
     )
 
     def reference(value: CompatibleReference) -> URIRef:
-        if isinstance(value, UnreconciledReference):
-            raise RdfDocumentError("Referência não reconciliada não é publicável.")
-        if isinstance(value, LocalReference):
-            if value.internal_id is not None or references is not None:
-                candidates = [
-                    references[key]
-                    for key in (value.internal_id, value.uri)
-                    if key is not None and references is not None and key in references
-                ]
-                if not candidates or any(entity != candidates[0] for entity in candidates):
-                    raise RdfDocumentError("Referência local sem resolução consistente.")
-                entity = candidates[0]
-                if (
-                    value.entity_type != entity.entity_type
-                    or (
-                        value.internal_id is not None
-                        and value.internal_id != entity.identity.internal_id
-                    )
-                    or (value.uri is not None and value.uri != entity.identity.uri)
-                ):
-                    raise RdfDocumentError("Identidade local incompatível com o resolvedor.")
-                return URIRef(entity.identity.uri)
-            if value.uri is None:
-                raise RdfDocumentError("Referência local sem URI armazenada.")
-        assert value.uri is not None
-        return URIRef(value.uri)
+        return reference_to_uri(value, references=references)
 
     def refs(
         node: URIRef | BNode, predicate: URIRef, values: Iterable[CompatibleReference]

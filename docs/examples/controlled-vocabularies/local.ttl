@@ -1,0 +1,9 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.org/resources/00000000-0000-4000-8000-000000000002> a skos:Concept ;
+    skos:altLabel "Acervo amazônico"@pt ;
+    skos:inScheme <https://example.org/vocabularies/collections> ;
+    skos:notation "AMZ" ;
+    skos:prefLabel "Amazon collection"@en,
+        "Coleção amazônica"@pt .
+

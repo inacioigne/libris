@@ -1,0 +1,15 @@
+{
+  "format": "libris.catalog-value",
+  "contract_version": "1.0",
+  "value": {
+    "kind": "local_concept",
+    "internal_id": "00000000-0000-4000-8000-000000000002",
+    "uri": "https://example.org/resources/00000000-0000-4000-8000-000000000002",
+    "vocabulary": "https://example.org/vocabularies/collections",
+    "label": [{"value": "Coleção amazônica", "language": "pt"}, {"value": "Amazon collection", "language": "en"}],
+    "alternative_labels": [{"value": "Acervo amazônico", "language": "pt"}],
+    "notation": "AMZ",
+    "source": "urn:libris:institution:example",
+    "status": "resolved"
+  }
+}
