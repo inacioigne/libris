@@ -142,8 +142,9 @@ Conditions são declarativas: field do mesmo recurso, operator=present/absent/eq
 effect=visible/editable/required; somente equals recebe value discriminado e válido
 para a dependência. Dependências ausentes, autorreferências e ciclos são rejeitados.
 Não há expressões, eval, JavaScript ou chamadas externas. São instruções para o
-formulário futuro, não constraints SHACL condicionais. A #21 definirá validação RDF
-quando uma regra de catalogação precisar de equivalente semântico.
+formulário futuro, não constraints SHACL condicionais. A
+[validação SHACL da #21](shacl-validation.md) aplica políticas catalográficas
+expressíveis; condições de apresentação continuam separadas.
 
 ## Composição e seleção determinísticas
 
@@ -282,12 +283,13 @@ fora do formulário, classe desconhecida ou caminho complexo mantém field_ids=[
 erro em nível de registro. Não descartar o erro nem associar por rótulo aproximado.
 Warnings/Info continuam reportados sem bloqueio; Violation bloqueia a conformidade.
 
-Limite deliberado: min_count/enum/condições adicionais de especializações **não são
-compilados em SHACL nem automaticamente aplicados ao RDF pelo adaptador**. Ele
-executa somente a release SHACL declarada. A #21 deve conferir correspondência de
-políticas e shapes, completar constraints e diagnóstico (sourceShape/value etc.);
-a #22 define o envelope/códigos HTTP finais. Nenhum novo perfil v2 foi integrado
-à escrita persistente do BibliographicService nesta etapa.
+A #21 acrescenta [constraints suplementares determinísticas](shacl-validation.md)
+para min/max, tipos, datatypes, idiomas e enums do contrato 2.0, usando o mesmo
+pySHACL. Presentation/conditions/default continuam sem efeito automático no RDF.
+Configurações contraditórias com fontes locais são rejeitadas; shapes históricas e
+chamadas validate_profile permanecem intactas. Ver ADR 0022 para justificativa,
+limites e rastreabilidade. A #22 define o envelope/códigos HTTP finais. Nenhum
+perfil v2 foi integrado à escrita persistente do BibliographicService.
 
 ## Evolução e compatibilidade
 
@@ -381,7 +383,8 @@ do schema antigo, round-trips e hashes de releases históricas. Na raiz,
 usar o ambiente sincronizado .venv/bin; resultados/limites reais estão no
 [relatório de verificação](catalog-profiles-verification.md).
 
-#21: correspondência policy/SHACL e diagnóstico completo; #22: respostas/erros;
+[#21](shacl-validation.md): correspondência policy/SHACL e diagnóstico completo implementados;
+#22: respostas/erros;
 #24: vocabulários/autoridades/pertinência e políticas de valores; #25: extensão de
 ontologias/componentes novos; #27: estados de **registros**, diferentes dos perfis;
 #30: ampliar/reutilizar corpus; #31: consolidar documentação/versionamento.

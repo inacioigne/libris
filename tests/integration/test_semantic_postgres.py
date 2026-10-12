@@ -23,6 +23,7 @@ from libris.modules.bibliographic.infrastructure.persistence import (
     SemanticRevision,
 )
 from libris.modules.bibliographic.infrastructure.rdf import (
+    BF,
     new_graph,
     parse_document,
 )
@@ -77,7 +78,15 @@ async def exercise_postgres(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
         invalid = new_graph()
         with pytest.raises(ValueError):
             await service.revise(identity.internal_id, 2, invalid, provenance)
+        # A real SHACL violation (root remains valid) also rolls back the CAS.
+        invalid_title = new_graph()
+        for triple in graph:
+            if triple[1] != BF.mainTitle:
+                invalid_title.add(triple)
+        with pytest.raises(ValueError, match="conforme"):
+            await service.revise(identity.internal_id, 2, invalid_title, provenance)
         current, _ = await service.read(identity.internal_id)
+        assert current.profile == revision.profile
         assert current.number == 2  # failed validation rolls back the CAS update
         results = await asyncio.gather(
             service.revise(identity.internal_id, 2, graph, provenance),

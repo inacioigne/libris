@@ -120,6 +120,26 @@
       "file": "invalid-only-variant-title.ttl",
       "scenario": "only-variant-title",
       "valid": false
+    },
+    {
+      "file": "snapshot-external-work.ttl",
+      "scenario": "snapshot-external-work",
+      "valid": true
+    },
+    {
+      "file": "snapshot-local-work.ttl",
+      "scenario": "snapshot-local-work",
+      "valid": true
+    },
+    {
+      "file": "external-property.ttl",
+      "scenario": "external-property",
+      "valid": true
+    },
+    {
+      "file": "invalid-subject-without-scheme.ttl",
+      "scenario": "invalid-subject-without-scheme",
+      "valid": false
     }
   ]
 }

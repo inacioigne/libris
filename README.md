@@ -53,6 +53,13 @@ Ver [ADR 0021](docs/decisions/0021-declarative-catalog-profiles.md),
 [exemplos](docs/examples/profiles/) e [verificação](docs/architecture/catalog-profiles-verification.md).
 O contrato prepara formulários futuros; não acrescenta CRUD, editor ou tabelas.
 
+A M03.02.02 consolida a [validação SHACL](docs/architecture/shacl-validation.md):
+registro local por release/contexto, diagnóstico RDF completo, distinção de falhas e
+políticas suplementares para perfis 2.0, preservando as fontes históricas.
+Ver [inventário](docs/architecture/shacl-inventory.md),
+[ADR 0022](docs/decisions/0022-shacl-profile-policies.md) e
+[evidências](docs/architecture/shacl-validation-verification.md).
+
 ## Estrutura
 
 ```text
