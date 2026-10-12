@@ -9,6 +9,7 @@ from .common import (
     ReadIdentity,
     RequiredReferences,
     ResourceReference,
+    SubjectReference,
     UniqueTexts,
     disjoint_labels,
     non_nullable_schema,
@@ -19,8 +20,8 @@ class SubjectCreate(Contract):
     preferred_label: UniqueTexts
     alternative_label: list[LocalizedText] = Field(default_factory=list)
     scheme: RequiredReferences
-    broader: list[ResourceReference] = Field(default_factory=list)
-    related: list[ResourceReference] = Field(default_factory=list)
+    broader: list[SubjectReference] = Field(default_factory=list)
+    related: list[SubjectReference] = Field(default_factory=list)
     external_reference: list[ResourceReference] = Field(default_factory=list)
     provenance: list[ResourceReference] = Field(default_factory=list)
 
@@ -40,8 +41,8 @@ class SubjectUpdate(PartialContract):
     preferred_label: UniqueTexts | None = Field(default=None, json_schema_extra=non_nullable_schema)
     alternative_label: list[LocalizedText] | None = None
     scheme: RequiredReferences | None = Field(default=None, json_schema_extra=non_nullable_schema)
-    broader: list[ResourceReference] | None = None
-    related: list[ResourceReference] | None = None
+    broader: list[SubjectReference] | None = None
+    related: list[SubjectReference] | None = None
     external_reference: list[ResourceReference] | None = None
     provenance: list[ResourceReference] | None = None
 

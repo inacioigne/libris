@@ -10,6 +10,7 @@ from pydantic.config import JsonDict
 
 from libris.modules.bibliographic.domain.models import ResourceIdentity
 from libris.modules.bibliographic.domain.profiles import absolute_iri
+from libris.modules.bibliographic.domain.relationships import EntityType
 
 
 def validate_iri(value: str) -> str:
@@ -81,6 +82,86 @@ class ResourceReference(Contract):
     uri: IRI
 
 
+class LocalReference(Contract):
+    kind: Literal["local"] = "local"
+    entity_type: EntityType
+    internal_id: UUID | None = None
+    uri: ResourceURI | None = None
+
+    @model_validator(mode="after")
+    def require_identity(self) -> "LocalReference":
+        if self.internal_id is None and self.uri is None:
+            raise ValueError("Referência local exige UUID e/ou URI armazenada.")
+        return self
+
+
+class ExternalReference(Contract):
+    kind: Literal["external"] = "external"
+    entity_type: EntityType
+    uri: IRI
+    namespace: IRI | None = None
+    external_id: Text | None = None
+
+    @model_validator(mode="after")
+    def require_namespace(self) -> "ExternalReference":
+        if self.external_id is not None and self.namespace is None:
+            raise ValueError("Identificador externo exige namespace.")
+        return self
+
+
+class UnreconciledReference(Contract):
+    kind: Literal["unreconciled"] = "unreconciled"
+    entity_type: EntityType
+    label: Text
+    namespace: IRI
+    key: Text
+
+    @model_validator(mode="after")
+    def non_blank(self) -> "UnreconciledReference":
+        if not self.label.strip() or not self.key.strip():
+            raise ValueError("Referência provisória exige rótulo e chave não vazios.")
+        return self
+
+
+EntityReference = Annotated[
+    LocalReference | ExternalReference | UnreconciledReference, Field(discriminator="kind")
+]
+# URI-only payloads from M03.01.02 remain accepted, without guessing locality.
+CompatibleReference = ResourceReference | EntityReference
+
+
+def expect_entity(value: CompatibleReference, expected: EntityType) -> CompatibleReference:
+    if not isinstance(value, ResourceReference) and value.entity_type != expected:
+        raise ValueError("Tipo de entidade incompatível com a propriedade.")
+    return value
+
+
+WorkReference = Annotated[
+    CompatibleReference, AfterValidator(lambda value: expect_entity(value, EntityType.WORK))
+]
+InstanceReference = Annotated[
+    CompatibleReference, AfterValidator(lambda value: expect_entity(value, EntityType.INSTANCE))
+]
+AgentReference = Annotated[
+    CompatibleReference, AfterValidator(lambda value: expect_entity(value, EntityType.AGENT))
+]
+SubjectReference = Annotated[
+    CompatibleReference, AfterValidator(lambda value: expect_entity(value, EntityType.SUBJECT))
+]
+
+
+def expect_authority(value: CompatibleReference) -> CompatibleReference:
+    if not isinstance(value, ResourceReference) and value.entity_type not in {
+        EntityType.AGENT,
+        EntityType.SUBJECT,
+    }:
+        raise ValueError("Autoridade relacionada exige Agent ou Subject.")
+    return value
+
+
+AuthorityReference = Annotated[CompatibleReference, AfterValidator(expect_authority)]
+
+
 class LocalizedText(Contract):
     value: Text
     language: LanguageTag | None = None
@@ -114,7 +195,7 @@ WorkTitles = Annotated[list[Title], Field(min_length=1), AfterValidator(primary_
 
 
 class Contribution(Contract):
-    agent: ResourceReference
+    agent: AgentReference
     role: RequiredReferences
 
 
@@ -147,7 +228,7 @@ class PublicationDate(Contract):
 
 
 class Publication(Contract):
-    agent: list[ResourceReference] = Field(default_factory=list)
+    agent: list[AgentReference] = Field(default_factory=list)
     place: list[ResourceReference] = Field(default_factory=list)
     date: list[PublicationDate] = Field(default_factory=list)
 
