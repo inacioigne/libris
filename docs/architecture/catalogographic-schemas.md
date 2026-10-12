@@ -1,17 +1,5 @@
 # Contratos públicos Pydantic — M03.01.02
 
-A estratégia consolidada de UUID/URI, validação de referências e identificadores
-externos está em [identificadores persistentes](persistent-identifiers.md).
-As descrições abaixo sobre limites iniciais de URI-only registram a M03.01.02;
-o complemento #16 e o ADR 0019 preservam essa forma e acrescentam referências tipadas.
-
-Evolução M03.01.03: os campos entre entidades agora também aceitam referências
-tipadas locais, externas e não reconciliadas, preservando URI-only. Regras de
-vínculos, operações e resolução estão no [contrato de relacionamentos](relationships.md)
-e no [ADR 0018](../decisions/0018-bibliographic-relationships.md). As seções abaixo
-descrevem a entrega original; suas pendências de referências foram aprofundadas
-nessa evolução. A política dos Update de recursos continua a do ADR 0017.
-
 Implementação técnica sobre `monograph-v1.1` e `authority-v1`, candidatos locais
 já existentes da M03.01.01. A homologação institucional permanece pendente.
 Os DTOs não substituem RDFLib Graph como modelo semântico canônico nem SHACL
