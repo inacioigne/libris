@@ -186,7 +186,7 @@ até expiração/revogação segundo política do provedor; logout local não os
 
 ## Roteiro Keycloak real e validação manual
 
-Reutilizar [overlay e roteiro isolado M04.02](identity-keycloak-local.md).
+Reutilizar [Compose e roteiro isolado M04.02](identity-keycloak-local.md).
 Não reaproveitar contas/volumes/bancos de trabalho para testes.
 Prepare projeto Compose novo e arquivo .env privado, credenciais aleatórias e
 portas livres; issuer registrado precisa ser idêntico em browser, web e API.
@@ -221,7 +221,7 @@ política do host; a M04.02 documenta a diferença ::1/publicação 127.0.0.1.
 
 Esse roteiro por si só não comprova execução. O [relatório](identity-web-verification.md)
 registra ensaio real automatizado em origem/portas isoladas e distingue as
-validações restantes do navegador e do overlay canônico.
+validações restantes do navegador e do Compose canônico.
 
 ## Testes reproduzíveis
 
@@ -284,4 +284,4 @@ e não comprova comportamento de browser real.
 Startup inicial Keycloak pode demorar mais de um minuto; aguardar descoberta antes
 de executar. Toda repetição exige **novo banco vazio**, sem reset de base existente.
 Após testes, parar somente os containers efêmeros criados; não usar down -v/prune.
-A origem de teste alternativa não substitui a configuração canônica do overlay.
+A origem de teste alternativa não substitui a configuração canônica do Compose.

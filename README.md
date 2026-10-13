@@ -148,6 +148,7 @@ o conjunto; ajuste conforme o ambiente.
 ```bash
 cp .env.example .env
 # Edite .env: escolha uma senha local e atualize DATABASE_URL com a mesma senha.
+# Defina também KEYCLOAK_ADMIN_USERNAME e KEYCLOAK_ADMIN_PASSWORD.
 docker compose config --quiet
 docker compose up --build -d
 docker compose ps
@@ -161,9 +162,14 @@ Acesse:
 - OpenAPI: http://localhost:8000/docs
 - Elasticsearch: http://localhost:9200
 - PostgreSQL: localhost:5432
+- Keycloak: http://keycloak.localhost:8081/admin
 
-As portas podem ser alteradas no `.env`. Ajuste `CORS_ORIGINS` se mudar a porta
-do frontend. Dentro do Compose use hosts `postgres`, `elasticsearch` e `api`,
+O `docker-compose.yml` reúne os cinco serviços, com OIDC habilitado por padrão.
+Host/navegador precisam resolver `keycloak.localhost` em `127.0.0.1`; consulte o
+[roteiro Keycloak](docs/architecture/identity-keycloak-local.md).
+
+As portas de PostgreSQL, Elasticsearch, API e web podem ser alteradas no `.env`.
+Ajuste `CORS_ORIGINS` se mudar a porta do frontend. Dentro do Compose use hosts `postgres`, `elasticsearch` e `api`,
 independentemente das portas publicadas. `API_INTERNAL_URL` é usado pelo BFF para consultar /api/v1/identity/me
 com Bearer server-side. Configure as variáveis WEB_* e aplique a migração web
 explicitamente conforme [identidade web](docs/architecture/identity-web.md).

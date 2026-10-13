@@ -50,9 +50,9 @@ path.write_text(
 )
 PY
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml config --quiet
+  -f docker-compose.yml config --quiet
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml up --build -d
+  -f docker-compose.yml up --build -d
 ```
 
 `--env-file` seleciona a configuração privada; variáveis já exportadas no terminal
@@ -65,7 +65,7 @@ não redefine senhas de uma instância persistida.
 
 O issuer único é `http://keycloak.localhost:8081/realms/libris`, audience `libris-api`.
 Docker resolve `keycloak.localhost` pelo alias de rede para Keycloak, na porta 8081.
-No host, o overlay publica **somente IPv4 127.0.0.1**. Verifique:
+No host, o Compose publica **somente IPv4 127.0.0.1**. Verifique:
 
 ```bash
 getent hosts keycloak.localhost
@@ -121,7 +121,7 @@ set -a
 source "$OIDC_TEST_ENV"
 set +a
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml run --rm --no-deps -T \
+  -f docker-compose.yml run --rm --no-deps -T \
   -e KEYCLOAK_ADMIN_USERNAME -e KEYCLOAK_ADMIN_PASSWORD \
   -e TEST_KEYCLOAK_ISOLATED=1 -e TEST_KEYCLOAK_API_URL=http://api:8000 \
   -v "$PWD/tests:/tests:ro" api python /tests/integration/keycloak_harness.py
@@ -131,7 +131,7 @@ Para executar também os testes de PKCE/state e o gate pytest opcional:
 
 ```bash
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml run --rm --no-deps -T --user root \
+  -f docker-compose.yml run --rm --no-deps -T --user root \
   -e KEYCLOAK_ADMIN_USERNAME -e KEYCLOAK_ADMIN_PASSWORD \
   -e TEST_KEYCLOAK_ENABLED=1 -e TEST_KEYCLOAK_ISOLATED=1 \
   -e TEST_KEYCLOAK_API_URL=http://api:8000 \
@@ -207,10 +207,10 @@ o projeto criado para a verificação:
 
 ```bash
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml stop
+  -f docker-compose.yml stop
 # Opcional: remover só containers/rede do projeto, preservando seus volumes:
 docker compose --env-file "$OIDC_TEST_ENV" -p "$OIDC_TEST_PROJECT" \
-  -f docker-compose.yml -f docker-compose.oidc.yml down
+  -f docker-compose.yml down
 unset KEYCLOAK_ADMIN_PASSWORD KEYCLOAK_ADMIN_USERNAME POSTGRES_PASSWORD DATABASE_URL
 ```
 

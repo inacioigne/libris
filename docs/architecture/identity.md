@@ -8,7 +8,7 @@ sessão compartilhada, refresh e logout; a API mantém seu contrato. Decisão: [
 ## Configuração
 
 Pydantic Settings lê ambiente e `.env` conforme o restante da API. Nenhuma variável
-OIDC é NEXT_PUBLIC. O overlay Docker já propaga a configuração para a API.
+OIDC é NEXT_PUBLIC. O Compose Docker já propaga a configuração para a API.
 
 | Variável | Default | Significado |
 | --- | --- | --- |
@@ -146,20 +146,20 @@ export KEYCLOAK_ADMIN_USERNAME='seu-admin-local'
 read -rsp 'Senha administrativa local: ' KEYCLOAK_ADMIN_PASSWORD
 export KEYCLOAK_ADMIN_PASSWORD
 # Não imprimir a variável.
-docker compose -f docker-compose.yml -f docker-compose.oidc.yml config --quiet
-docker compose -f docker-compose.yml -f docker-compose.oidc.yml up --build -d
+docker compose -f docker-compose.yml config --quiet
+docker compose -f docker-compose.yml up --build -d
 ```
 
 Browser/host precisam resolver keycloak.localhost em 127.0.0.1; se o sistema não
 resolver nomes .localhost, adicionar `127.0.0.1 keycloak.localhost` ao /etc/hosts.
 Docker usa alias de rede keycloak.localhost e mesma porta interna/externa 8081.
-KC_HOSTNAME fixa a URL pública; o overlay define exatamente o mesmo emissor na API.
+KC_HOSTNAME fixa a URL pública; o Compose define exatamente o mesmo emissor na API.
 Fora do Docker, definir OIDC_ENABLED=true e esse OIDC_ISSUER_URL no ambiente/.env.
 Não substituir o emissor por localhost/keycloak nem desabilitar a comparação de iss.
 
 Admin console: http://keycloak.localhost:8081/admin. Criar usuário local no realm
 libris, definir senha no provedor e atribuir client roles de libris-api. O volume
-opcional preserva o realm; import não sobrescreve realm existente, portanto mudanças
+Keycloak preserva o realm; import não sobrescreve realm existente, portanto mudanças
 no JSON exigem atualização pelo administrador. Produção precisa configuração própria.
 
 Para validar Code + PKCE sem implementar sessão Next.js, use o
