@@ -9,8 +9,21 @@ import { createPool, PostgresAuthStore } from "./store";
 let service: AuthService | undefined;
 export function authService(): AuthService {
   if (!service) {
+
+    // console.log("[AUTH] Iniciando AuthService...");
+    // try {
+    //   const config = readConfig();
+    // } catch (error) {
+    //   console.error("[AUTH] Erro ao ler configurações:", error);
+    //   throw error;
+    // }
+    
     const config = readConfig();
-    service = new AuthService(config, new PostgresAuthStore(createPool(config), config), new OpenIdProvider(config));
+    service = new AuthService(
+      config,
+      new PostgresAuthStore(createPool(config), config),
+      new OpenIdProvider(config),
+    );
   }
   return service;
 }
