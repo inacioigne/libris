@@ -186,6 +186,14 @@ manual não adiciona callback ou fluxo de refresh à aplicação.
 
 ## Verificações
 
+A [baseline M04.01](security-baseline.md), a
+[matriz de acesso](security-access-matrix.md), o
+[modelo de ameaças](security-threat-model.md) e os
+[critérios de saída M04](security-m04-exit-criteria.md) consolidam os controles
+atuais e as dependências futuras. Resultados da execução de 2026-10-13 estão na
+[verificação M04.01](security-m04-01-verification.md); o relatório da Entrega A
+abaixo permanece evidência histórica.
+
 ```bash
 cd apps/api
 uv sync --locked

@@ -131,6 +131,10 @@ Leia [visão arquitetural](docs/architecture/overview.md),
 [modelo bibliográfico](docs/architecture/bibliographic-model.md) e
 [ADRs](docs/decisions/) antes de implementar módulos.
 
+A [baseline de segurança M04.01](docs/architecture/security-baseline.md) reúne
+o inventário OIDC, a matriz de acesso, as ameaças e os critérios de saída M04,
+distinguindo serviços internos, requisitos futuros e validação operacional pendente.
+
 ## Executar com Docker
 
 Requisitos: Docker Engine com Compose, acesso ao daemon e conexão para baixar

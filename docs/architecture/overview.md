@@ -66,6 +66,12 @@ rotas de negócio futuras terão prefixo `/api/v1`. `/health` fica independente.
 
 ## Operação, segurança e qualidade
 
+A [baseline de segurança M04.01](security-baseline.md) confronta a Entrega A com
+o checkout e distingue código interno de integração operacional. Consulte a
+[matriz de acesso](security-access-matrix.md), o
+[modelo de ameaças](security-threat-model.md) e os
+[critérios de saída M04](security-m04-exit-criteria.md).
+
 `/health` é liveness: confirma apenas que a aplicação responde. Não representa
 readiness de PostgreSQL ou Elasticsearch. Um endpoint de readiness com timeouts
 será necessário quando as APIs realmente dependerem deles. O Compose verifica
