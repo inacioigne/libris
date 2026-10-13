@@ -10,7 +10,7 @@ Server OIDC inicial M04. A [fundação semântica](semantic-foundation.md) docum
 a Etapa 2; o [contrato catalográfico](catalogographic-contract.md), a
 [persistência editorial](editorial-persistence.md) e a [identidade](identity.md)
 documentam as evoluções subsequentes. Não há endpoints CRUD catalográficos, editor,
-login integrado no Next.js, pesquisa bibliográfica ou operações de circulação. A licença de distribuição do
+pesquisa bibliográfica ou operações de circulação. A licença de distribuição do
 projeto ainda precisa ser escolhida pelos mantenedores antes de publicação.
 
 ## Visão de execução
@@ -34,6 +34,7 @@ serviços de infraestrutura. Um único backend controla transações e módulos.
 - `apps/api/src/libris`: fábrica FastAPI, configuração, rotas e infraestrutura.
 - `apps/api/src/libris/modules`: núcleo bibliográfico experimental e módulo inicial de identidade OIDC; demais domínios futuros.
 - `apps/api/migrations`: ambiente Alembic assíncrono e migrações experimentais 0001–0004 para semântica, ator, auditoria e estados editoriais.
+- `apps/web/src/server/auth`: BFF OIDC/sessões PostgreSQL isoladas; [fluxo e limites](identity-web.md).
 - `apps/web/src/app`: App Router e páginas `/pt`, `/en`; `/` redireciona para `/pt`.
 - `apps/web/src/i18n`: dicionários tipados; internacionalização explícita por URL.
 - `packages/shared`: reservado para contratos OpenAPI e vocabulários compartilhados.
@@ -103,3 +104,9 @@ Foram consultados [instalação do Next.js](https://nextjs.org/docs/app/getting-
 [FastAPI/PyPI](https://pypi.org/project/fastapi/),
 [imagens oficiais Elastic](https://www.docker.elastic.co/r/elasticsearch/elasticsearch) e
 [distribuições oficiais Node.js](https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt).
+
+A M04.03 conecta login/callback/logout e consulta server-side /identity/me;
+o [ensaio web com Keycloak real](identity-web-verification.md) é isolado
+e não substitui homologação do navegador/produção.
+[ADR 0030](../decisions/0030-web-oidc-sessions.md) separa migrações web
+das migrações bibliográficas experimentais e mantém o Resource Server existente.

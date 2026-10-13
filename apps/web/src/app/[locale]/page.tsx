@@ -1,9 +1,11 @@
 import { Separator } from "@radix-ui/react-separator";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AuthPanel } from "@/server/auth/panel";
 import { isLocale, messages } from "@/i18n/messages";
 
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export const dynamic = "force-dynamic";
+export default async function Home({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const t = messages[locale];
@@ -22,6 +24,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <p className="mb-4 text-lg text-teal-800">{t.tagline}</p>
       <h1 className="max-w-4xl text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">{t.title}</h1>
       <p className="mt-8 max-w-2xl text-lg leading-relaxed text-slate-700">{t.description}</p>
+      <AuthPanel locale={locale} searchParams={await searchParams} />
       <section aria-labelledby="foundations" className="mt-20">
         <h2 id="foundations" className="mb-6 text-xl font-semibold">{t.about}</h2>
         <div className="grid gap-5 md:grid-cols-3">{foundations.map(([title, text], index) =>

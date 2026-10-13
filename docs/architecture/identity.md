@@ -1,8 +1,9 @@
 # Identidade e autorização — Entrega A
 
 A API atua como OAuth 2.0 Resource Server: aceita access tokens do provedor externo,
-valida JWT e converte papéis em permissões. Não emite tokens, recebe senhas, executa
-refresh ou implementa login no Next.js. Decisão: [ADR 0016](../decisions/0016-oidc-resource-server.md).
+valida JWT e converte papéis em permissões. Não emite tokens, recebe senhas ou executa
+refresh. O [BFF Next.js M04.03](identity-web.md) implementa o cliente de login,
+sessão compartilhada, refresh e logout; a API mantém seu contrato. Decisão: [ADR 0016](../decisions/0016-oidc-resource-server.md).
 
 ## Configuração
 
@@ -126,7 +127,8 @@ A configuração importa realm libris sem usuários/senhas e dois clients:
 - libris-api: bearer-only, sem login ou emissão própria; contém os seis client roles.
 - libris-web: público, Authorization Code com PKCE S256, sem implicit flow,
   password grant ou service accounts. Redirect registrado:
-  http://localhost:3000/oidc/callback. É contrato demonstrativo; não há página de callback/login.
+  http://localhost:3000/oidc/callback. O [BFF M04.03](identity-web.md) implementa callback/login; validação web real
+  segue procedimento e evidências próprios.
 
 O scope padrão `basic` em libris-web mantém a claim obrigatória `sub` em Keycloak
 25+. Mapper de audiência inclui libris-api somente no access token. Mapper de client roles
@@ -164,7 +166,8 @@ Para validar Code + PKCE sem implementar sessão Next.js, use o
 [harness e roteiro isolado M04.02](identity-keycloak-local.md). O harness mantém
 verifier, state, códigos e tokens em memória; verifica state antes da troca,
 rejeições PKCE/redirect, API real e rotação de chave. Não imprime credenciais nem
-precisa de callback web. A sessão de produto permanece no escopo da #36.
+precisa de callback web. A sessão de produto da #36 está descrita em [identidade web](identity-web.md);
+o harness M04.02 não a homologa.
 
 ## Verificações
 

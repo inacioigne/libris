@@ -122,3 +122,25 @@ não prova de funcionalidade. A consulta não alterou issues/milestones/remoto.
 decisões vigentes; não escolhe novo mecanismo, armazenamento ou arquitetura.
 Mitigações futuras do modelo são recomendações vinculadas a issues, sem declarar
 que já foram implementadas. ADRs históricos e evidências anteriores permanecem intactos.
+
+## Atualização M04.03 — 2026-10-13
+
+A baseline/tabelas acima representam o diagnóstico M04.01 datado; não foram
+reescritas como evidência de testes posteriores. O App Router agora contém
+[BFF OIDC e sessões compartilhadas](identity-web.md), decisão
+[ADR 0030](../decisions/0030-web-oidc-sessions.md), com
+[resultados próprios](identity-web-verification.md).
+
+| Fronteira/ameaça | Controle implementado M04.03 | Limite restante |
+| --- | --- | --- |
+| F1/F3/F4, TH13 | Tokens somente server-only, PostgreSQL cifrado, cookie ID opaco, no-store/referrer | Logs do proxy, host/secret manager e backups exigem configuração operacional |
+| TH15 | Code/S256, state/binding por tentativa, nonce/assinatura/aud/issuer, uso único, novo ID; POST Origin/Host + CSRF no logout | XSS pode executar ações no contexto da vítima; revisão CSP/pentest #40/#42 |
+| TH16 | Redirect URI fixa, retorno /pt ou /en canônico, endpoints discovery restritos à origem do issuer | Confiança no provedor/configuração; homologação navegador real pendente |
+| TH07/TH22 | Timeout/limite de resposta, locks PG e backoff por sessão, fail closed | Quotas globais, avaliação de carga/pool/locks e disponibilidade pendentes |
+| TH21/TH23 | HTTPS obrigatório em production, cookies Secure/__Host-, logout local commit antes de RP logout | Compose é local; JWT previamente emitido não tem revogação global instantânea |
+| M04 sessão web | Código e testes negativos; persistência real isolada e ensaio HTTP próprio | Keycloak web real, leitores de tela e produção não homologados |
+
+/health permanece público; /identity/me continua Bearer da API. Páginas públicas
+não dependem de login; identidade renderizada provém somente da API. Nenhuma
+permissão de CRUD/shell M05/#37 foi introduzida. Auditoria de segurança #41,
+autorização contextual #38/#39 e homologação abrangente #42 continuam separadas.

@@ -5,6 +5,12 @@ export function isLocale(value: string): value is Locale {
 }
 export const messages = {
   pt: {
+    authTitle: "Acesso ao Libris", login: "Entrar", logout: "Sair",
+    authenticated: "Sessão autenticada", anonymous: "Entre com o provedor de identidade da instituição.",
+    expired: "A sessão expirou. Entre novamente.", forbidden: "A API recusou o acesso: permissão insuficiente.",
+    unavailable: "O serviço de autenticação ou a API está temporariamente indisponível.",
+    authError: "Não foi possível concluir o login. Tente novamente.", cancelled: "Login cancelado.",
+    actor: "Identificador do ator", roles: "Papéis", permissions: "Permissões", noPermissions: "Nenhuma",
     language: "Português", tagline: "Conhecimento conectado.",
     title: "Uma nova base para a gestão de bibliotecas.",
     description: "Libris é um sistema integrado de gestão bibliotecária, concebido com BIBFRAME e dados conectados desde o início.",
@@ -16,6 +22,12 @@ export const messages = {
     languages: "Escolher idioma", skip: "Ir para o conteúdo", footer: "Libris · Gestão bibliotecária e Linked Data",
   },
   en: {
+    authTitle: "Libris access", login: "Sign in", logout: "Sign out",
+    authenticated: "Authenticated session", anonymous: "Sign in with your institution’s identity provider.",
+    expired: "Your session expired. Please sign in again.", forbidden: "The API denied access: insufficient permissions.",
+    unavailable: "The authentication service or API is temporarily unavailable.",
+    authError: "Sign in could not be completed. Please try again.", cancelled: "Sign in cancelled.",
+    actor: "Actor identifier", roles: "Roles", permissions: "Permissions", noPermissions: "None",
     language: "English", tagline: "Connected knowledge.",
     title: "A new foundation for library management.",
     description: "Libris is an integrated library system designed around BIBFRAME and linked data from the start.",

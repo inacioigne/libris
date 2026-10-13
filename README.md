@@ -13,7 +13,9 @@ snapshots JSONB, revisões e concorrência otimista. Há migrações Alembic
 experimentais; elas não executam no startup. Editor, APIs de catalogação, circulação,
 autoridades e pesquisa ainda não estão implementados. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
-`/api/v1/identity/me` e ator opcional nas revisões, sem login no frontend.
+`/api/v1/identity/me` e ator opcional nas revisões, com [BFF de login web M04.03](docs/architecture/identity-web.md) implementado;
+ensaio real isolado documentado em [M04.03](docs/architecture/identity-web-verification.md);
+homologação de navegador/produção permanece separada.
 A M04.02 fornece [roteiro Keycloak isolado](docs/architecture/identity-keycloak-local.md)
 e [evidências reais e limites](docs/architecture/identity-m04-02-verification.md).
 
@@ -162,8 +164,9 @@ Acesse:
 
 As portas podem ser alteradas no `.env`. Ajuste `CORS_ORIGINS` se mudar a porta
 do frontend. Dentro do Compose use hosts `postgres`, `elasticsearch` e `api`,
-independentemente das portas publicadas. `API_INTERNAL_URL` está reservado para
-futuras chamadas no servidor Next.js; a página atual não consulta a API.
+independentemente das portas publicadas. `API_INTERNAL_URL` é usado pelo BFF para consultar /api/v1/identity/me
+com Bearer server-side. Configure as variáveis WEB_* e aplique a migração web
+explicitamente conforme [identidade web](docs/architecture/identity-web.md).
 
 A senha do exemplo é descartável e pública. O Compose é exclusivamente local,
 publica portas em `127.0.0.1` e desativa segurança do Elasticsearch. Não usar essa

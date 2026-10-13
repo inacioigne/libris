@@ -72,6 +72,15 @@ services:
       dockerfile: infrastructure/docker/web.Dockerfile
     environment:
       API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000}
+      WEB_AUTH_ENV: ${WEB_AUTH_ENV:-local}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WEB_OIDC_ISSUER: ${WEB_OIDC_ISSUER:-http://keycloak.localhost:8081/realms/libris}
+      WEB_OIDC_CLIENT_ID: ${WEB_OIDC_CLIENT_ID:-libris-web}
+      WEB_OIDC_SCOPES: ${WEB_OIDC_SCOPES:-openid profile}
+      WEB_SESSION_DATABASE_URL: ${WEB_SESSION_DATABASE_URL:-}
+      WEB_SESSION_KEYS: ${WEB_SESSION_KEYS:-}
+      WEB_SESSION_ACTIVE_KEY: ${WEB_SESSION_ACTIVE_KEY:-}
+      WEB_SESSION_SECONDS: ${WEB_SESSION_SECONDS:-28800}
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:

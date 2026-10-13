@@ -50,7 +50,8 @@
         "http://localhost:3000"
       ],
       "attributes": {
-        "pkce.code.challenge.method": "S256"
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000/pt##http://localhost:3000/en"
       },
       "fullScopeAllowed": true,
       "defaultClientScopes": [
