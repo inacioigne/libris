@@ -16,6 +16,9 @@ implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
 `/api/v1/identity/me` e ator opcional nas revisões, com [BFF de login web M04.03](docs/architecture/identity-web.md) implementado;
 ensaio real isolado documentado em [M04.03](docs/architecture/identity-web-verification.md);
 homologação de navegador/produção permanece separada.
+A M04.04 implementa o [shell administrativo e guardas server-side](docs/architecture/admin-access.md)
+em `/pt/admin` e `/en/admin`, com navegação por permissões efetivas e
+[verificação própria](docs/architecture/admin-access-verification.md), sem CRUD ou editor.
 A M04.02 fornece [roteiro Keycloak isolado](docs/architecture/identity-keycloak-local.md)
 e [evidências reais e limites](docs/architecture/identity-m04-02-verification.md).
 

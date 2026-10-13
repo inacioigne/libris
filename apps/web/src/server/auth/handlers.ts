@@ -63,9 +63,7 @@ export async function loginHandler(
     return rejected(403);
   }
   try {
-    console.log("[Testando login..]: ", destination);
     const login = await service.start(destination);
-    console.log("[Login..]: ", login);
     const response = privateResponse(NextResponse.redirect(login.url, 303));
     response.cookies.set(
       transactionCookie(login.state, service.config),
@@ -73,8 +71,7 @@ export async function loginHandler(
       cookieOptions(service.config, 300, transactionCookiePath(service.config)),
     );
     return response;
-  } catch (error) {
-    console.log("[Erro login..]: ", error);
+  } catch {
     const target = new URL(destination, service.config.origin);
     target.searchParams.set("auth", "error");
     return privateResponse(NextResponse.redirect(target, 303));

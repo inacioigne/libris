@@ -61,7 +61,7 @@ UI apresenta somente actor_id, roles e permissions do contrato existente,
 escapados pelo React. Não faz concessão de permissões nem interpreta ID token
 como autorização. 401 encerra sessão; 403 mostra insuficiência mantendo logout;
 falhas operacionais mostram indisponibilidade. Textos pt/en, role=status, labels,
-formulários/botões nativos e foco visível preservados. Não implementa shell #37.
+formulários/botões nativos e foco visível preservados. A M04.04 acrescenta [shell #37 e guardas próprias](admin-access.md).
 
 ## Configuração e instalação explícita
 
@@ -127,7 +127,8 @@ Proxy deve preservar Host público e encaminhar Origin do navegador; não substi
 Host por origem interna nem confiar em X-Forwarded-* arbitrários.
 Callback é GET limitado por state/binding/nonce/PKCE e uso único.
 
-Retorno aceita somente caminhos canônicos /pt e /en, incluindo query normal.
+A M04.04 restringe retorno a /pt, /en, /pt/admin e /en/admin canônicos,
+incluindo query normal; outros caminhos são rejeitados.
 Rejeita destino absoluto/protocol-relative, backslashes, whitespace/controles,
 fragmentos, dot segments, separadores codificados e dupla codificação.
 Erro/cancelamento após consumo válido mantém destino/idioma confiáveis;

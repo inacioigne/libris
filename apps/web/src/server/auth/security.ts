@@ -12,13 +12,13 @@ export function equalSecret(left: string, right: string): boolean {
 export function returnPath(value: string): string {
   // Deliberately narrow: only canonical locale-relative paths. Encoded separators,
   // control characters and double encoding are rejected before URL parsing.
-  if (value.length > 2048 || /[\\\s#]/.test(value) || /%(?:0[0-9a-f]|1[0-9a-f]|7f|2f|5c|25)/i.test(value) ||
+  if (value.length > 2048 || /[\\\s#\u0000-\u001f\u007f]/.test(value) || /%(?:0[0-9a-f]|1[0-9a-f]|7f|2f|5c|25)/i.test(value) ||
       !/^\/(pt|en)(?:\/|\?|$)/.test(value)) throw new Error("Invalid return destination");
   const url = new URL(value, "https://libris.invalid");
   if (url.origin !== "https://libris.invalid" || url.pathname !== value.split("?")[0]) {
     throw new Error("Invalid return destination");
   }
-  if (!/^\/(pt|en)(?:\/|$)/.test(url.pathname)) throw new Error("Invalid return destination");
+  if (!/^\/(pt|en)(?:\/admin)?$/.test(url.pathname)) throw new Error("Invalid return destination");
   return value;
 }
 export function assertSameOrigin(request: Request, config: AuthConfig): void {

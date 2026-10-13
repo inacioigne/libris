@@ -22,6 +22,7 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
   const pool = new Pool({ connectionString: process.env.TEST_WEB_HTTP_DATABASE_URL });
   const codes = new Map<string, { nonce: string; challenge: string; redirect: string }>();
   let apiStatus = 200, apiCalls = 0, refreshes = 0;
+  let permissions = ["bibliographic:read"];
   let issuer = "";
   const upstream = createServer(async (request, response) => {
     const url = new URL(request.url!, issuer);
@@ -68,7 +69,13 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
       assert.equal(request.headers.authorization, "Bearer http-access-secret");
       assert.equal(request.headers.cookie, undefined);
       response.statusCode = apiStatus;
-      return response.end(JSON.stringify({ actor_id: "oidc:sha256:http", roles: ["libris-reader"], permissions: ["bibliographic:read"] }));
+      if (apiStatus === 401) {
+        response.setHeader("WWW-Authenticate", "Bearer");
+        return response.end(JSON.stringify({ detail: "Autenticação necessária ou inválida." }));
+      }
+      if (apiStatus === 403) return response.end(JSON.stringify({ detail: "Permissão insuficiente." }));
+      if (apiStatus >= 500) return response.end(JSON.stringify({ detail: "Service unavailable" }));
+      return response.end(JSON.stringify({ actor_id: "oidc:sha256:http", roles: ["libris-reader"], permissions }));
     }
     response.statusCode = 404; response.end("{}");
   });
@@ -102,6 +109,33 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     assert.ok(ready, "Next server failed to start");
     const anonymous = await (await fetchWeb("/en")).text();
     assert.match(anonymous, /Sign in/); assert.equal(apiCalls, 0);
+    const checkPrivate = (response: Response) => {
+      assert.match(response.headers.get("Cache-Control")!, /private/);
+      assert.match(response.headers.get("Cache-Control")!, /no-store/);
+      assert.equal(response.headers.get("Pragma"), "no-cache");
+      assert.equal(response.headers.get("Referrer-Policy"), "no-referrer");
+    };
+    const blocked = (html: string) => {
+      assert.doesNotMatch(html, /id="capabilities-title"|aria-label="Administrative navigation"|id="cataloging"/);
+      assert.doesNotMatch(html, /http-access-secret|http-refresh-secret|http-subject/);
+    };
+    for (const locale of ["pt", "en"]) {
+      const response = await fetchWeb(`/${locale}/admin?permissions=system:admin&actor_id=forged`, {
+        headers: { "X-Permissions": "system:admin", "X-Actor-Id": "forged", Cookie: "permissions=system:admin; roles=libris-admin" },
+      });
+      checkPrivate(response);
+      const html = await response.text(); blocked(html);
+      assert.match(html, locale === "pt" ? /Autenticação necessária/ : /Sign in required/);
+      assert.match(html, new RegExp(`name="returnTo" value="/${locale}/admin"`));
+      assert.equal(apiCalls, 0);
+    }
+    const invalidCookie = await fetchWeb("/en/admin", { headers: { Cookie: `libris-session=${randomBytes(32).toString("base64url")}` } });
+    checkPrivate(invalidCookie); const invalidHtml = await invalidCookie.text();
+    assert.match(invalidHtml, /Session expired/); blocked(invalidHtml);
+    for (const path of ["/fr/admin", "/en/admin/cataloging"]) {
+      const response = await fetchWeb(path); assert.equal(response.status, 404); blocked(await response.text());
+      if (path.startsWith("/en/admin/")) checkPrivate(response);
+    }
     const login = await fetchWeb("/oidc/login", { method: "POST", headers: { Origin: origin,
       "Content-Type": "application/x-www-form-urlencoded" }, body: "returnTo=%2Fen%3Fview%3Doriginal" });
     assert.equal(login.status, 303);
@@ -122,6 +156,46 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     assert.match(html, /Authenticated session/); assert.match(html, /oidc:sha256:http/);
     assert.doesNotMatch(html, /http-access-secret|http-refresh-secret/);
     assert.equal((await fetchWeb(callback.pathname + callback.search, { headers: { Cookie: binding } })).headers.get("location"), origin + "/pt?auth=error");
+    const readOnly = await fetchWeb("/en/admin?permissions=system:admin", { headers: { Cookie: session, "X-Permissions": "system:admin" } });
+    checkPrivate(readOnly); const deniedHtml = await readOnly.text();
+    assert.match(deniedHtml, /Access denied/); assert.match(deniedHtml, /oidc:sha256:http/); blocked(deniedHtml);
+    assert.match(deniedHtml, /action="\/oidc\/logout"/);
+    assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "1");
+    for (const [effective, expected, absent] of [
+      [["bibliographic:update"], "cataloging", "authorities"],
+      [["authority:manage"], "authorities", "cataloging"],
+      [["editorial:approve", "metadata_revision:read"], "editorial", "system"],
+      [["editorial:publish"], "editorial", "cataloging"],
+      [["system:admin"], "system", "cataloging"],
+    ] as const) {
+      permissions = [...effective];
+      for (const locale of ["pt", "en"]) {
+        const response = await fetchWeb(`/${locale}/admin`, { headers: { Cookie: session } }); checkPrivate(response);
+        const adminHtml = await response.text();
+        assert.match(adminHtml, new RegExp(`id="${expected}"`));
+        assert.doesNotMatch(adminHtml, new RegExp(`id="${absent}"`));
+        assert.match(adminHtml, /id="capabilities-title"/);
+        assert.match(adminHtml, /<main id="content" tabindex="-1"/);
+        assert.match(adminHtml, /class="skip-link"/);
+        assert.match(adminHtml, /aria-current="page"/);
+        assert.equal((adminHtml.match(/<h1(?: |>)/g) ?? []).length, 1);
+        assert.match(adminHtml, /<h2/); assert.match(adminHtml, /<h3/);
+        assert.match(adminHtml, locale === "pt" ? /<html lang="pt-BR"/ : /<html lang="en"/);
+        assert.doesNotMatch(adminHtml, /http-access-secret|http-refresh-secret|http-subject/);
+      }
+    }
+    const uncachedAnonymous = await fetchWeb("/en/admin"); checkPrivate(uncachedAnonymous);
+    const uncachedHtml = await uncachedAnonymous.text(); blocked(uncachedHtml); assert.match(uncachedHtml, /Sign in required/);
+    const rscAnonymous = await fetchWeb("/en/admin", { headers: { RSC: "1" } }); checkPrivate(rscAnonymous); blocked(await rscAnonymous.text());
+    permissions = ["made-up:admin"];
+    blocked(await (await fetchWeb("/en/admin", { headers: { Cookie: session } })).text());
+    for (const status of [403, 503]) {
+      apiStatus = status;
+      const response = await fetchWeb("/en/admin", { headers: { Cookie: session } }); checkPrivate(response);
+      const html = await response.text(); blocked(html);
+      assert.match(html, status === 403 ? /Access denied/ : /Service unavailable/);
+    }
+    apiStatus = 200;
     const csrf = html.match(/name="csrf" value="([^"]+)"/)?.[1];
     assert.ok(csrf);
     const logoutForm = new URLSearchParams({ csrf, returnTo: "/en" }).toString();
@@ -141,6 +215,34 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     assert.ok(!logout.headers.get("location")!.includes("secret"));
     assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
     assert.match(await (await fetchWeb("/en", { headers: { Cookie: session } })).text(), /session expired/);
+    const expiredAdmin = await fetchWeb("/en/admin", { headers: { Cookie: session } }); checkPrivate(expiredAdmin);
+    const expiredHtml = await expiredAdmin.text(); assert.match(expiredHtml, /Session expired/); blocked(expiredHtml);
+    // Complete both admin login return flows through built production routes.
+    for (const locale of ["pt", "en"]) {
+      permissions = ["authority:manage"];
+      const login = await fetchWeb("/oidc/login", { method: "POST", headers: { Origin: origin }, body: new URLSearchParams({ returnTo: `/${locale}/admin` }) });
+      checkPrivate(login); assert.equal(login.status, 303);
+      const auth = await fetch(login.headers.get("location")!, { redirect: "manual" });
+      const callbackUrl = new URL(auth.headers.get("location")!);
+      const callbackResponse = await fetchWeb(callbackUrl.pathname + callbackUrl.search, { headers: { Cookie: sessionCookies(login) } });
+      checkPrivate(callbackResponse); assert.equal(callbackResponse.headers.get("location"), origin + `/${locale}/admin`);
+      const cookie = sessionCookies(callbackResponse).split("; ").find((c) => c.startsWith("libris-session="))!;
+      const page = await fetchWeb(`/${locale}/admin`, { headers: { Cookie: cookie } });
+      assert.match(await page.text(), /id="authorities"/);
+      apiStatus = 401;
+      const expired = await fetchWeb(`/${locale}/admin`, { headers: { Cookie: cookie } }); checkPrivate(expired);
+      const expiredHtml = await expired.text(); blocked(expiredHtml);
+      assert.match(expiredHtml, locale === "pt" ? /Sessão expirada/ : /Session expired/);
+      apiStatus = 200;
+    }
+    for (const returnTo of ["https://evil.invalid", "//evil.invalid", "/en/admin/users", "/en/admin%252f"]) {
+      const response = await fetchWeb("/oidc/login", { method: "POST", headers: { Origin: origin }, body: new URLSearchParams({ returnTo }) });
+      checkPrivate(response); assert.equal(response.status, 403);
+    }
+    await pool.query("ALTER TABLE libris_web.sessions RENAME TO unavailable_sessions");
+    const unavailable = await fetchWeb("/en/admin", { headers: { Cookie: session } }); checkPrivate(unavailable);
+    const unavailableHtml = await unavailable.text(); blocked(unavailableHtml); assert.match(unavailableHtml, /Service unavailable/);
+    await pool.query("ALTER TABLE libris_web.unavailable_sessions RENAME TO sessions");
     assert.equal(refreshes, 0);
     assert.ok(!output.includes("http-access-secret") && !output.includes("http-refresh-secret"));
   } finally {

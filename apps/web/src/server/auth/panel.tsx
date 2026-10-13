@@ -1,9 +1,6 @@
 import "server-only";
-import { cookies } from "next/headers";
 import { messages, type Locale } from "@/i18n/messages";
-import { authService } from "./runtime";
-import { sessionCookie } from "./security";
-import type { IdentityResult } from "./service";
+import { requestIdentity } from "./request";
 
 export async function AuthPanel({
   locale,
@@ -13,19 +10,8 @@ export async function AuthPanel({
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const t = messages[locale];
-  let result: IdentityResult;
-  
-  try {
-    const service = authService();
-    result = await service.identity(
-      (await cookies()).get(sessionCookie(service.config))?.value,
-    );
-    // console.log("AuthPanel:", result);
-    
-  } catch {
-    result = { status: "unavailable" };
-  }
-  
+  const result = await requestIdentity();
+
   const query = new URLSearchParams();
   // Preserve ordinary page context, excluding authentication feedback.
   for (const [key, value] of Object.entries(searchParams)) {

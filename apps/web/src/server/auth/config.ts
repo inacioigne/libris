@@ -56,7 +56,6 @@ export function readConfig(
   const issuerUrl = trustedUrl(issuer, localHttp);
   if (issuerUrl.search) throw new Error("Invalid issuer");
   const databaseUrl = required(env, "WEB_SESSION_DATABASE_URL");
-  // console.log("Auth environment:", databaseUrl);
   const database = new URL(databaseUrl);
   if (!["postgres:", "postgresql:"].includes(database.protocol))
     throw new Error("PostgreSQL required");

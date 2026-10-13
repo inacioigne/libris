@@ -5,6 +5,15 @@ export function isLocale(value: string): value is Locale {
 }
 export const messages = {
   pt: {
+    adminTitle: "Área administrativa", adminDescription: "Seu contexto de trabalho no Libris e as capacidades associadas à sua identidade.",
+    adminNavigation: "Navegação administrativa", adminOverview: "Visão geral", adminCapabilities: "Capacidades da sessão",
+    cataloging: "Catalogação", authorities: "Autoridades", history: "Revisões e auditoria", editorial: "Fluxo editorial", system: "Administração do sistema",
+    futureCapability: "Sua identidade possui uma capacidade nesta área. A interface operacional ainda não está disponível.",
+    adminEmpty: "Não há áreas disponíveis para esta sessão.", adminNote: "Este espaço apresenta suas capacidades. Editor, operações de catálogo e gestão do sistema serão disponibilizados em entregas futuras.",
+    login_required: "Autenticação necessária", session_expired: "Sessão expirada", access_denied: "Acesso não autorizado", service_unavailable: "Serviço indisponível",
+    adminDenied: "Sua identidade está autenticada, mas não possui autorização para esta área.", adminApiDenied: "Não foi possível autorizar o acesso desta sessão à área administrativa.",
+    backHome: "Voltar à página inicial", retry: "Tentar novamente",
+
     authTitle: "Acesso ao Libris", login: "Entrar", logout: "Sair",
     authenticated: "Sessão autenticada", anonymous: "Entre com o provedor de identidade da instituição.",
     expired: "A sessão expirou. Entre novamente.", forbidden: "A API recusou o acesso: permissão insuficiente.",
@@ -22,6 +31,15 @@ export const messages = {
     languages: "Escolher idioma", skip: "Ir para o conteúdo", footer: "Libris · Gestão bibliotecária e Linked Data",
   },
   en: {
+    adminTitle: "Administrative area", adminDescription: "Your Libris workspace context and the capabilities associated with your identity.",
+    adminNavigation: "Administrative navigation", adminOverview: "Overview", adminCapabilities: "Session capabilities",
+    cataloging: "Cataloging", authorities: "Authorities", history: "Revisions and audit", editorial: "Editorial workflow", system: "System administration",
+    futureCapability: "Your identity has a capability in this area. The operational interface is not yet available.",
+    adminEmpty: "No areas are available for this session.", adminNote: "This space presents your capabilities. The editor, catalog operations and system management will be available in future releases.",
+    login_required: "Sign in required", session_expired: "Session expired", access_denied: "Access denied", service_unavailable: "Service unavailable",
+    adminDenied: "Your identity is authenticated but is not authorized to access this area.", adminApiDenied: "This session could not be authorized to access the administrative area.",
+    backHome: "Return to the home page", retry: "Try again",
+
     authTitle: "Libris access", login: "Sign in", logout: "Sign out",
     authenticated: "Authenticated session", anonymous: "Sign in with your institution’s identity provider.",
     expired: "Your session expired. Please sign in again.", forbidden: "The API denied access: insufficient permissions.",

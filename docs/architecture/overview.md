@@ -110,3 +110,7 @@ o [ensaio web com Keycloak real](identity-web-verification.md) é isolado
 e não substitui homologação do navegador/produção.
 [ADR 0030](../decisions/0030-web-oidc-sessions.md) separa migrações web
 das migrações bibliográficas experimentais e mantém o Resource Server existente.
+
+A M04.04 acrescenta [shell e guardas administrativas](admin-access.md) em `/pt/admin`
+e `/en/admin`, reutilizando a sessão BFF e permissões de /identity/me.
+[Evidências próprias](admin-access-verification.md); nenhum endpoint CRUD/editor novo.

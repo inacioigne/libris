@@ -61,6 +61,7 @@ export default async function Home({
           {t.description}
         </p>
         <AuthPanel locale={locale} searchParams={await searchParams} />
+        <p className="mt-6"><Link href={`/${locale}/admin`} className="font-semibold text-teal-900">{t.adminTitle}</Link></p>
         <section aria-labelledby="foundations" className="mt-20">
           <h2 id="foundations" className="mb-6 text-xl font-semibold">
             {t.about}
