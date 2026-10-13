@@ -3,10 +3,14 @@
 ## Escopo e estado
 
 O Libris será um ILS de código aberto, modular e orientado a dados conectados.
-Há uma API de saúde, uma página institucional bilíngue, infraestrutura local e
-um núcleo semântico experimental com RDF/SHACL e snapshots PostgreSQL.
-A [fundação semântica](semantic-foundation.md) documenta a Etapa 2. Não há catalogação, login,
-consulta bibliográfica ou operações de circulação. A licença de distribuição do
+Há uma API de saúde, uma página institucional bilíngue, infraestrutura local,
+um núcleo semântico experimental com RDF/SHACL e snapshots PostgreSQL, contratos
+catalográficos M03, auditoria e persistência editorial internas, além do Resource
+Server OIDC inicial M04. A [fundação semântica](semantic-foundation.md) documenta
+a Etapa 2; o [contrato catalográfico](catalogographic-contract.md), a
+[persistência editorial](editorial-persistence.md) e a [identidade](identity.md)
+documentam as evoluções subsequentes. Não há endpoints CRUD catalográficos, editor,
+login integrado no Next.js, pesquisa bibliográfica ou operações de circulação. A licença de distribuição do
 projeto ainda precisa ser escolhida pelos mantenedores antes de publicação.
 
 ## Visão de execução
@@ -28,8 +32,8 @@ serviços de infraestrutura. Um único backend controla transações e módulos.
 ## Organização do código
 
 - `apps/api/src/libris`: fábrica FastAPI, configuração, rotas e infraestrutura.
-- `apps/api/src/libris/modules`: núcleo bibliográfico experimental; demais domínios futuros.
-- `apps/api/migrations`: ambiente Alembic assíncrono e migração semântica experimental.
+- `apps/api/src/libris/modules`: núcleo bibliográfico experimental e módulo inicial de identidade OIDC; demais domínios futuros.
+- `apps/api/migrations`: ambiente Alembic assíncrono e migrações experimentais 0001–0004 para semântica, ator, auditoria e estados editoriais.
 - `apps/web/src/app`: App Router e páginas `/pt`, `/en`; `/` redireciona para `/pt`.
 - `apps/web/src/i18n`: dicionários tipados; internacionalização explícita por URL.
 - `packages/shared`: reservado para contratos OpenAPI e vocabulários compartilhados.
@@ -78,8 +82,9 @@ restrição de rede e observabilidade definidos para o ambiente real.
 Página simples usa elementos nativos acessíveis e a primitiva Separator do Radix UI.
 Radix estabelece a base de componentes acessíveis; shadcn/ui será adotado para
 controles complexos quando necessários, evitando instalar componentes sem uso.
-Testes de inicialização são isolados dos serviços externos; testes futuros de
-persistência deverão usar PostgreSQL real. Locks preservam dependências; tags de
+Testes de inicialização são isolados dos serviços externos; testes de integração
+de persistência já usam PostgreSQL real descartável e não fazem parte da suíte
+padrão sem serviços. Locks preservam dependências; tags de
 imagens com major ainda podem receber patches, e deverão ganhar digests no pipeline
 de entrega. Não há CI/CD, métricas, backup automático ou promessa de escala validada.
 
