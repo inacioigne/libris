@@ -15,6 +15,12 @@
           "name": "libris-authority-manager"
         },
         {
+          "name": "libris-reviewer"
+        },
+        {
+          "name": "libris-publisher"
+        },
+        {
           "name": "libris-admin"
         }
       ]
@@ -48,6 +54,7 @@
       },
       "fullScopeAllowed": true,
       "defaultClientScopes": [
+        "basic",
         "roles",
         "profile"
       ],

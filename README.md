@@ -14,6 +14,8 @@ experimentais; elas não executam no startup. Editor, APIs de catalogação, cir
 autoridades e pesquisa ainda não estão implementados. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
 `/api/v1/identity/me` e ator opcional nas revisões, sem login no frontend.
+A M04.02 fornece [roteiro Keycloak isolado](docs/architecture/identity-keycloak-local.md)
+e [evidências reais e limites](docs/architecture/identity-m04-02-verification.md).
 
 Consulte a [fundação semântica](docs/architecture/semantic-foundation.md) para
 exemplos, serviços internos, limites e testes de integração PostgreSQL.

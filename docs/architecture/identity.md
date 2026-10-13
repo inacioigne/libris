@@ -64,8 +64,9 @@ na implantação; não foi criado um sistema paralelo de logging.
 | libris-admin | Todas: as anteriores, bibliographic:delete e system:admin |
 
 As operações editoriais e seus limites estão no [contrato #27](editorial-lifecycle.md).
-O realm demonstrativo conserva os quatro papéis originais; os novos papéis precisam
-de provisionamento explícito no provedor.
+O realm demonstrativo provisiona os seis papéis do mapa centralizado. Instâncias
+persistidas precisam receber reviewer/publisher explicitamente; a importação de
+startup não sobrescreve um realm existente.
 
 Múltiplos papéis somam permissões. Papel desconhecido ou ausente não concede nada.
 SYSTEM_ADMIN não é um bypass implícito: libris-admin recebe todas as permissões
@@ -122,12 +123,13 @@ por metadata_audit:read; ver [contrato e limites](provenance-audit-versioning.md
 
 A configuração importa realm libris sem usuários/senhas e dois clients:
 
-- libris-api: bearer-only, sem login ou emissão própria; contém os quatro client roles.
+- libris-api: bearer-only, sem login ou emissão própria; contém os seis client roles.
 - libris-web: público, Authorization Code com PKCE S256, sem implicit flow,
   password grant ou service accounts. Redirect registrado:
   http://localhost:3000/oidc/callback. É contrato demonstrativo; não há página de callback/login.
 
-Mapper de audiência inclui libris-api somente no access token. Mapper de client roles
+O scope padrão `basic` em libris-web mantém a claim obrigatória `sub` em Keycloak
+25+. Mapper de audiência inclui libris-api somente no access token. Mapper de client roles
 publica resource_access.libris-api.roles somente no access token. JWT esperado:
 iss=http://keycloak.localhost:8081/realms/libris, aud contendo libris-api,
 sub não vazio, exp e typ=Bearer; JOSE alg=RS256 e kid correspondente ao JWKS.
@@ -158,33 +160,18 @@ libris, definir senha no provedor e atribuir client roles de libris-api. O volum
 opcional preserva o realm; import não sobrescreve realm existente, portanto mudanças
 no JSON exigem atualização pelo administrador. Produção precisa configuração própria.
 
-Para obter token manualmente sem implementar login, usar cliente OIDC com PKCE,
-ou gerar um verifier e challenge em um terminal local (não guardar em logs):
-
-```bash
-python3 - <<'PY'
-import base64, hashlib, secrets
-verifier = secrets.token_urlsafe(48)
-challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b'=').decode()
-print('verifier:', verifier)
-print('challenge:', challenge)
-print('state:', secrets.token_urlsafe(24))
-PY
-```
-
-Abrir no browser o authorization_endpoint publicado na descoberta, com
-client_id=libris-web, response_type=code, scope=openid,
-redirect_uri=http://localhost:3000/oidc/callback, state gerado,
-code_challenge=challenge e code_challenge_method=S256. Após autenticar, o redirect
-vai à URL de callback ainda não implementada: copiar code da barra de endereço,
-conferir state e trocar imediatamente no token_endpoint da descoberta via POST
-application/x-www-form-urlencoded: grant_type=authorization_code,
-client_id=libris-web, code, redirect_uri idêntico e code_verifier original.
-Usar somente access_token como Bearer em `/api/v1/identity/me`. Não colocar tokens
-em comandos compartilhados, arquivos versionados ou documentação. Esse procedimento
-manual não adiciona callback ou fluxo de refresh à aplicação.
+Para validar Code + PKCE sem implementar sessão Next.js, use o
+[harness e roteiro isolado M04.02](identity-keycloak-local.md). O harness mantém
+verifier, state, códigos e tokens em memória; verifica state antes da troca,
+rejeições PKCE/redirect, API real e rotação de chave. Não imprime credenciais nem
+precisa de callback web. A sessão de produto permanece no escopo da #36.
 
 ## Verificações
+
+A execução M04.02 / #35 está no [relatório separado](identity-m04-02-verification.md),
+com resultados Keycloak reais, testes offline e limitações de navegador/Next.js.
+O [roteiro local](identity-keycloak-local.md) inclui setup isolado, DNS IPv4/IPv6,
+provisionamento, suíte opcional e desligamento que preserva volumes.
 
 A [baseline M04.01](security-baseline.md), a
 [matriz de acesso](security-access-matrix.md), o

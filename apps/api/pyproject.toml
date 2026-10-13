@@ -31,7 +31,10 @@ entrypoint = "libris.main:app"
 
 [tool.pytest.ini_options]
 testpaths = ["../../tests/api"]
-markers = ["integration: exige PostgreSQL real dedicado e migrado"]
+markers = [
+    "integration: exige PostgreSQL real dedicado e migrado",
+    "keycloak: exige Keycloak real isolado e ativação explícita",
+]
 
 [tool.ruff]
 target-version = "py313"

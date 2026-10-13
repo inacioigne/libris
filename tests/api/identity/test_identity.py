@@ -120,6 +120,8 @@ def test_valid_token_and_actor(provider: Provider) -> None:
         ({"exp": 1}, None),
         ({"iss": "https://wrong"}, None),
         ({"aud": "libris-web"}, None),
+        ({}, "aud"),
+        ({"aud": []}, None),
         ({"sub": ""}, None),
         ({"sub": " "}, None),
         ({}, "sub"),
@@ -351,7 +353,8 @@ def test_concurrent_initial_requests_share_refresh(provider: Provider) -> None:
 
 
 @pytest.mark.parametrize(
-    "mutation", ["missing-kid", "encryption", "wrong-alg", "bad-key", "duplicate"]
+    "mutation",
+    ["missing-kid", "encryption", "wrong-alg", "bad-key", "duplicate", "key-ops"],
 )
 def test_incompatible_keys(provider: Provider, mutation: str) -> None:
     token = provider.token()
@@ -363,6 +366,8 @@ def test_incompatible_keys(provider: Provider, mutation: str) -> None:
         provider.keys[0]["alg"] = "RS512"
     elif mutation == "bad-key":
         provider.keys[0]["n"] = ""
+    elif mutation == "key-ops":
+        provider.keys[0]["key_ops"] = ["sign"]
     else:
         provider.keys.append(dict(provider.keys[0]))
     with pytest.raises(AuthenticationError):
@@ -385,3 +390,198 @@ def test_bearer_cors_preflight() -> None:
             },
         )
         assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "aud-missing",
+        "aud-wrong",
+        "issuer",
+        "expired",
+        "id-token",
+        "typ-missing",
+        "signature",
+        "algorithm",
+        "malformed",
+    ],
+)
+def test_negative_tokens_have_http_bearer_challenge(provider: Provider, case: str) -> None:
+    changes: dict[str, object] = {}
+    omit = None
+    if case == "aud-missing":
+        omit = "aud"
+    elif case == "aud-wrong":
+        changes["aud"] = "libris-web"
+    elif case == "issuer":
+        changes["iss"] = "http://wrong"
+    elif case == "expired":
+        changes["exp"] = 1
+    elif case == "id-token":
+        changes["typ"] = "ID"
+    elif case == "typ-missing":
+        omit = "typ"
+    token = provider.token(changes, omit=omit)
+    if case == "signature":
+        token = provider.token(private=provider.other)
+    elif case == "algorithm":
+        token = jwt.encode({"sub": "s"}, "x" * 32, algorithm="HS256", headers={"kid": "one"})
+    elif case == "malformed":
+        token = "broken"
+    app = create_app(provider.settings)
+    with TestClient(app) as client:
+        app.state.identity_service = IdentityService(
+            provider.validator, "client", "libris-api"
+        )
+        response = client.get("/api/v1/identity/me", headers={"Authorization": "Bearer " + token})
+        assert response.status_code == 401
+        assert response.headers["www-authenticate"] == "Bearer"
+        assert token not in response.text
+
+
+@pytest.mark.parametrize("roles", [[], ["unknown"]])
+def test_no_privilege_authenticates_me_but_cannot_write(
+    provider: Provider, roles: list[str]
+) -> None:
+    app = create_app(provider.settings)
+
+    @app.get("/permission-probe")
+    def probe(
+        actor: AuthenticatedActor = Depends(require_permissions(P.SYSTEM_ADMIN)),
+    ) -> str:
+        return actor.actor_id
+
+    claims: dict[str, object] = {
+        "resource_access": {
+            "libris-api": {"roles": roles},
+            "other": {"roles": ["libris-admin"]},
+        },
+        "realm_access": {"roles": ["libris-admin"]},
+    }
+    headers = {
+        "Authorization": "Bearer " + provider.token(claims),
+        "X-Roles": "libris-admin",
+        "X-Actor-ID": "fake",
+        "X-Permissions": "system:admin",
+    }
+    with TestClient(app) as client:
+        app.state.identity_service = IdentityService(provider.validator, "client", "libris-api")
+        response = client.get("/api/v1/identity/me", headers=headers)
+        assert response.status_code == 200
+        assert response.json()["permissions"] == []
+        assert response.json()["roles"] == roles
+        assert response.json()["actor_id"] != "fake"
+        assert client.get("/permission-probe", headers=headers).status_code == 403
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        "discovery-json",
+        "discovery-shape",
+        "missing-uri",
+        "jwks-json",
+        "jwks-shape",
+        "too-many-keys",
+        "oversize",
+        "redirect",
+    ],
+)
+def test_invalid_provider_documents_fail_closed(provider: Provider, failure: str) -> None:
+    def transport(request: httpx.Request) -> httpx.Response:
+        provider.calls.append(request.url.path)
+        discovery = request.url.path.endswith("openid-configuration")
+        if failure == "redirect":
+            return httpx.Response(302, headers={"Location": "http://untrusted/keys"})
+        if failure == "oversize":
+            return httpx.Response(200, content=b" " * 1_048_577)
+        if failure == ("discovery-json" if discovery else "jwks-json"):
+            return httpx.Response(200, content=b"{")
+        if failure == ("discovery-shape" if discovery else "jwks-shape"):
+            return httpx.Response(200, json=[])
+        if discovery:
+            value: dict[str, object] = {"issuer": provider.settings.oidc_issuer_url}
+            if failure != "missing-uri":
+                value["jwks_uri"] = "http://provider/keys"
+        else:
+            value = {"keys": provider.keys * (101 if failure == "too-many-keys" else 1)}
+        return httpx.Response(200, json=value)
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(transport)) as client:
+            validator = OIDCValidator(provider.settings, client, lambda: provider.now)
+            for _ in range(10):
+                with pytest.raises(AuthenticationError):
+                    await validator.validate(provider.token())
+            assert len(provider.calls) <= 2
+            assert not any("untrusted" in call for call in provider.calls)
+
+    asyncio.run(scenario())
+
+
+def test_refresh_failure_recovery_and_removed_key(provider: Provider) -> None:
+    async def scenario() -> None:
+        original = provider.token()
+        await provider.validator.validate(original)
+        provider.now += 301
+        provider.timeout = True
+        for _ in range(10):
+            with pytest.raises(AuthenticationError):
+                await provider.validator.validate(original)
+        assert len(provider.calls) == 3
+        provider.timeout = False
+        # Recovery remains throttled even after the provider becomes available.
+        with pytest.raises(AuthenticationError):
+            await provider.validator.validate(original)
+        provider.now += 11
+        provider.keys = [provider.jwk(provider.other, "two")]
+        await provider.validator.validate(provider.token(private=provider.other, kid="two"))
+        with pytest.raises(AuthenticationError):
+            await provider.validator.validate(original)
+        assert len(provider.calls) == 4
+
+    asyncio.run(scenario())
+
+
+def test_logs_do_not_disclose_token_or_claims(
+    provider: Provider, caplog: pytest.LogCaptureFixture
+) -> None:
+    token = provider.token(
+        {"sub": "private-subject", "email": "private@example.invalid"},
+        private=provider.other,
+    )
+    with caplog.at_level("DEBUG"):
+        with pytest.raises(AuthenticationError):
+            asyncio.run(provider.validator.validate(token))
+    for sensitive in (token, "private-subject", "private@example.invalid"):
+        assert sensitive not in caplog.text
+
+
+def test_keycloak_realm_preserves_resource_server_contract() -> None:
+    from pathlib import Path
+
+    from libris.modules.identity.infrastructure.role_mapper import ROLE_PERMISSIONS
+
+    realm = json.loads(
+        (
+            Path(__file__).resolve().parents[3] / "infrastructure/keycloak/libris-realm.json"
+        ).read_text()
+    )
+    assert {role["name"] for role in realm["roles"]["client"]["libris-api"]} == set(
+        ROLE_PERMISSIONS
+    )
+    assert not realm.get("users")
+    web = next(client for client in realm["clients"] if client["clientId"] == "libris-web")
+    assert "basic" in web["defaultClientScopes"]  # Keycloak 25+ maps required sub here.
+    assert web["attributes"]["pkce.code.challenge.method"] == "S256"
+    assert web["redirectUris"] == ["http://localhost:3000/oidc/callback"]
+    assert web["standardFlowEnabled"] and web["publicClient"]
+    assert not web["implicitFlowEnabled"] and not web["directAccessGrantsEnabled"]
+    audience = next(
+        mapper
+        for mapper in web["protocolMappers"]
+        if mapper["protocolMapper"] == "oidc-audience-mapper"
+    )
+    assert audience["config"]["included.client.audience"] == "libris-api"
+    assert audience["config"]["access.token.claim"] == "true"
+    assert audience["config"]["id.token.claim"] == "false"
