@@ -54,72 +54,100 @@
     {
       "file": "invalid-missing-title.ttl",
       "scenario": "missing-title",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/title",
+      "expected_component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
     },
     {
       "file": "invalid-literal-work-reference.ttl",
       "scenario": "literal-work-reference",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+      "expected_component": "http://www.w3.org/ns/shacl#NodeKindConstraintComponent"
     },
     {
       "file": "invalid-two-work-references.ttl",
       "scenario": "two-work-references",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+      "expected_component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent"
     },
     {
       "file": "invalid-missing-item-reference.ttl",
       "scenario": "missing-item-reference",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/itemOf",
+      "expected_component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
     },
     {
       "file": "invalid-missing-local-identifier.ttl",
       "scenario": "missing-local-identifier",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "expected_component": "http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent"
     },
     {
       "file": "invalid-missing-contribution-role.ttl",
       "scenario": "missing-contribution-role",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/role",
+      "expected_component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
     },
     {
       "file": "invalid-literal-agent.ttl",
       "scenario": "literal-agent",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/agent",
+      "expected_component": "http://www.w3.org/ns/shacl#NodeKindConstraintComponent"
     },
     {
       "file": "invalid-wrong-reference-type.ttl",
       "scenario": "wrong-reference-type",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+      "expected_component": "http://www.w3.org/ns/shacl#NodeConstraintComponent"
     },
     {
       "file": "invalid-wrong-edition-owner.ttl",
       "scenario": "wrong-edition-owner",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/editionStatement",
+      "expected_component": "http://www.w3.org/ns/shacl#MaxCountConstraintComponent"
     },
     {
       "file": "invalid-empty-identifier.ttl",
       "scenario": "empty-identifier",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+      "expected_component": "http://www.w3.org/ns/shacl#MinLengthConstraintComponent"
     },
     {
       "file": "invalid-duplicate-authorized-label.ttl",
       "scenario": "duplicate-authorized-label",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://www.w3.org/2000/01/rdf-schema#label",
+      "expected_component": "http://www.w3.org/ns/shacl#UniqueLangConstraintComponent"
     },
     {
       "file": "invalid-numeric-title.ttl",
       "scenario": "numeric-title",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+      "expected_component": "http://www.w3.org/ns/shacl#OrConstraintComponent"
     },
     {
       "file": "invalid-numeric-publication-date.ttl",
       "scenario": "numeric-publication-date",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/date",
+      "expected_component": "http://www.w3.org/ns/shacl#OrConstraintComponent"
     },
     {
       "file": "invalid-only-variant-title.ttl",
       "scenario": "only-variant-title",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://id.loc.gov/ontologies/bibframe/title",
+      "expected_component": "http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent"
     },
     {
       "file": "snapshot-external-work.ttl",
@@ -139,7 +167,9 @@
     {
       "file": "invalid-subject-without-scheme.ttl",
       "scenario": "invalid-subject-without-scheme",
-      "valid": false
+      "valid": false,
+      "expected_path": "http://www.w3.org/2004/02/skos/core#inScheme",
+      "expected_component": "http://www.w3.org/ns/shacl#MinCountConstraintComponent"
     }
   ]
 }

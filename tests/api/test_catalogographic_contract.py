@@ -65,7 +65,13 @@ def test_corpus_shacl(case: dict[str, object]) -> None:
     report = validate_profile(graph, INSTITUTIONAL_PROFILE_ID)
     assert report.conforms == case["valid"]
     if not case["valid"]:
-        assert any(issue.severity == str(SH.Violation) for issue in report.issues)
+        assert any(
+            issue.severity == str(SH.Violation)
+            and issue.path == case["expected_path"]
+            and issue.source_constraint_component == case["expected_component"]
+            and issue.source_shape_term is not None
+            for issue in report.issues
+        )
         assert any(True for _ in report.graph.subjects(RDF.type, SH.ValidationResult))
 
 

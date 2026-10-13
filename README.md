@@ -207,6 +207,10 @@ conexão no startup; isso é intencional e não comprova readiness dos serviços
 
 ## Testes e verificações
 
+Consolidação da M03.05.01 / #30: [inventário de fixtures e testes](docs/architecture/catalogographic-v1-test-inventory.md),
+[matriz de conformidade](docs/architecture/catalogographic-v1-conformance-matrix.md) e
+[reprodução e resultados](docs/architecture/catalogographic-v1-testing.md).
+
 ```bash
 cd apps/api
 uv run pytest
