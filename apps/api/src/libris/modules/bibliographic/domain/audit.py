@@ -19,6 +19,8 @@ class AuditEventType(StrEnum):
     WITHDRAWN = "record.withdrawn"
     RESTORED = "record.restored"
     SUPERSEDED = "record.superseded"
+    RETURNED = "record.returned"
+    ARCHIVED = "record.archived"
 
 
 class ActorType(StrEnum):
@@ -133,6 +135,11 @@ class AuditEvent:
             AuditEventType.PUBLISHED: (EditorialState.APPROVED, EditorialState.PUBLISHED),
             AuditEventType.WITHDRAWN: (EditorialState.PUBLISHED, EditorialState.WITHDRAWN),
         }
+        transitions[AuditEventType.ARCHIVED] = (EditorialState.WITHDRAWN, EditorialState.ARCHIVED)
+        if self.event_type == AuditEventType.RETURNED:
+            if self.previous_state not in {EditorialState.IN_REVIEW, EditorialState.APPROVED}:
+                raise ValueError("Devolução exige revisão/aprovação anterior.")
+            transitions[AuditEventType.RETURNED] = (self.previous_state, EditorialState.DRAFT)
         pair = transitions.get(self.event_type)
         if self.restoration_kind == RestorationKind.EDITORIAL:
             pair = (EditorialState.WITHDRAWN, EditorialState.PUBLISHED)
@@ -163,9 +170,13 @@ class AuditEvent:
                 AuditEventType.SUBMITTED,
                 AuditEventType.APPROVED,
                 AuditEventType.PUBLISHED,
+                AuditEventType.RETURNED,
             }:
                 raise ValueError("Operação não se aplica à candidata.")
-        if self.event_type in {AuditEventType.WITHDRAWN, AuditEventType.SUPERSEDED} and (
-            self.reason is None
-        ):
+        if self.event_type in {
+            AuditEventType.WITHDRAWN,
+            AuditEventType.SUPERSEDED,
+            AuditEventType.RETURNED,
+            AuditEventType.ARCHIVED,
+        } and (self.reason is None):
             raise ValueError("Retirada/substituição exige justificativa.")

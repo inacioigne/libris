@@ -14,6 +14,7 @@ from rdflib.term import Node
 
 from libris.modules.bibliographic.api.schemas.common import LocalReference, UnreconciledReference
 from libris.modules.bibliographic.api.schemas.relationships import RelationshipCreate
+from libris.modules.bibliographic.application.audit import audit_actor
 from libris.modules.bibliographic.application.diagnostics import CatalogValidationResult
 from libris.modules.bibliographic.application.relationships import (
     ReferenceResolver,
@@ -186,7 +187,7 @@ async def publication_readiness(
 
 
 class EditorialService:
-    """No concrete PostgreSQL adapter yet; not wired to routes or BibliographicService."""
+    """Authorized orchestration; transaction factory owns state and audit commit."""
 
     def __init__(self, transactions: TransactionFactory) -> None:
         self.transactions = transactions
@@ -205,6 +206,7 @@ class EditorialService:
     ) -> PreparedTransition:
         # Actor comes from IdentityService / server dependency, never request fields.
         async with self.transactions() as transaction:
+            audit_actor(actor)
             record = await transaction.read(identifier)
             record.require_expected(expected_version, expected_current_revision)
             operation = transition_operation(record.source(scope), target)

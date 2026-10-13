@@ -1,5 +1,10 @@
 # Proveniência, auditoria e versionamento — M03.04.02
 
+A #43 integra a auditoria ao estado editorial persistido, incluindo a extensão
+record.returned/record.archived. O [contrato atual de persistência](editorial-persistence.md)
+e o [ADR 0028](../decisions/0028-editorial-transactions.md) sucedem as pendências
+editoriais descritas nesta entrega original da #28.
+
 Implementação interna da [issue #28](https://github.com/inacioigne/libris/issues/28),
 com decisão em [ADR 0027](../decisions/0027-provenance-audit-versioning.md).
 Fonte de verdade: PostgreSQL. Revisões e eventos são estruturas separadas;

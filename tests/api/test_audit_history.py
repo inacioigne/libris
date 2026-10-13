@@ -65,12 +65,14 @@ def actor(role: str = "libris-admin") -> AuthenticatedActor:
 
 
 def event(kind: E = E.CREATED) -> AuditEvent:
-    if kind in {E.SUBMITTED, E.APPROVED, E.PUBLISHED, E.WITHDRAWN}:
+    if kind in {E.SUBMITTED, E.APPROVED, E.PUBLISHED, E.WITHDRAWN, E.RETURNED, E.ARCHIVED}:
         previous, new = {
             E.SUBMITTED: (S.DRAFT, S.IN_REVIEW),
             E.APPROVED: (S.IN_REVIEW, S.APPROVED),
             E.PUBLISHED: (S.APPROVED, S.PUBLISHED),
             E.WITHDRAWN: (S.PUBLISHED, S.WITHDRAWN),
+            E.RETURNED: (S.IN_REVIEW, S.DRAFT),
+            E.ARCHIVED: (S.WITHDRAWN, S.ARCHIVED),
         }[kind]
         return AuditEvent(
             uuid4(),
@@ -127,7 +129,7 @@ def test_taxonomy_and_immutable_events(kind: E) -> None:
     assert observed.event_type.value.startswith("record.")
     with pytest.raises(FrozenInstanceError):
         observed.reason = "tampered"  # type: ignore[misc]
-    assert len(E) == 8
+    assert len(E) == 10
 
 
 @pytest.mark.parametrize(
@@ -435,7 +437,7 @@ def test_revision_invariants(changes: dict[str, object]) -> None:
 
 
 @pytest.mark.parametrize("operation", [Op.RETURN, Op.ARCHIVE])
-def test_unmapped_editorial_operations_are_explicit(operation: Op) -> None:
+def test_governed_editorial_operations_are_explicit(operation: Op) -> None:
     source = S.IN_REVIEW if operation == Op.RETURN else S.WITHDRAWN
     target = S.DRAFT if operation == Op.RETURN else S.ARCHIVED
     record = EditorialRecord(
@@ -455,8 +457,10 @@ def test_unmapped_editorial_operations_are_explicit(operation: Op) -> None:
         justification="Synthetic decision",
     )
     revision = Revision(IDENTITY, 1, NOW, Provenance("fixture", "test"), PROFILE_ID)
-    with pytest.raises(ValueError, match="taxonomia"):
-        editorial_event(change.event, revision, Provenance("fixture", "test"), actor=actor())
+    event = editorial_event(change.event, revision, Provenance("fixture", "test"), actor=actor())
+    assert event.event_type == (E.RETURNED if operation == Op.RETURN else E.ARCHIVED)
+    assert event.previous_state == source and event.new_state == target
+    assert event.reason == "Synthetic decision"
 
 
 def test_supersession_requires_distinct_successor_and_reason() -> None:

@@ -53,7 +53,7 @@ from libris.modules.bibliographic.infrastructure.validation import (
     AUTHORITY_PROFILE_ID,
     INSTITUTIONAL_PROFILE_ID,
 )
-from libris.modules.identity.domain.models import AuthenticatedActor
+from libris.modules.identity.domain.models import AuthenticatedActor, actor_identifier
 from libris.modules.identity.infrastructure.role_mapper import map_permissions
 
 NOW = datetime.now(UTC)
@@ -95,7 +95,9 @@ def revision(number: int = 1, profile: str = INSTITUTIONAL_PROFILE_ID) -> Revisi
 
 def actor(role: str) -> AuthenticatedActor:
     roles = frozenset({role})
-    return AuthenticatedActor("actor", "issuer", "subject", roles, map_permissions(roles))
+    return AuthenticatedActor(
+        actor_identifier("issuer", "subject"), "issuer", "subject", roles, map_permissions(roles)
+    )
 
 
 @pytest.mark.parametrize("source,target", list(product(S, S)))

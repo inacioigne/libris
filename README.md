@@ -85,8 +85,7 @@ A M03.04.01 implementa o [contrato de estados editoriais](docs/architecture/edit
 matriz fechada, permissões explícitas, publicação validada, revisão candidata separada
 da publicação anterior e ciclo independente da identidade. Ver
 [ADR 0026](docs/decisions/0026-editorial-lifecycle.md).
-A coordenação exige adaptador transacional futuro; não há persistência editorial,
-integração à escrita semântica ou auditoria durável nesta entrega.
+O contrato original foi integrado à persistência PostgreSQL pela #43, descrita abaixo.
 
 
 A M03.04.02 implementa [proveniência, auditoria e versionamento](docs/architecture/provenance-audit-versioning.md):
@@ -95,7 +94,13 @@ restauração de conteúdo com CAS e comparação semântica RDF. A migração i
 `0003_semantic_audit` preserva snapshots legados, sem backfill. Ver
 [ADR 0027](docs/decisions/0027-provenance-audit-versioning.md) e
 [evidências e pendências](docs/architecture/provenance-audit-versioning-verification.md).
-A persistência do estado editorial da #27 e sua integração atômica continuam pendentes.
+A M03.04.03 / #43 implementa a [persistência editorial PostgreSQL](docs/architecture/editorial-persistence.md):
+metadados separados, transições e auditoria no mesmo commit, CAS de conteúdo/estado,
+publicação da revisão aprovada, candidata isolada e consultas internas autorizadas.
+`0004_semantic_editorial` preserva legado sem backfill e amplia RETURN/ARCHIVE.
+Ver [ADR 0028](docs/decisions/0028-editorial-transactions.md) e
+[verificação](docs/architecture/editorial-persistence-verification.md).
+Não há APIs CRUD públicas ou homologação institucional.
 
 
 ## Estrutura
@@ -212,7 +217,7 @@ uv run alembic upgrade head --sql
 ```
 
 Existem as revisões experimentais `0001_semantic`, `0002_revision_actor` e
-`0003_semantic_audit`. `alembic current` exige banco
+`0003_semantic_audit` e `0004_semantic_editorial`. `alembic current` exige banco
 acessível; `heads` e geração offline inspecionam o ambiente sem modificar o banco.
 Execute `uv run alembic upgrade head` explicitamente quando desejar instalar as
 tabelas experimentais. O downgrade descarta seus dados.
@@ -244,7 +249,8 @@ Homologar os perfis candidatos com catalogadores e implementar a API de cataloga
 no Incremento 2, conforme o contrato consolidado de entidades, URIs, referências
 e concorrência. Autenticação/autorização OIDC está implementada na Entrega A;
 auditoria de criação/revisão e histórico interno estão implementados na M03.04.02.
-Persistência editorial, APIs completas e demais entregas operacionais continuam pendentes.
+Persistência editorial e integração interna estão implementadas na #43; APIs completas
+e demais entregas operacionais continuam pendentes.
 As tabelas permanecem experimentais; não há esquema bibliográfico definitivo.
 Ver [contrato](docs/architecture/catalogographic-contract.md) e ADRs 0009–0015.
 

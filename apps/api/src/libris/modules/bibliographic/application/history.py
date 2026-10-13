@@ -11,10 +11,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from libris.modules.bibliographic.application.audit import audit_actor
 from libris.modules.bibliographic.application.comparison import SemanticDiff, compare_graphs
 from libris.modules.bibliographic.domain.audit import AuditEvent
+from libris.modules.bibliographic.domain.editorial import EditorialRecord
 from libris.modules.bibliographic.domain.models import Revision
 from libris.modules.bibliographic.infrastructure.audit import (
     AuditStore,
 )
+from libris.modules.bibliographic.infrastructure.editorial import EditorialStore, write_gate
 from libris.modules.bibliographic.infrastructure.persistence import (
     RevisionStore,
 )
@@ -29,6 +31,14 @@ class RevisionHistoryEntry:
     revision: Revision
     # False means no observed content event, never a synthesized legacy event.
     content_event_recorded: bool
+
+
+@dataclass(frozen=True)
+class EditorialHistory:
+    # None explicitly means a legacy resource with no observed editorial initialization.
+    state: EditorialRecord | None
+    current: Revision
+    events: tuple[AuditEvent, ...]
 
 
 class HistoryService:
@@ -116,3 +126,19 @@ class HistoryService:
             await self.read_revision(identifier, current_number, actor=actor),
         )
         return compare_graphs(previous[1], current[1])
+
+
+    async def read_editorial(
+        self, identifier: UUID, *, actor: AuthenticatedActor,
+        limit: int = 100, after: tuple[datetime, UUID] | None = None,
+    ) -> EditorialHistory:
+        self._authorize(actor, Permission.METADATA_AUDIT_READ)
+        self._authorize(actor, Permission.METADATA_REVISION_READ)
+        async with self.sessions() as session, session.begin():
+            await write_gate(session)
+            states = EditorialStore()
+            await states.lock_resource(session, identifier)
+            state = await states.get(session, identifier)
+            current, _ = await self.revisions.get(session, identifier, None)
+            events = await self.audit.list(session, identifier, limit=limit, after=after)
+        return EditorialHistory(state, current, events)

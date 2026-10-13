@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from libris.modules.bibliographic.application.audit import audit_actor, content_event
 from libris.modules.bibliographic.application.diagnostics import CatalogValidationRejected
 from libris.modules.bibliographic.domain.audit import ActorType, AuditEventType, ExecutionActor
+from libris.modules.bibliographic.domain.editorial import prepare_content_revision
 from libris.modules.bibliographic.domain.errors import CatalogCode, CatalogError
 from libris.modules.bibliographic.domain.models import (
     Provenance,
@@ -19,6 +20,7 @@ from libris.modules.bibliographic.domain.models import (
 from libris.modules.bibliographic.domain.profile_registry import ProfileError
 from libris.modules.bibliographic.infrastructure.audit import AuditStore
 from libris.modules.bibliographic.infrastructure.diagnostics import adapt_report
+from libris.modules.bibliographic.infrastructure.editorial import EditorialStore, write_gate
 from libris.modules.bibliographic.infrastructure.ownership import check_snapshot
 from libris.modules.bibliographic.infrastructure.persistence import RevisionStore
 from libris.modules.bibliographic.infrastructure.profiles import load_legacy_profile
@@ -76,6 +78,7 @@ class BibliographicService:
         self.sessions = sessions
         self.store = RevisionStore()
         self.audit = AuditStore()
+        self.editorial = EditorialStore()
 
     async def create(
         self,
@@ -98,8 +101,11 @@ class BibliographicService:
             actor_id,
         )
         async with self.sessions() as session, session.begin():
+            await write_gate(session)
             await self.store.create(session, identity)
             await self.store.save(session, revision, document)
+            resource = await self.editorial.lock_resource(session, identity.internal_id)
+            await self.editorial.initialize(session, resource)
             await self.audit.append(
                 session, content_event(revision, AuditEventType.CREATED, actor_type)
             )
@@ -114,6 +120,7 @@ class BibliographicService:
         *,
         actor: AuthenticatedActor | None = None,
         execution_actor: ExecutionActor | None = None,
+        expected_editorial_version: int | None = None,
     ) -> Revision:
         actor_id, actor_type = audit_actor(actor, execution_actor)
         async with self.sessions() as session, session.begin():
@@ -126,6 +133,7 @@ class BibliographicService:
                 actor_id,
                 actor_type,
                 AuditEventType.REVISED,
+                expected_editorial_version=expected_editorial_version,
             )
         return revision
 
@@ -140,9 +148,15 @@ class BibliographicService:
         actor_type: ActorType | None,
         event_type: AuditEventType,
         source_revision: int | None = None,
+        expected_editorial_version: int | None = None,
     ) -> Revision:
         if type(expected_revision) is not int or expected_revision < 1:
             raise ValueError("A revisão esperada deve ser positiva.")
+        await write_gate(session)
+        resource = await self.editorial.lock_resource(session, identifier)
+        state = await self.editorial.initialize(session, resource)
+        if expected_editorial_version is not None:
+            state.require_expected(expected_editorial_version, expected_revision)
         try:
             previous, prior_document = await self.store.get(session, identifier, None)
         except LookupError as exc:
@@ -164,7 +178,14 @@ class BibliographicService:
             previous.profile,
             actor_id,
         )
+        next_state = prepare_content_revision(
+            state,
+            revision,
+            expected_version=state.version,
+            expected_current_revision=expected_revision,
+        )
         await self.store.save(session, revision, document)
+        await self.editorial.save(session, state, next_state)
         await self.audit.append(
             session,
             content_event(
@@ -184,6 +205,7 @@ class BibliographicService:
         provenance: Provenance,
         *,
         actor: AuthenticatedActor,
+        expected_editorial_version: int | None = None,
     ) -> Revision:
         """Copy an owned historical snapshot as new content, never an editorial restore."""
         actor_id, actor_type = audit_actor(actor)
@@ -193,6 +215,8 @@ class BibliographicService:
         if type(source_revision) is not int or not 1 <= source_revision <= expected_revision:
             raise ValueError("Revisão de origem deve pertencer ao histórico esperado.")
         async with self.sessions() as session, session.begin():
+            await write_gate(session)
+            await self.editorial.lock_resource(session, identifier)
             historical, document = await self.store.get(session, identifier, source_revision)
             current, _ = await self.store.get(session, identifier, None)
             if historical.identity != current.identity or historical.profile != current.profile:
@@ -208,10 +232,22 @@ class BibliographicService:
                 actor_type,
                 AuditEventType.RESTORED,
                 source_revision,
+                expected_editorial_version,
             )
         return revision
 
     async def read(self, identifier: UUID, number: int | None = None) -> tuple[Revision, Graph]:
         async with self.sessions() as session:
             revision, document = await self.store.get(session, identifier, number)
+        return revision, parse_document(json.dumps(document), "json-ld")
+
+    async def read_public(self, identifier: UUID) -> tuple[Revision, Graph] | None:
+        """Trusted internal public projection; legacy has no inferred publication."""
+        async with self.sessions() as session, session.begin():
+            await write_gate(session)
+            await self.editorial.lock_resource(session, identifier)
+            state = await self.editorial.get(session, identifier)
+            if state is None or state.public_revision is None:
+                return None
+            revision, document = await self.store.get(session, identifier, state.public_revision)
         return revision, parse_document(json.dumps(document), "json-ld")

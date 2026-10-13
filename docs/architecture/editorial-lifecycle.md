@@ -3,7 +3,9 @@
 Implementação de domínio e coordenação de aplicação da [issue #27](https://github.com/inacioigne/libris/issues/27),
 no escopo da [issue #26](https://github.com/inacioigne/libris/issues/26).
 Decisão: [ADR 0026](../decisions/0026-editorial-lifecycle.md).
-Não há persistência editorial concreta, endpoint ou workflow operacional completo.
+A #43 integra este contrato à [persistência PostgreSQL](editorial-persistence.md).
+Não há endpoint ou interface administrativa. As evidências originais de #27 abaixo
+continuam sendo históricas; ver [verificação atual](editorial-persistence-verification.md).
 
 ## Estados, matriz e autorização
 
@@ -76,9 +78,8 @@ archived é recusada nesta política inicial.
 
 `prepare_content_revision` exige a próxima Revision sequencial e identidade exata;
 retorna metadados imutáveis para gravação junto do snapshot. **Não persiste conteúdo**.
-BibliographicService ainda não chama essa política: adoção operacional requer o
-adaptador e integração transacional futuros, sem duas gravações independentes.
-A criação futura deve gravar snapshot r1 e EditorialRecord draft no mesmo commit.
+BibliographicService chama essa política na mesma transação de snapshot/CAS/auditoria.
+Criação grava r1 e EditorialRecord draft no mesmo commit; ver persistência da #43.
 
 ## Validação de publicação
 
@@ -111,7 +112,11 @@ até o commit. O adaptador futuro deverá verificar fechos transitivos quando ex
 pelo contrato de relações e proteger versões/locks de dependências consultadas,
 sem acesso a tabelas de outro módulo. Não há essa garantia física nesta entrega.
 
-## Concorrência e persistência futura
+## Contrato original de concorrência e persistência
+
+A proposta da #27 a seguir foi concretizada pelo ADR 0028, com gate transacional
+shared/exclusive para proteger dependências e ambos os CAS; consulte
+[persistência editorial](editorial-persistence.md) para o comportamento vigente.
 
 O domínio verifica expectativas antes de preparar mudanças. `EditorialService`
 delimita a unidade transacional por async context manager; autoriza/valida antes de
@@ -154,8 +159,8 @@ operação, escopo, ator, instante, revisão relacionada, versões anterior/post
 justificativa (obrigatória para return/withdraw/archive). Evento preparado não é
 evento gravado. A #28 acrescenta [envelopes e armazenamento de auditoria](provenance-audit-versioning.md),
 com identificador, proveniência completa e adaptação explícita desses eventos preparados.
-A gravação junto do CAS de estado editorial continua pendente do adaptador PostgreSQL.
-RETURN/ARCHIVE precisam de extensão governada da taxonomia. Não há publicação de
+A #43 grava o envelope junto do CAS editorial por PostgresEditorialTransactions.
+RETURN/ARCHIVE usam a extensão governada record.returned/record.archived. Não há publicação de
 eventos, outbox ou sistema paralelo de logs.
 
 ## Evidências e critérios
@@ -167,8 +172,8 @@ CAS concorrente com doubles. A suíte preexistente continua verificando snapshot
 serialização, permissões e revisões; integração PostgreSQL fica separada.
 
 Os critérios de #27 têm comportamento em domínio/aplicação e testes. Persistência
-editorial operacional, integração com escrita de conteúdo e auditoria durável não
-fazem parte desta entrega sem migração, e permanecem dependências explícitas.
+editorial operacional, integração com escrita e auditoria durável foram acrescentadas
+pela #43; as verificações abaixo se referem somente à entrega original da #27.
 
 ## Verificação executada em 2026-10-12
 

@@ -114,6 +114,10 @@ class EditorialRecord:
                 raise CatalogError(C.APPROVAL_STALE, "Publicação deve conservar sua aprovação.")
 
     @property
+    def candidate_revision(self) -> int | None:
+        return self.current_revision if self.candidate_state is not None else None
+
+    @property
     def public_revision(self) -> int | None:
         return self.published_revision if self.editorial_state == S.PUBLISHED else None
 

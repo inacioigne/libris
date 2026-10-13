@@ -17,6 +17,7 @@ from libris.modules.bibliographic.application.service import (
     BibliographicService,
     prepare_document,
 )
+from libris.modules.bibliographic.domain.editorial import EditorialRecord
 from libris.modules.bibliographic.domain.models import (
     Provenance,
     ResourceIdentity,
@@ -470,6 +471,9 @@ def test_owned_snapshot_and_revision_preserve_extension() -> None:
     service.store.advance = AsyncMock(return_value=identity.uri)
     service.store.save = AsyncMock()
     service.audit.append = AsyncMock()
+    service.editorial.lock_resource = AsyncMock()
+    service.editorial.initialize = AsyncMock(return_value=EditorialRecord(identity))
+    service.editorial.save = AsyncMock()
     title = next(data.objects(root, BF.title))
     data.set((title, BF.mainTitle, Literal("Título atualizado", lang="pt")))
     result = asyncio.run(

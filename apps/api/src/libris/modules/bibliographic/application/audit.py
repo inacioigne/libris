@@ -69,11 +69,7 @@ def editorial_event(
     *,
     actor: AuthenticatedActor,
 ) -> AuditEvent:
-    """Prepare only; future state adapter must append in the SAME CAS transaction.
-
-    RETURN and ARCHIVE deliberately have no misleading mapping to the eight-event
-    taxonomy. Their durable integration requires a governed extension of it.
-    """
+    """Prepare an envelope; the caller appends it in the state CAS transaction."""
     identifier, kind = audit_actor(actor)
     if (
         prepared.actor_id != identifier
@@ -87,6 +83,8 @@ def editorial_event(
         EditorialOperation.PUBLISH: AuditEventType.PUBLISHED,
         EditorialOperation.WITHDRAW: AuditEventType.WITHDRAWN,
         EditorialOperation.REPUBLISH: AuditEventType.RESTORED,
+        EditorialOperation.RETURN: AuditEventType.RETURNED,
+        EditorialOperation.ARCHIVE: AuditEventType.ARCHIVED,
     }
     if prepared.operation not in types:
         raise ValueError("Operação editorial ainda sem evento na taxonomia versionada.")

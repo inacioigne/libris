@@ -465,11 +465,13 @@ def test_engine_failure_cannot_open_create_transaction(monkeypatch: pytest.Monke
 def test_revise_violation_exits_transaction_without_saving() -> None:
     from datetime import UTC, datetime
 
+    from libris.modules.bibliographic.domain.editorial import EditorialRecord
     from libris.modules.bibliographic.domain.models import Revision
 
     identity = ResourceIdentity.create("https://catalog.invalid/resources")
     graph = rdf(f"<{identity.uri}> a bf:Work.")
     session = MagicMock()
+    session.execute = AsyncMock()
     sessions = MagicMock()
     sessions.return_value.__aenter__ = AsyncMock(return_value=session)
     transaction = session.begin.return_value
@@ -482,10 +484,14 @@ def test_revise_violation_exits_transaction_without_saving() -> None:
     service.store.get = AsyncMock(return_value=(previous, []))
     service.store.advance = AsyncMock(return_value=identity.uri)
     service.store.save = AsyncMock()
+    service.editorial.lock_resource = AsyncMock()
+    service.editorial.initialize = AsyncMock(return_value=EditorialRecord(identity))
+    service.editorial.save = AsyncMock()
     with pytest.raises(ValueError, match="conforme"):
         asyncio.run(service.revise(identity.internal_id, 1, graph, Provenance("test", "shacl")))
     service.store.advance.assert_awaited_once()
     service.store.save.assert_not_awaited()
+    service.editorial.save.assert_not_awaited()
     from libris.modules.bibliographic.application.diagnostics import CatalogValidationRejected
 
     assert transaction.__aexit__.await_args.args[0] is CatalogValidationRejected

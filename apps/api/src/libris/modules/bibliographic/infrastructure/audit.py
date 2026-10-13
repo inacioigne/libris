@@ -10,6 +10,7 @@ from sqlalchemy import (
     Index,
     String,
     select,
+    text,
     tuple_,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +34,7 @@ from libris.modules.bibliographic.infrastructure.persistence import (
 # These checks are mirrored in the immutable Alembic migration, not imported by it.
 AUDIT_CHECKS = {
     "ck_audit_type": "event_type IN ('record.created','record.revised','record.submitted',"
-    "'record.approved','record.published','record.withdrawn','record.restored','record.superseded')",
+    "'record.approved','record.published','record.withdrawn','record.restored','record.superseded','record.returned','record.archived')",
     "ck_audit_revision": "revision_number > 0 AND "
     "(event_type <> 'record.created' OR revision_number = 1) AND "
     "(event_type <> 'record.revised' OR revision_number > 1)",
@@ -69,6 +70,10 @@ AUDIT_CHECKS = {
     "AND scope IN ('record','candidate')) OR "
     "(event_type = 'record.withdrawn' AND previous_state = 'published' AND new_state = 'withdrawn' "
     "AND scope = 'record' AND reason IS NOT NULL) OR "
+    "(event_type = 'record.returned' AND previous_state IN ('in_review','approved') "
+    "AND new_state = 'draft' AND scope IN ('record','candidate') AND reason IS NOT NULL) OR "
+    "(event_type = 'record.archived' AND previous_state = 'withdrawn' "
+    "AND new_state = 'archived' AND scope = 'record' AND reason IS NOT NULL) OR "
     "(event_type = 'record.restored' AND restoration_kind = 'editorial' AND "
     "previous_state = 'withdrawn' AND new_state = 'published' AND scope = 'record')))",
 }
@@ -101,6 +106,12 @@ class SemanticAuditEvent(Base):
         ),
         Index("ix_audit_resource_time", "resource_id", "occurred_at", "event_id"),
         Index("ix_audit_resource_revision", "resource_id", "revision_number"),
+        Index(
+            "ix_audit_editorial_version",
+            "resource_id",
+            "new_version",
+            postgresql_where=text("new_version IS NOT NULL"),
+        ),
     )
     event_id: Mapped[UUID] = mapped_column(primary_key=True)
     resource_id: Mapped[UUID]
