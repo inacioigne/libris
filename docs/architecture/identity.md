@@ -57,9 +57,15 @@ na implantação; não foi criado um sistema paralelo de logging.
 | Papel externo | Permissões internas |
 | --- | --- |
 | libris-reader | bibliographic:read, authority:read |
-| libris-cataloger | bibliographic:read/create/update, authority:read, metadata_revision:read/create |
+| libris-cataloger | bibliographic:read/create/update, authority:read, metadata_revision:read/create, editorial:submit |
 | libris-authority-manager | bibliographic:read, authority:read/manage |
+| libris-reviewer | bibliographic:read, authority:read, metadata_revision:read, editorial:approve/return |
+| libris-publisher | bibliographic:read, authority:read, metadata_revision:read, editorial:publish/withdraw/republish/archive |
 | libris-admin | Todas: as anteriores, bibliographic:delete e system:admin |
+
+As operações editoriais e seus limites estão no [contrato #27](editorial-lifecycle.md).
+O realm demonstrativo conserva os quatro papéis originais; os novos papéis precisam
+de provisionamento explícito no provedor.
 
 Múltiplos papéis somam permissões. Papel desconhecido ou ausente não concede nada.
 SYSTEM_ADMIN não é um bypass implícito: libris-admin recebe todas as permissões

@@ -37,6 +37,14 @@ class CatalogCode(StrEnum):
     VALIDATOR_FAILURE = "validator.failure"
     INFRASTRUCTURE_UNAVAILABLE = "infrastructure.unavailable"
     INTERNAL = "internal.failure"
+    EDITORIAL_STATE_INVALID = "editorial.state_invalid"
+    TRANSITION_FORBIDDEN = "editorial.transition_forbidden"
+    EDITORIAL_PERMISSION_DENIED = "editorial.permission_denied"
+    EDITORIAL_PRECONDITION = "editorial.precondition_required"
+    CONTENT_NOT_PUBLISHABLE = "editorial.content_not_publishable"
+    EDITORIAL_VERSION_STALE = "editorial.version_stale"
+    APPROVAL_STALE = "editorial.approval_stale"
+    IDENTITY_OPERATION_INVALID = "identity.operation_invalid"
 
 
 class CatalogError(ValueError):

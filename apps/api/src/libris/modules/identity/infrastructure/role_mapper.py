@@ -12,6 +12,7 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = {
             P.AUTHORITY_READ,
             P.METADATA_REVISION_READ,
             P.METADATA_REVISION_CREATE,
+            P.EDITORIAL_SUBMIT,
         }
     ),
     "libris-authority-manager": frozenset(
@@ -19,6 +20,26 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = {
             P.BIBLIOGRAPHIC_READ,
             P.AUTHORITY_READ,
             P.AUTHORITY_MANAGE,
+        }
+    ),
+    "libris-reviewer": frozenset(
+        {
+            P.BIBLIOGRAPHIC_READ,
+            P.AUTHORITY_READ,
+            P.METADATA_REVISION_READ,
+            P.EDITORIAL_APPROVE,
+            P.EDITORIAL_RETURN,
+        }
+    ),
+    "libris-publisher": frozenset(
+        {
+            P.BIBLIOGRAPHIC_READ,
+            P.AUTHORITY_READ,
+            P.METADATA_REVISION_READ,
+            P.EDITORIAL_PUBLISH,
+            P.EDITORIAL_WITHDRAW,
+            P.EDITORIAL_REPUBLISH,
+            P.EDITORIAL_ARCHIVE,
         }
     ),
     "libris-admin": frozenset(P),

@@ -81,6 +81,14 @@ Ver [ADR 0025](docs/decisions/0025-semantic-extensions.md) e
 [verificação](docs/architecture/semantic-extensions-verification.md).
 Os registros/perfis históricos e os DTOs permanecem preservados; não há novas rotas.
 
+A M03.04.01 implementa o [contrato de estados editoriais](docs/architecture/editorial-lifecycle.md):
+matriz fechada, permissões explícitas, publicação validada, revisão candidata separada
+da publicação anterior e ciclo independente da identidade. Ver
+[ADR 0026](docs/decisions/0026-editorial-lifecycle.md).
+A coordenação exige adaptador transacional futuro; não há persistência editorial,
+integração à escrita semântica ou auditoria durável nesta entrega.
+
+
 ## Estrutura
 
 ```text
