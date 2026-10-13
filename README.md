@@ -74,6 +74,13 @@ Ver [ADR 0024](docs/decisions/0024-controlled-vocabularies.md) e
 [verificação](docs/architecture/controlled-vocabularies-verification.md).
 Não há conectores remotos, cache persistente ou adoção automática nos DTOs históricos.
 
+A M03.03.02 implementa [extensibilidade semântica governada](docs/architecture/semantic-extensions.md):
+registro semântico 2.0 fixado por release, autorização de classes/propriedades e
+perfil candidato BIBFRAME + Dublin Core Terms, com exemplos RDF/JSON-LD sem perdas.
+Ver [ADR 0025](docs/decisions/0025-semantic-extensions.md) e
+[verificação](docs/architecture/semantic-extensions-verification.md).
+Os registros/perfis históricos e os DTOs permanecem preservados; não há novas rotas.
+
 ## Estrutura
 
 ```text

@@ -1,0 +1,1403 @@
+{
+  "version": "2.0",
+  "namespaces": [
+    {
+      "prefix": "bf",
+      "iri": "http://id.loc.gov/ontologies/bibframe/",
+      "ontology": "http://id.loc.gov/ontologies/bibframe/",
+      "release": "2.0.1",
+      "label": {
+        "pt": "BIBFRAME"
+      },
+      "description": {
+        "pt": "Namespace BIBFRAME; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.loc.gov/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "rdf",
+      "iri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "ontology": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "release": "1.0",
+      "label": {
+        "pt": "RDF"
+      },
+      "description": {
+        "pt": "Namespace RDF; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.w3.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "rdfs",
+      "iri": "http://www.w3.org/2000/01/rdf-schema#",
+      "ontology": "http://www.w3.org/2000/01/rdf-schema#",
+      "release": "1.0",
+      "label": {
+        "pt": "RDFS"
+      },
+      "description": {
+        "pt": "Namespace RDFS; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.w3.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "skos",
+      "iri": "http://www.w3.org/2004/02/skos/core#",
+      "ontology": "http://www.w3.org/2004/02/skos/core#",
+      "release": "1.0",
+      "label": {
+        "pt": "SKOS"
+      },
+      "description": {
+        "pt": "Namespace SKOS; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.w3.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "dcterms",
+      "iri": "http://purl.org/dc/terms/",
+      "ontology": "http://purl.org/dc/terms/",
+      "release": "2020-01-20",
+      "label": {
+        "pt": "Dublin Core Terms"
+      },
+      "description": {
+        "pt": "Namespace Dublin Core Terms; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.dublincore.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "schema",
+      "iri": "https://schema.org/",
+      "ontology": "https://schema.org/",
+      "release": null,
+      "label": {
+        "pt": "Schema.org"
+      },
+      "description": {
+        "pt": "Namespace Schema.org; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://schema.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "prov",
+      "iri": "http://www.w3.org/ns/prov#",
+      "ontology": "http://www.w3.org/ns/prov#",
+      "release": null,
+      "label": {
+        "pt": "PROV-O"
+      },
+      "description": {
+        "pt": "Namespace PROV-O; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.w3.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    },
+    {
+      "prefix": "xsd",
+      "iri": "http://www.w3.org/2001/XMLSchema#",
+      "ontology": "http://www.w3.org/2001/XMLSchema#",
+      "release": "1.0",
+      "label": {
+        "pt": "XML Schema"
+      },
+      "description": {
+        "pt": "Namespace XML Schema; apenas termos registrados são autorizados no Libris."
+      },
+      "maintainer": "https://www.w3.org/",
+      "inclusion": "urn:libris:decision:0025",
+      "approval": "technical"
+    }
+  ],
+  "classes": [
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Agent",
+      "entity": "Agent",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Agent"
+      },
+      "description": {
+        "pt": "Classe Agent; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Classification",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Classification"
+      },
+      "description": {
+        "pt": "Classe Classification; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Contribution",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Contribution"
+      },
+      "description": {
+        "pt": "Classe Contribution; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Extent",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Extent"
+      },
+      "description": {
+        "pt": "Classe Extent; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Identifier",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Identifier"
+      },
+      "description": {
+        "pt": "Classe Identifier; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Instance",
+      "entity": "Instance",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Instance"
+      },
+      "description": {
+        "pt": "Classe Instance; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Isbn",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Isbn"
+      },
+      "description": {
+        "pt": "Classe Isbn; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Item",
+      "entity": "Item",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Item"
+      },
+      "description": {
+        "pt": "Classe Item; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Local",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Local"
+      },
+      "description": {
+        "pt": "Classe Local; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Note",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Note"
+      },
+      "description": {
+        "pt": "Classe Note; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Organization",
+      "entity": "Agent",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Organization"
+      },
+      "description": {
+        "pt": "Classe Organization; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Person",
+      "entity": "Agent",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Person"
+      },
+      "description": {
+        "pt": "Classe Person; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Publication",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Publication"
+      },
+      "description": {
+        "pt": "Classe Publication; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/ShelfMark",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "ShelfMark"
+      },
+      "description": {
+        "pt": "Classe ShelfMark; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Title",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "Title"
+      },
+      "description": {
+        "pt": "Classe Title; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/VariantTitle",
+      "entity": null,
+      "auxiliary": true,
+      "namespace": "bf",
+      "label": {
+        "pt": "VariantTitle"
+      },
+      "description": {
+        "pt": "Classe VariantTitle; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "auxiliary": false,
+      "namespace": "bf",
+      "label": {
+        "pt": "Work"
+      },
+      "description": {
+        "pt": "Classe Work; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#Concept",
+      "entity": "Subject",
+      "auxiliary": false,
+      "namespace": "skos",
+      "label": {
+        "pt": "Concept"
+      },
+      "description": {
+        "pt": "Classe Concept; classificação Libris preservada do registro 1.0."
+      }
+    },
+    {
+      "iri": "http://www.w3.org/ns/prov#Entity",
+      "auxiliary": true,
+      "namespace": "prov",
+      "label": {
+        "pt": "Entidade de proveniência",
+        "en": "Provenance entity"
+      },
+      "description": {
+        "pt": "Classe auxiliar; não cria entidade operacional ou autoriza edição por si só."
+      }
+    }
+  ],
+  "properties": [
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/agent",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution",
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "target_entities": [
+        "Agent"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Agente"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/carrier",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Suporte"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/classification",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Classification"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Classificação"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/classificationPortion",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Classification"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Código de classificação"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/content",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conteúdo"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/contribution",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Contribuições"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/custodialHistory",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Histórico de custódia"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/date",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "typed"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [
+        "http://www.w3.org/2001/XMLSchema#date",
+        "http://www.w3.org/2001/XMLSchema#gYear",
+        "http://www.w3.org/2001/XMLSchema#string"
+      ],
+      "derived": false,
+      "label": {
+        "pt": "Data de publicação"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/editionStatement",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Indicação de edição"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/extent",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Extent"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Extensão"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/frequency",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work",
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "label": {
+        "pt": "Periodicidade"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/hasInstance",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "target_entities": [
+        "Instance"
+      ],
+      "datatypes": [],
+      "derived": true,
+      "label": {
+        "pt": "Manifestações"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/hasItem",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "target_entities": [
+        "Item"
+      ],
+      "datatypes": [],
+      "derived": true,
+      "label": {
+        "pt": "Exemplares"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/heldBy",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Organization"
+      ],
+      "target_entities": [
+        "Agent"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Instituição detentora"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Identificadores"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/instanceOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Obra"
+      },
+      "maximum": 1,
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/itemOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "target_entities": [
+        "Instance"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Manifestação"
+      },
+      "maximum": 1,
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/language",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Idioma"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/mainTitle",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Título principal"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/note",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Note"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Notas"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/noteType",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Note"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Tipo da nota"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/place",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Local de publicação"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Publication"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Publicação"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/relatedTo",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Obras relacionadas"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/role",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Contribution"
+      ],
+      "value_kinds": [
+        "vocabulary"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Papel"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/shelfMark",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Item"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Marca de estante bibliográfica"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/source",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Classification",
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local",
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Fonte"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/subject",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "target_entities": [
+        "Subject"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Assuntos"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/subtitle",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Subtítulo"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/title",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance",
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "structured"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Title",
+        "http://id.loc.gov/ontologies/bibframe/VariantTitle"
+      ],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Títulos principal e alternativos"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://id.loc.gov/ontologies/bibframe/translationOf",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship"
+      ],
+      "target_classes": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "target_entities": [
+        "Work"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Tradução de"
+      },
+      "namespace": "bf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://id.loc.gov/ontologies/bibframe/"
+    },
+    {
+      "iri": "http://purl.org/dc/terms/relation",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "entity",
+        "relationship",
+        "authority"
+      ],
+      "target_classes": [],
+      "target_entities": [
+        "Agent",
+        "Subject"
+      ],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Autoridade relacionada"
+      },
+      "namespace": "dcterms",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://purl.org/dc/terms/"
+    },
+    {
+      "iri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Identifier",
+        "http://id.loc.gov/ontologies/bibframe/Isbn",
+        "http://id.loc.gov/ontologies/bibframe/Local",
+        "http://id.loc.gov/ontologies/bibframe/ShelfMark"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Valor"
+      },
+      "namespace": "rdf",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    },
+    {
+      "iri": "http://www.w3.org/2000/01/rdf-schema#label",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Extent",
+        "http://id.loc.gov/ontologies/bibframe/Note",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Descrição"
+      },
+      "namespace": "rdfs",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2000/01/rdf-schema#"
+    },
+    {
+      "iri": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Referências externas"
+      },
+      "namespace": "rdfs",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2000/01/rdf-schema#"
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#altLabel",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Formas variantes"
+      },
+      "namespace": "skos",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#broader",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conceito mais amplo"
+      },
+      "namespace": "skos",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#inScheme",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Vocabulário"
+      },
+      "namespace": "skos",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#prefLabel",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Termo autorizado"
+      },
+      "namespace": "skos",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "iri": "http://www.w3.org/2004/02/skos/core#related",
+      "sources": [
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Conceito relacionado"
+      },
+      "namespace": "skos",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/2004/02/skos/core#"
+    },
+    {
+      "iri": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Agent",
+        "http://id.loc.gov/ontologies/bibframe/Item",
+        "http://id.loc.gov/ontologies/bibframe/Organization",
+        "http://id.loc.gov/ontologies/bibframe/Person",
+        "http://www.w3.org/2004/02/skos/core#Concept"
+      ],
+      "value_kinds": [
+        "iri"
+      ],
+      "target_classes": [],
+      "target_entities": [],
+      "datatypes": [],
+      "derived": false,
+      "label": {
+        "pt": "Proveniência semântica"
+      },
+      "namespace": "prov",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "http://www.w3.org/ns/prov#"
+    },
+    {
+      "iri": "https://schema.org/dateCreated",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "typed"
+      ],
+      "datatypes": [
+        "http://www.w3.org/2001/XMLSchema#date",
+        "http://www.w3.org/2001/XMLSchema#dateTime"
+      ],
+      "label": {
+        "pt": "Data de criação"
+      },
+      "namespace": "schema",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "https://schema.org/"
+    },
+    {
+      "iri": "https://schema.org/encodingFormat",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "label": {
+        "pt": "Formato digital"
+      },
+      "namespace": "schema",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "https://schema.org/"
+    },
+    {
+      "iri": "https://schema.org/fileFormat",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Instance"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "status": "deprecated",
+      "label": {
+        "pt": "Formato digital obsoleto; usar encodingFormat"
+      },
+      "namespace": "schema",
+      "description": {
+        "pt": "Contrato de compatibilidade Libris; fontes e limites não são axiomas universais da ontologia."
+      },
+      "ontology_source": "https://schema.org/"
+    },
+    {
+      "iri": "http://purl.org/dc/terms/abstract",
+      "namespace": "dcterms",
+      "sources": [
+        "http://id.loc.gov/ontologies/bibframe/Work"
+      ],
+      "value_kinds": [
+        "text"
+      ],
+      "label": {
+        "pt": "Resumo",
+        "en": "Abstract"
+      },
+      "description": {
+        "pt": "Resumo do recurso; suporte Libris textual e opcional no perfil candidato."
+      },
+      "ontology_source": "http://purl.org/dc/terms/abstract"
+    }
+  ],
+  "format_version": "1.1"
+}

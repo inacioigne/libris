@@ -1,0 +1,10 @@
+@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/works/123> a bf:Work ;
+    bf:title [ a bf:Title ; bf:mainTitle "Exemplo de obra"@pt ] ;
+    dcterms:abstract "Descrição complementar da obra."@pt ;
+    dcterms:created "2026-10-12"^^xsd:date ;
+    dcterms:provenance [ a prov:Entity ; prov:value "Fonte local"@pt ] .

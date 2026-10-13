@@ -7,5 +7,6 @@
   "urn:libris:profile:monograph:2.0.0": "170a4cf305cf7062ddeb9f9ee36527b25e0fca50f722b2cfec5cd340517c28d5",
   "urn:libris:profile:serial:2.0.0": "34f75bde91fff17bdd071c8f19bd92de16da5a0a8503588d85eafc4ecfb7686b",
   "urn:libris:profile:subject:2.0.0": "2d228e4e430efb41e077140cb1ea454648f297a6f7301944755fe4e8b6de0ac9",
+  "urn:libris:profile:work-extensions:2.0.0": "75f31b661a46f43f7fa28a2ee02e4324600c8c183d1b367a4968a8eb5a3d95d6",
   "urn:libris:profile:work:2.0.0": "d68cc5ebc1a3f1f4ccce53e34b999d0fd021158ba7d05736b48466a4c8e91c75"
 }

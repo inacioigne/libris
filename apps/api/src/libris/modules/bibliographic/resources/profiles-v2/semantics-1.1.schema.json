@@ -1,0 +1,427 @@
+{
+  "$defs": {
+    "ClassDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "iri": {
+          "title": "Iri",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EntityType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "auxiliary": {
+          "default": false,
+          "title": "Auxiliary",
+          "type": "boolean"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "status": {
+          "default": "supported",
+          "enum": [
+            "supported",
+            "deprecated",
+            "review_required"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "iri"
+      ],
+      "title": "ClassDefinition",
+      "type": "object"
+    },
+    "EntityType": {
+      "enum": [
+        "Work",
+        "Instance",
+        "Item",
+        "Agent",
+        "Subject"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "NamespaceDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "prefix": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+          "title": "Prefix",
+          "type": "string"
+        },
+        "iri": {
+          "title": "Iri",
+          "type": "string"
+        },
+        "ontology": {
+          "title": "Ontology",
+          "type": "string"
+        },
+        "release": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release"
+        },
+        "status": {
+          "default": "supported",
+          "enum": [
+            "supported",
+            "review_required"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "maintainer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maintainer"
+        },
+        "inclusion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inclusion"
+        },
+        "approval": {
+          "default": "technical",
+          "enum": [
+            "technical",
+            "institutional",
+            "pending"
+          ],
+          "title": "Approval",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix",
+        "iri",
+        "ontology"
+      ],
+      "title": "NamespaceDefinition",
+      "type": "object"
+    },
+    "PropertyDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "iri": {
+          "title": "Iri",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "ontology_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ontology Source"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "value_kinds": {
+          "items": {
+            "enum": [
+              "text",
+              "typed",
+              "iri",
+              "entity",
+              "authority",
+              "vocabulary",
+              "relationship",
+              "structured"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Value Kinds",
+          "type": "array"
+        },
+        "target_classes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Classes",
+          "type": "array"
+        },
+        "target_entities": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EntityType"
+          },
+          "title": "Target Entities",
+          "type": "array"
+        },
+        "datatypes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Datatypes",
+          "type": "array"
+        },
+        "minimum": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "maximum": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum"
+        },
+        "derived": {
+          "default": false,
+          "title": "Derived",
+          "type": "boolean"
+        },
+        "status": {
+          "default": "supported",
+          "enum": [
+            "supported",
+            "deprecated",
+            "review_required"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "label": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "iri",
+        "sources",
+        "value_kinds",
+        "label"
+      ],
+      "title": "PropertyDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "default": "1.0",
+      "enum": [
+        "1.0",
+        "1.1"
+      ],
+      "title": "Format Version",
+      "type": "string"
+    },
+    "version": {
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$",
+      "title": "Version",
+      "type": "string"
+    },
+    "namespaces": {
+      "items": {
+        "$ref": "#/$defs/NamespaceDefinition"
+      },
+      "title": "Namespaces",
+      "type": "array"
+    },
+    "classes": {
+      "items": {
+        "$ref": "#/$defs/ClassDefinition"
+      },
+      "title": "Classes",
+      "type": "array"
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PropertyDefinition"
+      },
+      "title": "Properties"
+    }
+  },
+  "required": [
+    "version",
+    "namespaces",
+    "classes",
+    "properties"
+  ],
+  "title": "SemanticRegistry",
+  "type": "object"
+}

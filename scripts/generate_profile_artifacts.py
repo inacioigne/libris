@@ -15,7 +15,11 @@ from libris.modules.bibliographic.domain.profile_registry import (
     ShapeRegistry,
     profile_fingerprint,
 )
-from libris.modules.bibliographic.infrastructure.profiles import load_profile_registry
+from libris.modules.bibliographic.infrastructure.profiles import (
+    ProfileSemanticRelease,
+    load_profile_registry,
+    load_semantic_registry,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 RESOURCES = ROOT / "apps/api/src/libris/modules/bibliographic/resources/profiles-v2"
@@ -33,9 +37,8 @@ def main() -> None:
     args = parser.parse_args()
     artifacts: dict[Path, object] = {
         RESOURCES / "profile-2.0.schema.json": ProfileDefinition.model_json_schema(),
-        RESOURCES
-        / "resolved-profile-2.0.schema.json": ResolvedProfile.model_json_schema(),
-        RESOURCES / "semantics-1.0.schema.json": SemanticRegistry.model_json_schema(),
+        RESOURCES / "resolved-profile-2.0.schema.json": ResolvedProfile.model_json_schema(),
+        RESOURCES / "semantics-1.1.schema.json": SemanticRegistry.model_json_schema(),
         RESOURCES / "shapes-1.0.schema.json": ShapeRegistry.model_json_schema(),
     }
     manifest: list[str] = json.loads(
@@ -50,38 +53,43 @@ def main() -> None:
             ProfileDefinition.model_validate_json((RESOURCES / name).read_text("utf-8"))
             for name in manifest
         ]
+        associations = [
+            ProfileSemanticRelease.model_validate(entry)
+            for entry in json.loads((RESOURCES / "semantic-profile-releases.json").read_text())
+        ]
+        semantics_by_release: dict[str, SemanticRegistry] = {}
+        for association in associations:
+            declaration = ProfileDefinition.model_validate_json(
+                (RESOURCES / association.profile_file).read_text("utf-8")
+            )
+            if declaration.release_id != association.profile_release:
+                raise SystemExit("Associação semântica aponta a outra release.")
+            declarations.append(declaration)
+            semantic_registry = load_semantic_registry(association.semantic_release)
+            semantic_registry.check_extension_of(load_semantic_registry("1.0"))
+            semantics_by_release[declaration.release_id] = semantic_registry
         # Validate complete input before making the artifact concrete.
         candidate_registry = ProfileRegistry(
             declarations,
             SemanticRegistry.model_validate_json(
                 (RESOURCES / "semantics-v1.json").read_text("utf-8")
             ),
-            ShapeRegistry.model_validate_json(
-                (RESOURCES / "shapes-v1.json").read_text("utf-8")
-            ),
+            ShapeRegistry.model_validate_json((RESOURCES / "shapes-v1.json").read_text("utf-8")),
+            semantics_by_release=semantics_by_release,
         )
         lock_path = RESOURCES / "release-lock.json"
         locks: dict[str, str] = json.loads(lock_path.read_text("utf-8"))
         protected = set(locks)
         for declaration in declarations:
             if declaration.status != "draft":
-                protected.update(
-                    candidate_registry.resolve(declaration.release_id).lineage
-                )
+                protected.update(candidate_registry.resolve(declaration.release_id).lineage)
         for declaration in declarations:
             fingerprint = profile_fingerprint(declaration)
-            if (
-                declaration.release_id in locks
-                and locks[declaration.release_id] != fingerprint
-            ):
-                raise SystemExit(
-                    "Release imutável modificada: " + declaration.release_id
-                )
+            if declaration.release_id in locks and locks[declaration.release_id] != fingerprint:
+                raise SystemExit("Release imutável modificada: " + declaration.release_id)
             if declaration.release_id in protected:
                 locks[declaration.release_id] = fingerprint
-        lock_path.write_text(
-            json.dumps(locks, sort_keys=True, indent=2) + "\n", encoding="utf-8"
-        )
+        lock_path.write_text(json.dumps(locks, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     registry = load_profile_registry()
     for name in manifest:
         if name not in {
@@ -92,15 +100,13 @@ def main() -> None:
             "digital-2.0.0.json",
         }:
             continue
-        definition = ProfileDefinition.model_validate_json(
-            (RESOURCES / name).read_text("utf-8")
-        )
+        definition = ProfileDefinition.model_validate_json((RESOURCES / name).read_text("utf-8"))
         artifacts[EXAMPLES / name] = definition.model_dump(mode="json")
         if name != "monograph-2.0.0.json":
             continue
-        artifacts[EXAMPLES / name.replace(".json", ".resolved.json")] = (
-            registry.resolve(definition.release_id).model_dump(mode="json")
-        )
+        artifacts[EXAMPLES / name.replace(".json", ".resolved.json")] = registry.resolve(
+            definition.release_id
+        ).model_dump(mode="json")
     mismatches: list[str] = []
     for path, value in artifacts.items():
         content = json.dumps(value, ensure_ascii=False, indent=2) + "\n"

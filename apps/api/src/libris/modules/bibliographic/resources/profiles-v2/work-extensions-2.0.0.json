@@ -1,0 +1,62 @@
+{
+  "format": "libris.catalog-profile",
+  "format_version": "2.0",
+  "id": "urn:libris:profile:work-extensions",
+  "release_id": "urn:libris:profile:work-extensions:2.0.0",
+  "release": "2.0.0",
+  "status": "candidate",
+  "category": "specialization",
+  "label": {
+    "pt": "Obra com resumo Dublin Core",
+    "en": "Work with Dublin Core abstract"
+  },
+  "description": {
+    "pt": "Extensão candidata BIBFRAME + DCTERMS sobre o núcleo 2.0.0; registro semântico 2.0."
+  },
+  "applies_to": [
+    "Work"
+  ],
+  "base_release": "urn:libris:profile:work:2.0.0",
+  "resources": [
+    {
+      "rdf_class": "http://id.loc.gov/ontologies/bibframe/Work",
+      "entity": "Work",
+      "label": {
+        "pt": "Obra"
+      },
+      "fields": [
+        {
+          "name": "abstract",
+          "property": "http://purl.org/dc/terms/abstract",
+          "namespace": "dcterms",
+          "label": {
+            "pt": "Resumo",
+            "en": "Abstract"
+          },
+          "description": {
+            "pt": "Descrição complementar da obra."
+          },
+          "value": {
+            "kind": "text",
+            "language": {
+              "enabled": true,
+              "unique": true
+            }
+          },
+          "policy": {
+            "min_count": 0,
+            "max_count": 2,
+            "repeatable": true,
+            "required": false,
+            "specializable": true
+          },
+          "presentation": {
+            "input": "textarea",
+            "section": "description",
+            "order": 20
+          }
+        }
+      ]
+    }
+  ]
+}

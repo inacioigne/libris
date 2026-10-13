@@ -19,6 +19,7 @@ from .profile_contract import (
     ResolvedProfile,
     ShapeReference,
     StructuredValue,
+    Text,
     TypedValue,
     Version,
 )
@@ -48,14 +49,23 @@ class NamespaceDefinition(Contract):
     prefix: Name
     iri: IRI
     ontology: IRI
-    release: Version
+    release: Text | None = None
     status: Literal["supported", "review_required"] = "supported"
+    label: Labels | None = None
+    description: Labels | None = None
+    maintainer: IRI | None = None
+    inclusion: IRI | None = None
+    approval: Literal["technical", "institutional", "pending"] = "technical"
 
 
 class ClassDefinition(Contract):
     iri: IRI
     entity: EntityType | None = None
     auxiliary: bool = False
+    namespace: Name | None = None
+    label: Labels | None = None
+    description: Labels | None = None
+    status: Literal["supported", "deprecated", "review_required"] = "supported"
 
     @model_validator(mode="after")
     def classification(self) -> "ClassDefinition":
@@ -66,6 +76,10 @@ class ClassDefinition(Contract):
 
 class PropertyDefinition(Contract):
     iri: IRI
+    namespace: Name | None = None
+    description: Labels | None = None
+    # Source ontology evidence is distinct from the supported Libris application surface.
+    ontology_source: IRI | None = None
     sources: tuple[IRI, ...] = Field(min_length=1)
     value_kinds: tuple[
         Literal[
@@ -106,6 +120,7 @@ class PropertyDefinition(Contract):
 
 
 class SemanticRegistry(Contract):
+    format_version: Literal["1.0", "1.1"] = "1.0"
     version: Version
     namespaces: tuple[NamespaceDefinition, ...]
     classes: tuple[ClassDefinition, ...]
@@ -132,11 +147,82 @@ class SemanticRegistry(Contract):
             ):
                 raise ValueError("Namespaces sobrepostos.")
         known_classes = {c.iri for c in self.classes}
+        for namespace in self.namespaces:
+            if (namespace.prefix == "bf") != (
+                namespace.iri == "http://id.loc.gov/ontologies/bibframe/"
+            ):
+                raise ValueError("O prefixo bf e o namespace BIBFRAME são reservados.")
+            if namespace.prefix == "bf" and namespace.ontology != namespace.iri:
+                raise ValueError("Uma extensão não substitui a ontologia BIBFRAME.")
+            if self.format_version == "1.1" and not (
+                namespace.label
+                and namespace.description
+                and namespace.maintainer
+                and namespace.inclusion
+            ):
+                raise ValueError("Namespace governado exige descrição, fonte e inclusão.")
+        terms: tuple[ClassDefinition | PropertyDefinition, ...] = (*self.classes, *self.properties)
+        for term in terms:
+            namespace = self.namespace_for(term.iri)
+            if term.namespace is not None and term.namespace != namespace.prefix:
+                raise ValueError("Namespace do termo diverge de sua IRI.")
+            if self.format_version == "1.1" and not (
+                term.namespace and term.label and term.description
+            ):
+                raise ValueError("Termo governado exige namespace, nome e descrição.")
+        canonical_entities = {
+            "http://id.loc.gov/ontologies/bibframe/" + name: EntityType(
+                "Agent" if name in {"Person", "Organization"} else name
+            )
+            for name in ("Work", "Instance", "Item", "Agent", "Person", "Organization")
+        }
+        canonical_entities["http://www.w3.org/2004/02/skos/core#Concept"] = EntityType.SUBJECT
+        for rdf_class in self.classes:
+            expected = canonical_entities.get(rdf_class.iri)
+            if rdf_class.entity is not None and expected is None:
+                raise ValueError("Classe externa não define nova entidade principal.")
+            if expected is not None and rdf_class.entity != expected:
+                raise ValueError("A extensão não altera a identidade de uma classe canônica.")
         for prop in self.properties:
             self.namespace_for(prop.iri)
             if not set(prop.sources + prop.target_classes) <= known_classes:
                 raise ValueError("Classe não registrada nos metadados da propriedade.")
         return self
+
+    def check_extension_of(self, previous: "SemanticRegistry") -> None:
+        """Append terms without redefining historical semantic compatibility contracts."""
+        namespaces = {n.iri: n for n in self.namespaces}
+        for old in previous.namespaces:
+            current = namespaces.get(old.iri)
+            if current is None or (current.prefix, current.ontology) != (old.prefix, old.ontology):
+                raise ProfileError("semantic_override", "Namespace histórico redefinido/removido.")
+        for old_class in previous.classes:
+            current_class = next((c for c in self.classes if c.iri == old_class.iri), None)
+            if current_class is None or (current_class.entity, current_class.auxiliary) != (
+                old_class.entity,
+                old_class.auxiliary,
+            ):
+                raise ProfileError("semantic_override", "Classe histórica redefinida/removida.")
+        excluded = {"namespace", "description", "ontology_source", "label", "status"}
+        for old_prop in previous.properties:
+            current_prop = next((p for p in self.properties if p.iri == old_prop.iri), None)
+            if current_prop is None or current_prop.model_dump(exclude=excluded) != (
+                old_prop.model_dump(exclude=excluded)
+            ):
+                raise ProfileError(
+                    "semantic_override", "Propriedade histórica redefinida/removida."
+                )
+
+    def check_class(self, iri: str) -> ClassDefinition:
+        namespace = self.namespace_for(iri)
+        rdf_class = next((c for c in self.classes if c.iri == iri), None)
+        if rdf_class is None:
+            raise ProfileError("unknown_class", "Classe não registrada.")
+        if namespace.status != "supported" or namespace.approval == "pending":
+            raise ProfileError("extension_review_required", "Namespace exige homologação.")
+        if rdf_class.status != "supported":
+            raise ProfileError("unsupported_class", "Classe não autorizada para o perfil.")
+        return rdf_class
 
     def namespace_for(self, iri: str) -> NamespaceDefinition:
         namespaces = [n for n in self.namespaces if iri.startswith(n.iri) and iri != n.iri]
@@ -148,7 +234,7 @@ class SemanticRegistry(Contract):
         namespace = self.namespace_for(field.property)
         if namespace.prefix != field.namespace:
             raise ProfileError("namespace_mismatch", "Alias não corresponde à URI da propriedade.")
-        if namespace.status != "supported":
+        if namespace.status != "supported" or namespace.approval == "pending":
             raise ProfileError(
                 "extension_review_required", "Ontologia exige homologação/adaptação."
             )
@@ -162,6 +248,10 @@ class SemanticRegistry(Contract):
         if field.derived != prop.derived:
             raise ProfileError("derived_mismatch", "Derivação deve respeitar contrato canônico.")
         value = field.value
+        self.check_class(resource.rdf_class)
+        if isinstance(value, (ReferenceValue, StructuredValue)):
+            for target in value.target_classes:
+                self.check_class(target)
         classes = {c.iri: c for c in self.classes}
         if isinstance(value, (ReferenceValue, StructuredValue)):
             if not set(value.target_classes) <= set(prop.target_classes):
@@ -237,8 +327,13 @@ class ProfileRegistry:
         shapes: ShapeRegistry,
         *,
         used_releases: Iterable[str] = (),
+        semantics_by_release: dict[str, SemanticRegistry] | None = None,
     ) -> None:
         self._semantics = SemanticRegistry.model_validate_json(semantics.model_dump_json())
+        self._semantics_by_release = {
+            key: SemanticRegistry.model_validate_json(value.model_dump_json())
+            for key, value in (semantics_by_release or {}).items()
+        }
         self._shapes = ShapeRegistry.model_validate_json(shapes.model_dump_json())
         self._used = frozenset(used_releases)
         self._definitions: dict[str, ProfileDefinition] = {}
@@ -252,6 +347,8 @@ class ProfileRegistry:
             self._definitions[definition.release_id] = definition
         if not self._used <= self._definitions.keys():
             raise ProfileError("unknown_release", "Release histórica não registrada.")
+        if not self._semantics_by_release.keys() <= self._definitions.keys():
+            raise ProfileError("unknown_release", "Registro associado a perfil desconhecido.")
         # Validate all compositions before making this registry available.
         for release_id in self._definitions:
             self._resolve(release_id, ())
@@ -262,6 +359,14 @@ class ProfileRegistry:
                     raise ProfileError("replacement_cycle", "Ciclo de substituição de releases.")
                 successors.add(current)
                 current = self.definition(current).replacement
+
+    def semantic_registry_for(self, release_id: str) -> SemanticRegistry:
+        """An explicit association overrides the inherited registry, never historical releases."""
+        definition = self.definition(release_id)
+        registry = self._semantics_by_release.get(release_id)
+        if registry is None and definition.base_release:
+            return self.semantic_registry_for(definition.base_release)
+        return SemanticRegistry.model_validate_json((registry or self._semantics).model_dump_json())
 
     def definition(self, release_id: str) -> ProfileDefinition:
         try:
@@ -426,7 +531,8 @@ class ProfileRegistry:
         )
 
     def _check_resolved(self, profile: ResolvedProfile) -> None:
-        classes = {c.iri: c for c in self._semantics.classes}
+        semantics = self.semantic_registry_for(profile.release_id)
+        classes = {c.iri: c for c in semantics.classes}
         resources = {r.rdf_class: r for r in profile.resources}
         entities = {r.entity for r in profile.resources if r.entity}
         if not set(profile.applies_to) <= entities:
@@ -441,6 +547,7 @@ class ProfileRegistry:
             rdf_class = classes.get(resource.rdf_class)
             if rdf_class is None or rdf_class.entity != resource.entity:
                 raise ProfileError("incompatible_class", "Classe/entidade fora do modelo canônico.")
+            semantics.check_class(resource.rdf_class)
         shape_sets = [self._shapes.get(reference) for reference in profile.validation]
         covered = {c for s in shape_sets for c in s.classes}
         if not set(resources) <= covered:
@@ -455,7 +562,7 @@ class ProfileRegistry:
             if any(g.section not in sections for g in resource.groups):
                 raise ProfileError("unknown_section", "Grupo com seção inexistente.")
             for field in resource.fields:
-                self._semantics.check_field(resource, field)
+                semantics.check_field(resource, field)
                 presentation = field.presentation
                 if presentation.section and presentation.section not in sections:
                     raise ProfileError("unknown_section", "Seção do campo inexistente.")
@@ -599,6 +706,7 @@ class ProfileRegistry:
             self._semantics,
             self._shapes,
             used_releases=self._used,
+            semantics_by_release=self._semantics_by_release,
         )
 
     def transition_release(
@@ -626,6 +734,7 @@ class ProfileRegistry:
             self._semantics,
             self._shapes,
             used_releases=self._used,
+            semantics_by_release=self._semantics_by_release,
         )
 
     def replace_draft(self, definition: ProfileDefinition) -> "ProfileRegistry":
@@ -649,6 +758,7 @@ class ProfileRegistry:
             self._semantics,
             self._shapes,
             used_releases=self._used,
+            semantics_by_release=self._semantics_by_release,
         )
 
 
