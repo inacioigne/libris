@@ -1,5 +1,9 @@
 # Erros e validação catalográfica — #22 / contrato 1.0
 
+Consolidação atual: [especificação pública v1](catalogographic-contract.md) e
+[inventário de campos](catalogographic-contract-field-inventory.md). O contrato de
+diagnósticos continua 1.0, independente da versão documental 1.0.0.
+
 A implementação reutiliza o mesmo Graph RDFLib, pySHACL e registros locais das
 #15/#17/#19/#20/#21. [ADR 0023](../decisions/0023-catalogographic-diagnostics.md).
 A [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) define o envelope HTTP e
@@ -110,6 +114,35 @@ os três perfis históricos; perfis declarativos não foram adotados silenciosam
 | validator.failure | Motor, shapes/configuração interna inválida, falha de execução |
 | infrastructure.unavailable | Shapes temporariamente indisponíveis ou conexão DB indisponível |
 | internal.failure | Falha inesperada, inclusive ValueError/KeyError não tipados |
+| reference.unverified | Conceito não verificado ou entidade ainda não reconciliada |
+| reference.deprecated | Conceito descontinuado; revisar uso |
+| reference.vocabulary_mismatch | Evidência local incompatível com vocabulário obrigatório |
+| reference.vocabulary_unverified | Pertença a vocabulário ainda não comprovada |
+| reference.resolver_unavailable | Provedor de resolução indisponível; sem conectores remotos implementados |
+| editorial.state_invalid | Estado editorial ou ponteiros inconsistentes |
+| editorial.transition_forbidden | Aresta ausente na matriz, transição inválida ou justificativa obrigatória ausente |
+| editorial.permission_denied | Ator sem permissão editorial da operação |
+| editorial.precondition_required | Expectativa/contexto obrigatório ausente ou inadequado |
+| editorial.content_not_publishable | Revisão não conforme ou referências impedem publicação |
+| editorial.version_stale | Versão editorial/revisão corrente divergente |
+| editorial.approval_stale | Revisão selecionada não corresponde à aprovada/publicada exigida |
+| identity.operation_invalid | Decisão de ciclo de identidade inválida; contrato de domínio sem serviço persistente |
+
+Inventário acima cobre todos os valores atuais de `domain/errors.py::CatalogCode`.
+`ProblemDetails.code` é string e admite ainda `authentication.required`,
+`authorization.denied` e fallback `http.{status}` do handler HTTP; não são membros
+de CatalogCode nem valores aceitos automaticamente por Diagnostic.code.
+Diagnósticos de vocabulário usam categoria reference e Warning para pendências/
+descontinuação, Violation para impedimentos conforme política configurada.
+As rejeições editoriais são CatalogError, sem Diagnostic obrigatório. A exceção
+CatalogPublicationRejected conserva `result`, mas o handler atual somente anexa
+`validation` para CatalogValidationRejected; não prometer relatório HTTP editorial
+integrado onde ainda não existe endpoint.
+
+Recuperação: erros schema/semânticos exigem corrigir payload/grafo; stale exige
+reler estado e decidir reaplicação, sem sobrescrever concorrente; indisponibilidade
+técnica exige restabelecer serviço/configuração, sem assumir conformidade. O serviço
+não faz retry automático ou reconciliação. Warning/Info não são falhas fatais.
 
 Componentes são comparados por URI, nunca pelo texto da mensagem. Componentes
 não catalogados preservam URI e recebem código genérico; não inferir cardinalidade
@@ -119,8 +152,11 @@ a classificação pública não depende de heurísticas textuais internas legada
 Códigos profile existentes são traduzidos por mapa explícito; demais ProfileError
 recebem profile.policy. O código original não é exposto indiscriminadamente.
 
-Campos/códigos novos são aditivos em 1.x; clientes ignoram atributos desconhecidos,
-aceitam códigos desconhecidos e exibem message como fallback. Não reaproveitar
+Para consumidores de UI recomenda-se ignorar atributos desconhecidos, aceitar
+códigos desconhecidos e exibir message como fallback. Isso não é uma garantia dos
+modelos Python: `extra=forbid` e Diagnostic.code enum fechado rejeitam essas entradas.
+Adições exigem análise direcional da [política pública proposta](../decisions/0029-catalogographic-contract-versioning.md).
+Não reaproveitar
 um código para outro significado. Remoções/mudanças incompatíveis exigem nova major,
 novo contrato e novos URIs de type. Perfis/releases mantêm versões independentes.
 
@@ -165,6 +201,12 @@ relatório de pré-validação normal pode ser retornado 200 sem Problem Details
 | 428 | CatalogError revision.precondition_required |
 | 500 | ShaclValidationError interna, configuração de shapes inválida, exceção inesperada |
 | 503 | Shapes indisponíveis, perfil indisponível, DBAPIError com conexão invalidada/SQLSTATE de indisponibilidade |
+
+CatalogError de códigos não presentes em CODE_STATUS recebe **422**, incluindo
+os códigos editoriais e `identity.operation_invalid`. Não documentar esses erros
+como 403/409/428/412 por semelhança do nome: esse mapeamento específico não existe.
+HTTPException 401/403 conserva seus status pela política OIDC. Não houve mudança
+do handler na #31; evolução de status exige decisão de integração explícita.
 
 DBAPIError só vira 409 para IntegrityError com SQLSTATE 23505/23503; somente
 conexão invalidada, classe 08 ou 57P01/57P02/57P03/53300 vira 503. Outros erros

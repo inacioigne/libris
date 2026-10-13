@@ -1,5 +1,9 @@
 # Matriz de conformidade catalográfica v1 — #30
 
+Consolidação documental posterior: [referência v1](catalogographic-contract.md) e
+[rastreabilidade com ADRs/implementadores](catalogographic-contract-traceability.md).
+Os resultados da #30 abaixo conservam seu contexto histórico.
+
 Escopo: [#30](https://github.com/inacioigne/libris/issues/30), dentro de
 [#29](https://github.com/inacioigne/libris/issues/29). Linha de base técnica do contrato
 bibliográfico 1.0, incluindo perfis históricos e declarativos 2.0 que o referenciam.

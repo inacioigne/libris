@@ -384,9 +384,11 @@ usar o ambiente sincronizado .venv/bin; resultados/limites reais estão no
 [relatório de verificação](catalog-profiles-verification.md).
 
 [#21](shacl-validation.md): correspondência policy/SHACL e diagnóstico completo implementados;
-#22: respostas/erros;
-#24: vocabulários/autoridades/pertinência e políticas de valores; #25: extensão de
-ontologias/componentes novos; #27: estados de **registros**, diferentes dos perfis;
-#30: ampliar/reutilizar corpus; #31: consolidar documentação/versionamento.
+[#22](catalogographic-errors.md): respostas/erros implementados;
+[#24](controlled-vocabularies.md): vocabulários/pertinência local e políticas de valores;
+[#25](semantic-extensions.md): registro de extensões por release;
+[#27/#43](editorial-persistence.md): estados de **registros**, diferentes dos perfis;
+[#30](catalogographic-v1-test-inventory.md): corpus e conformidade;
+[#31](catalogographic-contract.md): referência documental/versionamento.
 Integração PostgreSQL, APIs definitivas, migração MARC, indexação, armazenamento
 RDF adicional, reconciliação externa e administração permanecem fora do escopo.

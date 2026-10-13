@@ -1,5 +1,12 @@
 # Contratos públicos Pydantic — M03.01.02
 
+Consolidação atual da #31: [referência v1](catalogographic-contract.md),
+[inventário gerado de campos](catalogographic-contract-field-inventory.md) e
+[baseline JSON Schema 1.0.0](catalogographic-contract-v1.schema.json).
+Os trechos de diagnóstico e verificação desta entrega são históricos. As #16–#43
+já implementaram referências tipadas, serialização, perfis/SHACL, auditoria e
+persistência editorial interna; não existem APIs CRUD públicas.
+
 Implementação técnica sobre `monograph-v1.1` e `authority-v1`, candidatos locais
 já existentes da M03.01.01. A homologação institucional permanece pendente.
 Os DTOs não substituem RDFLib Graph como modelo semântico canônico nem SHACL
@@ -22,7 +29,8 @@ preservar domínio, aplicação, infraestrutura, perfis publicados e rotas reais
 Localização: `apps/api/src/libris/modules/bibliographic/api/schemas/`.
 `common.py` contém identidade de leitura, referências e auxiliares reutilizados;
 `work.py`, `instance.py`, `item.py`, `agent.py` e `subject.py` contêm os contratos
-Create/Read/Update. `__init__.py` publica os quinze contratos. Não há dependência
+Create/Read/Update. `__init__.py` publica os quinze contratos e os quatro contratos
+de relacionamentos em `relationships.py`. Não há dependência
 SQLAlchemy/FastAPI nesses arquivos. Reutiliza-se a validação de identidade existente.
 
 O teste `tests/api/test_catalogographic_schemas.py` confere campos e obrigatoriedade
@@ -36,6 +44,16 @@ SHACL e fixtures implementam `bf:shelfMark`. Este contrato usa `shelf_mark`, sem
 alterar releases ou corrigir silenciosamente decisões da M03.01.01.
 
 ## Convenções e cardinalidades
+
+O [schema documental](catalogographic-contract-v1.schema.json) é um **catálogo** de
+definições `$defs`, com `x-libris-roots` indicando cada modelo público. Para validar
+um payload com um validador JSON Schema, escolher uma raiz: combinar `$schema`,
+`$defs` do catálogo e o `$ref` de `x-libris-roots.WorkCreate` (ou modelo desejado).
+O catálogo sem `$ref` raiz não impõe o formato de uma entidade. Não usar oneOf entre
+todos os contratos: Create/Update/Read podem ter entradas coincidentes. Validar
+também com o modelo Pydantic para executar invariantes não expressas pelo schema.
+Nos testes, cada definição é comparada estruturalmente ao schema standalone do
+modelo e todas as referências internas são conferidas, sem igualdade de ordem RDF.
 
 Nomes públicos em inglês, `snake_case`, sem aliases novos. O campo singular mantém
 o nome da propriedade mesmo quando seu valor é uma lista, como nos descritores de
@@ -99,9 +117,12 @@ A classe esperada vem da propriedade e do perfil: instance_of → Work, item_of 
 Instance, contribuição → Agent/Person/Organization, subject → Concept, held_by →
 Organization. O DTO não afirma a classe de um alvo apenas a partir da URI e não
 consulta banco/rede. Validar existência, classe real, ciclo de vida e concorrência
-continua responsabilidade da aplicação/SHACL. Não há alternativa UUID-only ou
-regra unilateral de exclusividade UUID/URI: depende da M03.01.04. Entidades completas
-não são embutidas nas referências.
+continua responsabilidade da aplicação/SHACL. Os campos entre entidades também
+aceitam referências discriminadas local, external e unreconciled, além de URI-only
+legado. Local exige UUID e/ou URI armazenada; ambos devem concordar quando resolvidos.
+Namespace/key identifica a referência provisória, sem gerar URI fictícia. Regras
+completas estão no [contrato de relacionamentos](relationships.md#referências-e-identidade).
+Referências de vocabulário continuam URI-only. Entidades completas não são embutidas.
 
 ## Atualização parcial
 
@@ -147,11 +168,12 @@ nenhum cliente TypeScript foi gerado nesta issue.
 O contrato é uma superfície de edição tipada dos perfis locais, não um formato
 RDF genérico nem uma exportação lossless de todo o grafo. Campos desconhecidos
 falham, em vez de serem descartados. O núcleo RDF existente continua aberto a
-outras ontologias. Uma representação pública de extensões, tipos RDF adicionais,
-IRIs/blank nodes auxiliares e datatypes arbitrários depende da M03.01.05 e de
-perfis explícitos futuros; não se adicionou metadata/dicionário arbitrário ou
-conversor especulativo. Consumidores não devem substituir um grafo completo por
-este DTO sem uma política de preservação de propriedades fora do perfil.
+outras ontologias. Exportação integral Graph → JSON-LD/Turtle e mapeamento dos cinco
+Read estão implementados em [serialização](semantic-serialization.md). Configuração
+de extensões por release existe em [extensibilidade](semantic-extensions.md), mas
+não acrescenta metadata/dicionário arbitrário a estes DTOs nem oferece Graph → DTO.
+Consumidores não devem substituir um grafo completo por este DTO sem uma política
+de preservação de propriedades fora do perfil.
 
 ## Exemplos JSON
 
@@ -269,6 +291,7 @@ persistência alterada ou validação referencial implementada para afirmar.
 | Referências UUID-only/alternativas e integridade dos alvos | Parcial: URI conforme ADRs; demais regras dependem das M03.01.03/.04 |
 | Extensões semânticas públicas genéricas e transformação RDF/JSON-LD | Pendente: M03.01.05; núcleo Graph existente preservado |
 
-Próximos passos: concluir regras de referências nas M03.01.03/.04; definir na
-M03.01.05 a preservação de propriedades e identidades auxiliares; integrar os
-DTOs na API real com validação do estado resultante, autorização e concorrência.
+Situação atual: referências e exportação semântica já implementadas pelas entregas
+posteriores. Integração dos DTOs na API real, com validação do estado resultante,
+autorização e concorrência HTTP, continua futura. Resultados desta baseline estão
+na [verificação da #31](catalogographic-contract-v1-verification.md).

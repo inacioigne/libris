@@ -1,4 +1,150 @@
-# Contrato catalográfico — Etapa 3, Incremento 1
+# Contrato catalográfico v1 — referência canônica
+
+Identificador: **`urn:libris:contract:catalogographic:v1`**. Versão da
+especificação documental: **1.0.0** (M03.05.02 / [issue #31](https://github.com/inacioigne/libris/issues/31)).
+Baseline técnica do checkout; homologação institucional dos perfis pendente.
+Não é uma API de catalogação publicada, um header ou um campo novo dos DTOs.
+`FastAPI.info.version=0.1.0`, `/api/v1`, `bibliographic_contract=1.0` dos perfis e
+`contract_version=1.0` dos diagnósticos/valores são identificadores independentes;
+nenhum deles foi reescrito para 1.0.0.
+
+O objetivo é permitir consumo dos contratos existentes sem reconstruir sua definição
+pela leitura integral do código. RDFLib Graph é a representação semântica canônica;
+PostgreSQL é a fonte persistente, com snapshots JSON-LD expandido em JSONB.
+Pydantic é a superfície tipada de aplicação, não uma segunda fonte bibliográfica.
+Python 3.13–3.14, Pydantic 2, SQLAlchemy 2 async, RDFLib e pySHACL são dependências
+fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` são experimentais.
+
+## Como usar a especificação
+
+| Artefato normativo / complementar | Responsabilidade |
+| --- | --- |
+| Este documento | Escopo, estado atual, entidades, propriedade, revisão e limites |
+| [Schemas e invariantes](catalogographic-schemas.md) | Create/Read/Update, regras cruzadas e serialização JSON |
+| [Inventário de todos os campos](catalogographic-contract-field-inventory.md) / [baseline JSON Schema](catalogographic-contract-v1.schema.json) | Tipos, presença, null, cardinalidade, enums, defaults e auxiliares gerados dos 22 contratos raiz |
+| [Relacionamentos](relationships.md) | Registro de relações, referências, operações e resolução interna |
+| [Identificadores](persistent-identifiers.md) / [OIDC](identity.md) | Identidade bibliográfica versus identidade autenticada |
+| [Serialização](semantic-serialization.md) | Cada campo Read → predicado/classe RDF, contexto, datatypes, idiomas e limites |
+| [Perfis](catalog-profiles.md) / [SHACL](shacl-validation.md) / [shapes](shacl-inventory.md) | Configuração declarativa independente, releases e regras executáveis |
+| [Erros](catalogographic-errors.md) | Diagnósticos, códigos, segurança, serialização e handlers HTTP |
+| [Valores controlados](controlled-vocabularies.md) / [extensões](semantic-extensions.md) | Contratos aditivos; não acrescentam campos aos DTOs históricos |
+| [Editorial](editorial-lifecycle.md) / [persistência editorial](editorial-persistence.md) / [auditoria](provenance-audit-versioning.md) | Serviços internos, permissões e estado persistente independente |
+| [Política de evolução](../decisions/0029-catalogographic-contract-versioning.md) | Política proposta de governança; SemVer documental e compatibilidade direcional |
+| [Rastreabilidade](catalogographic-contract-traceability.md) / [verificação #31](catalogographic-contract-v1-verification.md) | Implementadores, asserções concretas, cobertura e execução desta baseline |
+
+Os ADRs registram decisões no momento de cada entrega; os relatórios `*-verification.md`
+registram execuções históricas, não resultados desta sessão. Em divergência, usar o
+comportamento verificável da baseline e registrar a lacuna antes de qualquer alteração
+incompatível. A descrição do Incremento 1 abaixo foi preservada e atualizada apenas
+onde o estado atual já é demonstrável.
+
+## Superfícies implementadas e operações
+
+| Nível | Entrada → saída | Pré-condições / erros / limites |
+| --- | --- | --- |
+| Contratos públicos Python | Work, Instance, Item, Agent e Subject: Create/Read/Update | Quinze modelos em `api/schemas`; Create sem UUID/URI; Read acrescenta ambos, sem revisão/ator; Update parcial não persiste |
+| Contratos de vínculos | RelationshipCreate/Read/Replace/Update | Estado completo ou operações add/remove/replace; Read admite inversas compostas; operações puras revalidam o estado final |
+| Contratos auxiliares públicos | CatalogValidationResult, CatalogValueDocument, ProblemDetails | Diagnóstico 1.0, valor discriminado 1.0, envelope HTTP; não são entidades bibliográficas |
+| Serviço interno `BibliographicService.create` | ResourceIdentity + Graph + Provenance + profile + ator opcional → Revision r1 | Perfil legado default; somente três IDs históricos; valida antes de abrir transação; cria snapshot, estado draft e evento created no mesmo commit |
+| Serviço interno `revise` | UUID + expected_revision + Graph completo + Provenance + ator opcional; expected_editorial_version opcional → Revision rN+1 | Revisão positiva obrigatória, URI e perfil armazenados reutilizados; tipo institucional preservado; CAS, validação, revisão, estado e evento revised atômicos; stale/rejeição/falha revertem tudo |
+| Serviço interno `read` | UUID + number opcional → (Revision, Graph) | Sem número lê corrente; histórico proprietário; ResourceNotFoundError se ausente; chamador interno confiável, sem autorização embutida |
+| Serviço interno `read_public` | UUID → (Revision, Graph) ou None | Lê revisão publicada exata; None para ausência de publicação/metadados legados, não presume publicação da corrente |
+| Serviço interno `restore_content` | UUID + source_revision + expected_revision + Provenance + actor autenticado; versão editorial opcional → Revision rN+1 | Permissões metadata_revision:read/create; revalida histórico; conserva origem histórica intacta; registra restored/content; não publica automaticamente |
+| Serviços internos `HistoryService` / `EditorialService` | Histórico/paginação/comparação e transition com expectativas de versão/conteúdo → visões/estado editorial | Autorização explícita; `PostgresEditorialTransactions` controla transação, validação e integridade local na publicação; ver contratos complementares |
+| Endpoints reais | GET `/health`, GET `/api/v1/identity/me` | Somente estes caminhos no OpenAPI de produção; handlers Problem Details/correlação já instalados; sem CRUD/prevalidate/perfis/resolver HTTP |
+
+Não existe adaptador persistente genérico Create/Update DTO → Graph vigente nem
+Graph → DTO completo. O pipeline Create + identidade → Read → Graph e a aplicação
+de patches nos testes demonstram contratos, não endpoints ou serviço PATCH público.
+`expected_revision` é argumento interno, não campo de Update ou Read.
+`revise` recebe um grafo completo, enquanto Update substitui propriedades fornecidas
+e exige validação do estado completo pela futura integração. Nunca descartar extensões
+ao substituir um snapshot por um DTO limitado. Erros de domínio não têm status HTTP
+intrínseco: os handlers os traduzem somente quando chegam a uma requisição.
+
+## Formatos e exemplos verificáveis
+
+JSON de aplicação usa snake_case, UUID em string, referências sem descrição embutida,
+listas vazias em Create/Read, extras rejeitados e `exclude_unset=True` em Update.
+JSON-LD/Turtle são saídas do mesmo Graph; o contexto local `bibframe-v1` é fixado e
+não é baixado. Os prefixos bf, rdf, rdfs, xsd, skos, dcterms e prov são aliases de
+IRIs completas, nunca identificadores alternativos. Idiomas/datatype/literais
+seguem a [tabela de mapeamento](semantic-serialization.md#mapeamento-completo-da-superfície-read).
+O isomorfismo RDF define equivalência, sem prometer ordem, bytes ou labels de BNodes.
+Entrada passa por adaptador limitado: default 1 MiB, máximo configurável 10 MiB,
+profundidade JSON 64; não resolver contextos/imports externos. RDF/XML, N-Triples e
+Dataset não pertencem a esta superfície. Lexicais que RDFLib não conserva geram
+erro explícito de exportação; não há garantia de round-trip textual.
+
+| Necessidade | Artefato existente / verificação |
+| --- | --- |
+| Cinco entidades, Create/Read/Update | `tests/fixtures/bibliographic/contracts/{work,instance,item,agent,subject}-{create,read,update}.json`; quinze exemplos em [schemas](catalogographic-schemas.md#exemplos-json) |
+| JSON, JSON-LD e Turtle pareados; autoridades e composição | [examples/serialization](../examples/serialization/README.md); `test_paired_examples_are_executable` e pipeline de `test_catalogographic_conformance.py` |
+| Referências e operações válidas/inválidas | `tests/fixtures/bibliographic/relationships/manifest.json`; `test_versioned_examples` verifica modelo/camada de rejeição |
+| Valores controlados | [local](../examples/controlled-vocabularies/local.json) e [externo](../examples/controlled-vocabularies/external.json), com pares RDF |
+| Perfis e SHACL | [perfil resolvido](../examples/profiles/monograph-2.0.0.resolved.json), corpus institucional com manifest e inventário SHACL |
+| Payload inválido e erro esperado | [erro estrutural](../examples/validation/schema-error.json), [violações](../examples/validation/violations.json), [falha técnica](../examples/validation/operational-failure.json); exemplos gerados por adaptadores reais |
+
+Exemplo inválido verificável: `WorkCreate` com `{"title":[]}` é rejeitado por
+Pydantic (cardinalidade); `WorkUpdate` com `{"title":null}` é rejeitado pelo
+validador de propriedade obrigatória, enquanto `{"subject":null}` indica remoção.
+Não inferir um código HTTP a partir do texto da exceção. A adaptação estrutural
+gera diagnósticos schema e o handler HTTP 422; não existe rota catalográfica para
+enviar esses exemplos neste checkout.
+
+## Quatro dimensões de versão e compatibilidade
+
+| Dimensão | Identidade / versão real | Regra |
+| --- | --- | --- |
+| Contrato público | Este ID v1; baseline documental 1.0.0; perfis declaram bibliographic_contract=1.0 | Versiona significado e superfície; não gera mecanismo HTTP de seleção |
+| Perfis declarativos | format_version=2.0; família, release_id e release (ex.: monograph 2.0.0) | Entrada/resolução e regras próprias; candidatos não homologados; legado preservado |
+| Shapes SHACL | experimental 1.0 / institutional 1.1, contexto snapshot/composed | Seleção local explícita; authority perfil 1.0 usa shapes institutional 1.1 |
+| Revisões de registros | Revision.number positivo por UUID; versão editorial separada | Append-only; CAS; não significa versão de API, edição bibliográfica ou release de perfil |
+
+Política documental: correção editorial sem mudar o comportamento é patch; nova
+capacidade preservando produtores **e leitores** anteriores pode ser minor;
+remoção, novo obrigatório, mudança de tipo, cardinalidade ou semântica que rompe
+qualquer direção exige major. Como os DTOs usam `extra=forbid`, campo opcional novo
+aceito pelo produtor novo não é automaticamente compatível com um leitor antigo.
+Não enviar tal campo a consumidores antigos sem superfície/seleção explícita.
+Enums/códigos também requerem exame do leitor: Diagnostic.code é enum fechado,
+apesar da recomendação de fallback dos consumidores de UI.
+O [ADR 0029 proposto](../decisions/0029-catalogographic-contract-versioning.md)
+detalha avaliação direcional, descontinuação, coexistência e migração; sua aprovação
+de governança é pendente, sem alegar decisão institucional já tomada.
+
+O gerador só escreve esta baseline ausente ou idêntica; `--check` detecta divergência.
+Versões futuras devem preservar este artefato e introduzir novo ID/arquivo após
+revisão explícita. Não sobrescrever baseline nem atualizar hashes históricos para
+acomodar mudança de comportamento. A seleção da versão pública futura não existe;
+nenhuma migração, header, roteador ou infraestrutura foi introduzido na #31.
+
+## Limitações e pendências atuais
+
+Conformidade técnica é execução correta do software; conformidade semântica é
+satisfazer as regras efetivamente modeladas; homologação institucional é decisão
+dos responsáveis biblioteconômicos. Os testes não substituem essa decisão.
+
+- Não há editor, CRUD/PATCH/prevalidate, resolução HTTP, tombstones persistidos,
+  fusão operacional, SPARQL, MARC, conectores remotos ou projeção Elasticsearch.
+- O serviço de escrita ainda aceita somente perfis históricos; perfis 2.0 são
+  resolvidos/validados internamente sem migração automática de registros.
+- Integridade local é verificada na publicação editorial transacional; isso não
+  implica verificação universal em create/revise nem existência de alvos externos.
+- DTOs e SHACL não são equivalentes: DTO limita uma forma sem idioma e Item exige
+  Local; SHACL uniqueLang não limita strings sem idioma e perfil declarativo core
+  não lista toda alternativa histórica de identifiedBy. Essas diferenças são
+  explícitas, sem relaxamento unilateral.
+- Dados fora dos campos DTO exigem exportação integral do Graph. Vocabulários e
+  extensões aditivos não tornam DTOs históricos genéricos. ISBN não tem checksum;
+  tipo/identidade externa não são provados por IRI sintaticamente válida.
+- Perfis, tradução, títulos, identificadores de Item, vocabulários, domínio público,
+  retenção/visibilidade histórica e política de fusão aguardam decisão institucional.
+- Atomicidade física depende de PostgreSQL real e migrações explícitas; testes
+  com doubles não comprovam a garantia do banco. Evidência desta sessão e limites
+  estão na [verificação #31](catalogographic-contract-v1-verification.md).
+
+## Perfil institucional do Incremento 1 (preservado)
 
 Release candidata institucional: **monograph-v1, release 1.1**,
 `urn:libris:profile:monograph:v1:1`. Perfil complementar de autoridades:
@@ -90,8 +236,9 @@ O modo `composed=True` também exige igualdade entre relações diretas e invers
 Um grafo com referências externas pode ser conforme sem existir uma descrição local
 dessas referências; conformidade SHACL não prova existência no PostgreSQL.
 
-Integridade de referências locais, tratamento de recursos descontinuados e troca
-de vínculos por serviços transacionais ficam para o Incremento 2. Não adicionar
+Integridade de referências locais na publicação editorial está implementada pela
+#43; ver [persistência editorial](editorial-persistence.md). Tratamento de recursos
+descontinuados e integração pública de troca de vínculos continuam futuros. Não adicionar
 tipos fictícios às referências para satisfazer shapes, nem consultar URIs na rede.
 Alvos SHACL não substituem a exigência de raiz: um grafo vazio pode ter conformidade
 vazia, mas não pode ser persistido como entidade.
@@ -152,14 +299,15 @@ confundir mudança de idioma com simples revisão administrativa de uma Instance
 | Proveniência técnica e release | `source`, `process`, `profile` por revisão |
 | Proveniência semântica | RDF da entidade, quando fornecida |
 | Estado ativo/descontinuado/fundido/substituído | Política especificada abaixo; armazenamento/operações futuros, ainda não implementados |
-| Ator humano e autorização | Incremento 2; não há usuário fictício ou auditoria humana simulada |
+| Ator humano e autorização | OIDC, actor_id opcional e auditoria interna autorizada implementados; sem usuário fictício, backfill ou API CRUD |
 | Inventário, reservas, empréstimos, multas | Módulos administrativos futuros, referenciando identidade persistente de Item |
 
 O mesmo PostgreSQL contém identidade, controle transacional e RDF. RDFLib não é
 um segundo store gravável. Avanço CAS e snapshot acontecem no mesmo commit;
 falha em validação, serialização ou inserção causa rollback. Rejeição obsoleta
 não sobrescreve alterações. Histórico não sofre UPDATE/DELETE por DML normal.
-Não foram criadas novas tabelas, migrações ou um esquema bibliográfico definitivo.
+O Incremento 1 não criou novas tabelas/migrações. As entregas posteriores adicionaram
+ator, auditoria e estado editorial (0002–0004), sem esquema bibliográfico definitivo.
 
 Alterar Authority, Instance ou Item não altera automaticamente Work. Circulação
 não modifica o grafo bibliográfico como estado primário nem revisa Item. Um

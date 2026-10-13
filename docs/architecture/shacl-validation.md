@@ -131,8 +131,9 @@ blank nodes, datatypes e idiomas sem converter tudo em texto ambíguo.
 
 As strings são visão legada de apresentação, **não serialização RDF sem perdas**.
 Termos e caminhos complexos devem ser interpretados no grafo do relatório; rótulos
-blank node não são identificadores persistentes entre execuções. A #22 deverá
-mapear esse contrato interno para DTOs seguros, sem publicar tipos RDFLib/pySHACL.
+blank node não são identificadores persistentes entre execuções. A #22 já mapeia
+esse contrato interno para [DTOs seguros](catalogographic-errors.md), sem publicar
+tipos RDFLib/pySHACL. Ver [referência v1](catalogographic-contract.md).
 correlate_validation_issues usa termo focal exato e classes locais. Propriedade
 compartilhada é correlacionada por classe. Caminho complexo/desconhecido ou foco
 ambíguo sem termo conserva o resultado com field_ids vazio; não aproximar por label.

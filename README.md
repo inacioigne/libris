@@ -207,6 +207,15 @@ conexão no startup; isso é intencional e não comprova readiness dos serviços
 
 ## Testes e verificações
 
+Referência canônica da M03.05.02 / #31: [contrato catalográfico v1, especificação 1.0.0](docs/architecture/catalogographic-contract.md),
+[inventário de campos](docs/architecture/catalogographic-contract-field-inventory.md),
+[JSON Schema documental](docs/architecture/catalogographic-contract-v1.schema.json),
+[rastreabilidade](docs/architecture/catalogographic-contract-traceability.md) e
+[verificação](docs/architecture/catalogographic-contract-v1-verification.md).
+A [política de evolução proposta](docs/decisions/0029-catalogographic-contract-versioning.md)
+distingue contrato público, perfis, shapes e revisões; não cria versionamento HTTP
+ou modifica releases históricas. Homologação institucional permanece pendente.
+
 Consolidação da M03.05.01 / #30: [inventário de fixtures e testes](docs/architecture/catalogographic-v1-test-inventory.md),
 [matriz de conformidade](docs/architecture/catalogographic-v1-conformance-matrix.md) e
 [reprodução e resultados](docs/architecture/catalogographic-v1-testing.md).

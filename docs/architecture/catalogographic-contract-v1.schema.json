@@ -1,0 +1,3619 @@
+{
+  "$defs": {
+    "AddLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Links",
+          "type": "array"
+        },
+        "op": {
+          "const": "add",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "links"
+      ],
+      "title": "AddLinks",
+      "type": "object"
+    },
+    "AgentCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_name": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Authorized Name",
+          "type": "array"
+        },
+        "external_reference": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "External Reference",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "title": "Identified By",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "Agent",
+            "Person",
+            "Organization"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "related_authority": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related Authority",
+          "type": "array"
+        },
+        "variant_name": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Variant Name",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "authorized_name"
+      ],
+      "title": "AgentCreate",
+      "type": "object"
+    },
+    "AgentRead": {
+      "additionalProperties": false,
+      "description": "Owned description and stored identity; no technical audit columns.",
+      "properties": {
+        "authorized_name": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Authorized Name",
+          "type": "array"
+        },
+        "external_reference": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "External Reference",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "title": "Identified By",
+          "type": "array"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "Agent",
+            "Person",
+            "Organization"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "related_authority": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related Authority",
+          "type": "array"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "variant_name": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Variant Name",
+          "type": "array"
+        }
+      },
+      "required": [
+        "internal_id",
+        "uri",
+        "kind",
+        "authorized_name"
+      ],
+      "title": "AgentRead",
+      "type": "object"
+    },
+    "AgentUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_name": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Authorized Name",
+          "type": "array"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference"
+        },
+        "identified_by": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Identifier"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identified By"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance"
+        },
+        "related_authority": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related Authority"
+        },
+        "variant_name": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LocalizedText"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant Name"
+        }
+      },
+      "title": "AgentUpdate",
+      "type": "object"
+    },
+    "CatalogCode": {
+      "enum": [
+        "request.malformed",
+        "schema.invalid",
+        "schema.required",
+        "schema.cardinality",
+        "schema.value",
+        "shacl.violation",
+        "shacl.min_count",
+        "shacl.max_count",
+        "shacl.qualified_min_count",
+        "shacl.qualified_max_count",
+        "shacl.datatype",
+        "shacl.node_kind",
+        "shacl.class",
+        "shacl.in",
+        "profile.unknown",
+        "profile.incompatible",
+        "profile.unavailable",
+        "profile.policy",
+        "identity.invalid",
+        "reference.invalid",
+        "reference.unverified",
+        "reference.deprecated",
+        "reference.vocabulary_mismatch",
+        "reference.vocabulary_unverified",
+        "reference.resolver_unavailable",
+        "resource.unknown",
+        "state.conflict",
+        "revision.stale",
+        "revision.precondition_required",
+        "validation.rejected",
+        "validator.failure",
+        "infrastructure.unavailable",
+        "internal.failure",
+        "editorial.state_invalid",
+        "editorial.transition_forbidden",
+        "editorial.permission_denied",
+        "editorial.precondition_required",
+        "editorial.content_not_publishable",
+        "editorial.version_stale",
+        "editorial.approval_stale",
+        "identity.operation_invalid"
+      ],
+      "title": "CatalogCode",
+      "type": "string"
+    },
+    "CatalogValidationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "conforms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conforms"
+        },
+        "context": {
+          "enum": [
+            "snapshot",
+            "composed"
+          ],
+          "title": "Context",
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "profile_id": {
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "profile_release": {
+          "title": "Profile Release",
+          "type": "string"
+        },
+        "profile_version": {
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "state": {
+          "enum": [
+            "completed",
+            "failed"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "profile_id",
+        "profile_release",
+        "profile_version",
+        "context"
+      ],
+      "title": "CatalogValidationResult",
+      "type": "object"
+    },
+    "CatalogValueDocument": {
+      "additionalProperties": false,
+      "description": "Versioned operational envelope, not a bibliographic snapshot.",
+      "properties": {
+        "contract_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "format": {
+          "const": "libris.catalog-value",
+          "default": "libris.catalog-value",
+          "title": "Format",
+          "type": "string"
+        },
+        "value": {
+          "discriminator": {
+            "mapping": {
+              "controlled_concept": "#/$defs/ControlledConcept",
+              "entity_reference": "#/$defs/EntityValue",
+              "literal": "#/$defs/LiteralValue",
+              "local_concept": "#/$defs/LocalConcept"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LiteralValue"
+            },
+            {
+              "$ref": "#/$defs/ControlledConcept"
+            },
+            {
+              "$ref": "#/$defs/LocalConcept"
+            },
+            {
+              "$ref": "#/$defs/EntityValue"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "CatalogValueDocument",
+      "type": "object"
+    },
+    "Classification": {
+      "additionalProperties": false,
+      "properties": {
+        "classification_portion": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Classification Portion",
+          "type": "array"
+        },
+        "source": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Source",
+          "type": "array"
+        }
+      },
+      "required": [
+        "classification_portion"
+      ],
+      "title": "Classification",
+      "type": "object"
+    },
+    "Contribution": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResourceReference"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "external": "#/$defs/ExternalReference",
+                  "local": "#/$defs/LocalReference",
+                  "unreconciled": "#/$defs/UnreconciledReference"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LocalReference"
+                },
+                {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                {
+                  "$ref": "#/$defs/UnreconciledReference"
+                }
+              ]
+            }
+          ],
+          "title": "Agent"
+        },
+        "role": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "minItems": 1,
+          "title": "Role",
+          "type": "array"
+        }
+      },
+      "required": [
+        "agent",
+        "role"
+      ],
+      "title": "Contribution",
+      "type": "object"
+    },
+    "ContributionLink": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "contribution",
+          "default": "contribution",
+          "title": "Kind",
+          "type": "string"
+        },
+        "predicate": {
+          "const": "http://id.loc.gov/ontologies/bibframe/contribution",
+          "default": "http://id.loc.gov/ontologies/bibframe/contribution",
+          "title": "Predicate",
+          "type": "string"
+        },
+        "role": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Role",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        },
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "role"
+      ],
+      "title": "ContributionLink",
+      "type": "object"
+    },
+    "ControlledConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "kind": {
+          "const": "controlled_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind"
+      ],
+      "title": "ControlledConcept",
+      "type": "object"
+    },
+    "Diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "schema",
+            "semantic",
+            "profile",
+            "identity",
+            "reference",
+            "state",
+            "technical"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "code": {
+          "$ref": "#/$defs/CatalogCode"
+        },
+        "constraint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraint"
+        },
+        "field_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Field Ids",
+          "type": "array"
+        },
+        "focus_node": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Focus Node"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "messages": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Messages",
+          "type": "array"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RdfPath"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "severity": {
+          "default": "Violation",
+          "enum": [
+            "Violation",
+            "Warning",
+            "Info"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_shape": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Shape"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "category"
+      ],
+      "title": "Diagnostic",
+      "type": "object"
+    },
+    "DirectLink": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "direct",
+          "default": "direct",
+          "title": "Kind",
+          "type": "string"
+        },
+        "predicate": {
+          "minLength": 1,
+          "title": "Predicate",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        },
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "predicate"
+      ],
+      "title": "DirectLink",
+      "type": "object"
+    },
+    "EntityType": {
+      "enum": [
+        "Work",
+        "Instance",
+        "Item",
+        "Agent",
+        "Subject"
+      ],
+      "title": "EntityType",
+      "type": "string"
+    },
+    "EntityValue": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "entity_reference",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EntityValue",
+      "type": "object"
+    },
+    "Extent": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Label",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "Extent",
+      "type": "object"
+    },
+    "ExternalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "kind": {
+          "const": "external",
+          "default": "external",
+          "title": "Kind",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_type",
+        "uri"
+      ],
+      "title": "ExternalReference",
+      "type": "object"
+    },
+    "Identifier": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "Identifier",
+          "enum": [
+            "Identifier",
+            "Local",
+            "Isbn"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Source",
+          "type": "array"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "Identifier",
+      "type": "object"
+    },
+    "InstanceCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "carrier": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Carrier",
+          "type": "array"
+        },
+        "edition_statement": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Edition Statement",
+          "type": "array"
+        },
+        "extent": {
+          "items": {
+            "$ref": "#/$defs/Extent"
+          },
+          "title": "Extent",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "title": "Identified By",
+          "type": "array"
+        },
+        "instance_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResourceReference"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "external": "#/$defs/ExternalReference",
+                  "local": "#/$defs/LocalReference",
+                  "unreconciled": "#/$defs/UnreconciledReference"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LocalReference"
+                },
+                {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                {
+                  "$ref": "#/$defs/UnreconciledReference"
+                }
+              ]
+            }
+          ],
+          "title": "Instance Of"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "provision_activity": {
+          "items": {
+            "$ref": "#/$defs/Publication"
+          },
+          "title": "Provision Activity",
+          "type": "array"
+        },
+        "title": {
+          "items": {
+            "$ref": "#/$defs/Title"
+          },
+          "title": "Title",
+          "type": "array"
+        }
+      },
+      "required": [
+        "instance_of"
+      ],
+      "title": "InstanceCreate",
+      "type": "object"
+    },
+    "InstanceRead": {
+      "additionalProperties": false,
+      "description": "Owned description and stored identity; no technical audit columns.",
+      "properties": {
+        "carrier": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Carrier",
+          "type": "array"
+        },
+        "edition_statement": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Edition Statement",
+          "type": "array"
+        },
+        "extent": {
+          "items": {
+            "$ref": "#/$defs/Extent"
+          },
+          "title": "Extent",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "title": "Identified By",
+          "type": "array"
+        },
+        "instance_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResourceReference"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "external": "#/$defs/ExternalReference",
+                  "local": "#/$defs/LocalReference",
+                  "unreconciled": "#/$defs/UnreconciledReference"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LocalReference"
+                },
+                {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                {
+                  "$ref": "#/$defs/UnreconciledReference"
+                }
+              ]
+            }
+          ],
+          "title": "Instance Of"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "provision_activity": {
+          "items": {
+            "$ref": "#/$defs/Publication"
+          },
+          "title": "Provision Activity",
+          "type": "array"
+        },
+        "title": {
+          "items": {
+            "$ref": "#/$defs/Title"
+          },
+          "title": "Title",
+          "type": "array"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "internal_id",
+        "uri",
+        "instance_of"
+      ],
+      "title": "InstanceRead",
+      "type": "object"
+    },
+    "InstanceUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "carrier": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Carrier"
+        },
+        "edition_statement": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LocalizedText"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edition Statement"
+        },
+        "extent": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Extent"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extent"
+        },
+        "identified_by": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Identifier"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identified By"
+        },
+        "instance_of": {
+          "$ref": "#/$defs/ResourceReference",
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Instance Of"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Note"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "provision_activity": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Publication"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provision Activity"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Title"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "title": "InstanceUpdate",
+      "type": "object"
+    },
+    "ItemCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "custodial_history": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Custodial History",
+          "type": "array"
+        },
+        "held_by": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Held By",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "minItems": 1,
+          "title": "Identified By",
+          "type": "array"
+        },
+        "item_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResourceReference"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "external": "#/$defs/ExternalReference",
+                  "local": "#/$defs/LocalReference",
+                  "unreconciled": "#/$defs/UnreconciledReference"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LocalReference"
+                },
+                {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                {
+                  "$ref": "#/$defs/UnreconciledReference"
+                }
+              ]
+            }
+          ],
+          "title": "Item Of"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "shelf_mark": {
+          "items": {
+            "$ref": "#/$defs/ShelfMark"
+          },
+          "title": "Shelf Mark",
+          "type": "array"
+        }
+      },
+      "required": [
+        "item_of",
+        "identified_by"
+      ],
+      "title": "ItemCreate",
+      "type": "object"
+    },
+    "ItemRead": {
+      "additionalProperties": false,
+      "description": "Owned description and stored identity; no technical audit columns.",
+      "properties": {
+        "custodial_history": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Custodial History",
+          "type": "array"
+        },
+        "held_by": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Held By",
+          "type": "array"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "minItems": 1,
+          "title": "Identified By",
+          "type": "array"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "item_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResourceReference"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "external": "#/$defs/ExternalReference",
+                  "local": "#/$defs/LocalReference",
+                  "unreconciled": "#/$defs/UnreconciledReference"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/LocalReference"
+                },
+                {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                {
+                  "$ref": "#/$defs/UnreconciledReference"
+                }
+              ]
+            }
+          ],
+          "title": "Item Of"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "shelf_mark": {
+          "items": {
+            "$ref": "#/$defs/ShelfMark"
+          },
+          "title": "Shelf Mark",
+          "type": "array"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "internal_id",
+        "uri",
+        "item_of",
+        "identified_by"
+      ],
+      "title": "ItemRead",
+      "type": "object"
+    },
+    "ItemUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "custodial_history": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LocalizedText"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custodial History"
+        },
+        "held_by": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Held By"
+        },
+        "identified_by": {
+          "items": {
+            "$ref": "#/$defs/Identifier"
+          },
+          "minItems": 1,
+          "title": "Identified By",
+          "type": "array"
+        },
+        "item_of": {
+          "$ref": "#/$defs/ResourceReference",
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Item Of"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Note"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance"
+        },
+        "shelf_mark": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ShelfMark"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shelf Mark"
+        }
+      },
+      "title": "ItemUpdate",
+      "type": "object"
+    },
+    "LiteralValue": {
+      "additionalProperties": false,
+      "description": "RDF lexical value: numeric/date lexicals remain strings, without coercion.",
+      "properties": {
+        "datatype": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datatype"
+        },
+        "kind": {
+          "const": "literal",
+          "title": "Kind",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "LiteralValue",
+      "type": "object"
+    },
+    "LocalConcept": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_labels": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Labels",
+          "type": "array"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "local_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Label",
+          "type": "array"
+        },
+        "notation": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notation"
+        },
+        "replacement": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replacement"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "status": {
+          "default": "unverified",
+          "enum": [
+            "resolved",
+            "unverified",
+            "invalid",
+            "deprecated",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        },
+        "vocabulary": {
+          "minLength": 1,
+          "title": "Vocabulary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri",
+        "vocabulary",
+        "kind",
+        "internal_id"
+      ],
+      "title": "LocalConcept",
+      "type": "object"
+    },
+    "LocalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "internal_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internal Id"
+        },
+        "kind": {
+          "const": "local",
+          "default": "local",
+          "title": "Kind",
+          "type": "string"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "entity_type"
+      ],
+      "title": "LocalReference",
+      "type": "object"
+    },
+    "LocalizedText": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]+(?:-[a-zA-Z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "LocalizedText",
+      "type": "object"
+    },
+    "Note": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Label",
+          "type": "array"
+        },
+        "note_type": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Note Type",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "Note",
+      "type": "object"
+    },
+    "ProblemDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "instance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instance"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "maximum": 599,
+          "minimum": 400,
+          "title": "Status",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "validation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalogValidationResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "status",
+        "code",
+        "request_id"
+      ],
+      "title": "ProblemDetails",
+      "type": "object"
+    },
+    "Publication": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Agent",
+          "type": "array"
+        },
+        "date": {
+          "items": {
+            "$ref": "#/$defs/PublicationDate"
+          },
+          "title": "Date",
+          "type": "array"
+        },
+        "place": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Place",
+          "type": "array"
+        }
+      },
+      "title": "Publication",
+      "type": "object"
+    },
+    "PublicationDate": {
+      "additionalProperties": false,
+      "properties": {
+        "datatype": {
+          "default": "http://www.w3.org/2001/XMLSchema#string",
+          "enum": [
+            "http://www.w3.org/2001/XMLSchema#string",
+            "http://www.w3.org/2001/XMLSchema#gYear",
+            "http://www.w3.org/2001/XMLSchema#date"
+          ],
+          "title": "Datatype",
+          "type": "string"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "PublicationDate",
+      "type": "object"
+    },
+    "PublicationLink": {
+      "additionalProperties": false,
+      "properties": {
+        "activity_key": {
+          "minLength": 1,
+          "title": "Activity Key",
+          "type": "string"
+        },
+        "activity_type": {
+          "const": "Publication",
+          "default": "Publication",
+          "title": "Activity Type",
+          "type": "string"
+        },
+        "kind": {
+          "const": "publication",
+          "default": "publication",
+          "title": "Kind",
+          "type": "string"
+        },
+        "predicate": {
+          "const": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+          "default": "http://id.loc.gov/ontologies/bibframe/provisionActivity",
+          "title": "Predicate",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        },
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "external": "#/$defs/ExternalReference",
+              "local": "#/$defs/LocalReference",
+              "unreconciled": "#/$defs/UnreconciledReference"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalReference"
+            },
+            {
+              "$ref": "#/$defs/ExternalReference"
+            },
+            {
+              "$ref": "#/$defs/UnreconciledReference"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "activity_key"
+      ],
+      "title": "PublicationLink",
+      "type": "object"
+    },
+    "RdfPath": {
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "iri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iri"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RdfPath"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "iri",
+            "sequence",
+            "alternative",
+            "inverse",
+            "zero_or_more",
+            "one_or_more",
+            "zero_or_one",
+            "opaque"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "RdfPath",
+      "type": "object"
+    },
+    "RelationshipCreate": {
+      "additionalProperties": false,
+      "description": "Complete owned collection; minima are the current candidate profile's policy.",
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "RelationshipCreate",
+      "type": "object"
+    },
+    "RelationshipRead": {
+      "additionalProperties": false,
+      "description": "Allows composed inverses, without recursively embedding descriptions.",
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "RelationshipRead",
+      "type": "object"
+    },
+    "RelationshipReplace": {
+      "additionalProperties": false,
+      "description": "Complete replacement of the owned relationships, not the whole RDF snapshot.",
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalReference"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "RelationshipReplace",
+      "type": "object"
+    },
+    "RelationshipUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "operations": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "add": "#/$defs/AddLinks",
+                "remove": "#/$defs/RemoveLinks",
+                "replace": "#/$defs/ReplaceLinks"
+              },
+              "propertyName": "op"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/AddLinks"
+              },
+              {
+                "$ref": "#/$defs/RemoveLinks"
+              },
+              {
+                "$ref": "#/$defs/ReplaceLinks"
+              }
+            ]
+          },
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "title": "RelationshipUpdate",
+      "type": "object"
+    },
+    "RemoveLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Links",
+          "type": "array"
+        },
+        "op": {
+          "const": "remove",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "links"
+      ],
+      "title": "RemoveLinks",
+      "type": "object"
+    },
+    "ReplaceLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "links": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "contribution": "#/$defs/ContributionLink",
+                "direct": "#/$defs/DirectLink",
+                "publication": "#/$defs/PublicationLink"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DirectLink"
+              },
+              {
+                "$ref": "#/$defs/ContributionLink"
+              },
+              {
+                "$ref": "#/$defs/PublicationLink"
+              }
+            ]
+          },
+          "title": "Links",
+          "type": "array"
+        },
+        "op": {
+          "const": "replace",
+          "title": "Op",
+          "type": "string"
+        },
+        "predicate": {
+          "minLength": 1,
+          "title": "Predicate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "predicate",
+        "links"
+      ],
+      "title": "ReplaceLinks",
+      "type": "object"
+    },
+    "ResourceReference": {
+      "additionalProperties": false,
+      "description": "URI-only reference: target class comes from the owning property/profile.",
+      "properties": {
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "ResourceReference",
+      "type": "object"
+    },
+    "ShelfMark": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Source",
+          "type": "array"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ShelfMark",
+      "type": "object"
+    },
+    "SubjectCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Label",
+          "type": "array"
+        },
+        "broader": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Broader",
+          "type": "array"
+        },
+        "external_reference": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "External Reference",
+          "type": "array"
+        },
+        "preferred_label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Preferred Label",
+          "type": "array"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "related": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "scheme": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "minItems": 1,
+          "title": "Scheme",
+          "type": "array"
+        }
+      },
+      "required": [
+        "preferred_label",
+        "scheme"
+      ],
+      "title": "SubjectCreate",
+      "type": "object"
+    },
+    "SubjectRead": {
+      "additionalProperties": false,
+      "description": "Owned description and stored identity; no technical audit columns.",
+      "properties": {
+        "alternative_label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Alternative Label",
+          "type": "array"
+        },
+        "broader": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Broader",
+          "type": "array"
+        },
+        "external_reference": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "External Reference",
+          "type": "array"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "preferred_label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Preferred Label",
+          "type": "array"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "related": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related",
+          "type": "array"
+        },
+        "scheme": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "minItems": 1,
+          "title": "Scheme",
+          "type": "array"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "internal_id",
+        "uri",
+        "preferred_label",
+        "scheme"
+      ],
+      "title": "SubjectRead",
+      "type": "object"
+    },
+    "SubjectUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_label": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LocalizedText"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alternative Label"
+        },
+        "broader": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Broader"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference"
+        },
+        "preferred_label": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Preferred Label",
+          "type": "array"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance"
+        },
+        "related": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related"
+        },
+        "scheme": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "minItems": 1,
+          "title": "Scheme",
+          "type": "array"
+        }
+      },
+      "title": "SubjectUpdate",
+      "type": "object"
+    },
+    "Title": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "Title",
+          "enum": [
+            "Title",
+            "VariantTitle"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "main_title": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "minItems": 1,
+          "title": "Main Title",
+          "type": "array"
+        },
+        "subtitle": {
+          "items": {
+            "$ref": "#/$defs/LocalizedText"
+          },
+          "title": "Subtitle",
+          "type": "array"
+        }
+      },
+      "required": [
+        "main_title"
+      ],
+      "title": "Title",
+      "type": "object"
+    },
+    "UnreconciledReference": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_type": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "kind": {
+          "const": "unreconciled",
+          "default": "unreconciled",
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "namespace": {
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_type",
+        "label",
+        "namespace",
+        "key"
+      ],
+      "title": "UnreconciledReference",
+      "type": "object"
+    },
+    "WorkCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "classification": {
+          "items": {
+            "$ref": "#/$defs/Classification"
+          },
+          "title": "Classification",
+          "type": "array"
+        },
+        "content": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Content",
+          "type": "array"
+        },
+        "contribution": {
+          "items": {
+            "$ref": "#/$defs/Contribution"
+          },
+          "title": "Contribution",
+          "type": "array"
+        },
+        "language": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Language",
+          "type": "array"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "related_to": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related To",
+          "type": "array"
+        },
+        "subject": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Subject",
+          "type": "array"
+        },
+        "title": {
+          "items": {
+            "$ref": "#/$defs/Title"
+          },
+          "minItems": 1,
+          "title": "Title",
+          "type": "array"
+        },
+        "translation_of": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Translation Of",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "WorkCreate",
+      "type": "object"
+    },
+    "WorkRead": {
+      "additionalProperties": false,
+      "description": "Owned description and stored identity; no technical audit columns.",
+      "properties": {
+        "classification": {
+          "items": {
+            "$ref": "#/$defs/Classification"
+          },
+          "title": "Classification",
+          "type": "array"
+        },
+        "content": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Content",
+          "type": "array"
+        },
+        "contribution": {
+          "items": {
+            "$ref": "#/$defs/Contribution"
+          },
+          "title": "Contribution",
+          "type": "array"
+        },
+        "internal_id": {
+          "format": "uuid",
+          "title": "Internal Id",
+          "type": "string"
+        },
+        "language": {
+          "items": {
+            "$ref": "#/$defs/ResourceReference"
+          },
+          "title": "Language",
+          "type": "array"
+        },
+        "note": {
+          "items": {
+            "$ref": "#/$defs/Note"
+          },
+          "title": "Note",
+          "type": "array"
+        },
+        "related_to": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Related To",
+          "type": "array"
+        },
+        "subject": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Subject",
+          "type": "array"
+        },
+        "title": {
+          "items": {
+            "$ref": "#/$defs/Title"
+          },
+          "minItems": 1,
+          "title": "Title",
+          "type": "array"
+        },
+        "translation_of": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              {
+                "discriminator": {
+                  "mapping": {
+                    "external": "#/$defs/ExternalReference",
+                    "local": "#/$defs/LocalReference",
+                    "unreconciled": "#/$defs/UnreconciledReference"
+                  },
+                  "propertyName": "kind"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/LocalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/ExternalReference"
+                  },
+                  {
+                    "$ref": "#/$defs/UnreconciledReference"
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Translation Of",
+          "type": "array"
+        },
+        "uri": {
+          "minLength": 1,
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "internal_id",
+        "uri",
+        "title"
+      ],
+      "title": "WorkRead",
+      "type": "object"
+    },
+    "WorkUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "classification": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Classification"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classification"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "contribution": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Contribution"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contribution"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ResourceReference"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Note"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "related_to": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Related To"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "title": {
+          "items": {
+            "$ref": "#/$defs/Title"
+          },
+          "minItems": 1,
+          "title": "Title",
+          "type": "array"
+        },
+        "translation_of": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResourceReference"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "external": "#/$defs/ExternalReference",
+                        "local": "#/$defs/LocalReference",
+                        "unreconciled": "#/$defs/UnreconciledReference"
+                      },
+                      "propertyName": "kind"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/LocalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/ExternalReference"
+                      },
+                      {
+                        "$ref": "#/$defs/UnreconciledReference"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translation Of"
+        }
+      },
+      "title": "WorkUpdate",
+      "type": "object"
+    }
+  },
+  "$id": "urn:libris:contract:catalogographic:v1:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-libris-contract": "urn:libris:contract:catalogographic:v1",
+  "x-libris-publication": "documental; sem endpoints catalográficos",
+  "x-libris-roots": {
+    "AgentCreate": {
+      "$ref": "#/$defs/AgentCreate"
+    },
+    "AgentRead": {
+      "$ref": "#/$defs/AgentRead"
+    },
+    "AgentUpdate": {
+      "$ref": "#/$defs/AgentUpdate"
+    },
+    "CatalogValidationResult": {
+      "$ref": "#/$defs/CatalogValidationResult"
+    },
+    "CatalogValueDocument": {
+      "$ref": "#/$defs/CatalogValueDocument"
+    },
+    "InstanceCreate": {
+      "$ref": "#/$defs/InstanceCreate"
+    },
+    "InstanceRead": {
+      "$ref": "#/$defs/InstanceRead"
+    },
+    "InstanceUpdate": {
+      "$ref": "#/$defs/InstanceUpdate"
+    },
+    "ItemCreate": {
+      "$ref": "#/$defs/ItemCreate"
+    },
+    "ItemRead": {
+      "$ref": "#/$defs/ItemRead"
+    },
+    "ItemUpdate": {
+      "$ref": "#/$defs/ItemUpdate"
+    },
+    "ProblemDetails": {
+      "$ref": "#/$defs/ProblemDetails"
+    },
+    "RelationshipCreate": {
+      "$ref": "#/$defs/RelationshipCreate"
+    },
+    "RelationshipRead": {
+      "$ref": "#/$defs/RelationshipRead"
+    },
+    "RelationshipReplace": {
+      "$ref": "#/$defs/RelationshipReplace"
+    },
+    "RelationshipUpdate": {
+      "$ref": "#/$defs/RelationshipUpdate"
+    },
+    "SubjectCreate": {
+      "$ref": "#/$defs/SubjectCreate"
+    },
+    "SubjectRead": {
+      "$ref": "#/$defs/SubjectRead"
+    },
+    "SubjectUpdate": {
+      "$ref": "#/$defs/SubjectUpdate"
+    },
+    "WorkCreate": {
+      "$ref": "#/$defs/WorkCreate"
+    },
+    "WorkRead": {
+      "$ref": "#/$defs/WorkRead"
+    },
+    "WorkUpdate": {
+      "$ref": "#/$defs/WorkUpdate"
+    }
+  },
+  "x-libris-specification-version": "1.0.0"
+}

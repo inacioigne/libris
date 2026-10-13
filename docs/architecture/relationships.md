@@ -1,5 +1,11 @@
 # Contrato de relacionamentos — M03.01.03 (#16)
 
+Estado atual consolidado na [especificação v1](catalogographic-contract.md).
+Os trechos de diagnóstico/integração futura desta entrega registram seu momento:
+#18 implementou serialização; #20–#25 implementaram perfis, SHACL e extensões;
+#43 implementou integridade local na publicação editorial transacional. A escrita
+pública de vínculos, CRUD e resolução HTTP continuam futuras.
+
 Versão 1.0. Complementa os [DTOs catalográficos](catalogographic-schemas.md), o
 [contrato canônico](catalogographic-contract.md) e o
 [ADR 0018](../decisions/0018-bibliographic-relationships.md). Os perfis institucionais
