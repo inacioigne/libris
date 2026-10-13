@@ -59,8 +59,8 @@ na implantação; não foi criado um sistema paralelo de logging.
 | libris-reader | bibliographic:read, authority:read |
 | libris-cataloger | bibliographic:read/create/update, authority:read, metadata_revision:read/create, editorial:submit |
 | libris-authority-manager | bibliographic:read, authority:read/manage |
-| libris-reviewer | bibliographic:read, authority:read, metadata_revision:read, editorial:approve/return |
-| libris-publisher | bibliographic:read, authority:read, metadata_revision:read, editorial:publish/withdraw/republish/archive |
+| libris-reviewer | bibliographic:read, authority:read, metadata_revision:read, metadata_audit:read, editorial:approve/return |
+| libris-publisher | bibliographic:read, authority:read, metadata_revision:read, metadata_audit:read, editorial:publish/withdraw/republish/archive |
 | libris-admin | Todas: as anteriores, bibliographic:delete e system:admin |
 
 As operações editoriais e seus limites estão no [contrato #27](editorial-lifecycle.md).
@@ -115,7 +115,8 @@ explicitamente antes de usar os serviços atualizados sobre um banco existente.
 Migração 0002_revision_actor é aditiva, sem backfill/UPDATE das revisões imutáveis.
 O downgrade remove somente a coluna e perde as associações de ator; não executar
 em dados de trabalho sem decisão explícita. Histórico com NULL não recebe ator fictício.
-Não há auditoria completa ou taxonomia implementada para atores de serviço.
+A #28 acrescenta auditoria observada, atores técnicos controlados e leitura interna
+por metadata_audit:read; ver [contrato e limites](provenance-audit-versioning.md).
 
 ## Keycloak opcional local
 

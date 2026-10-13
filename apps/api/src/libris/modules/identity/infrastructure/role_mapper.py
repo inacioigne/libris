@@ -27,6 +27,7 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = {
             P.BIBLIOGRAPHIC_READ,
             P.AUTHORITY_READ,
             P.METADATA_REVISION_READ,
+            P.METADATA_AUDIT_READ,
             P.EDITORIAL_APPROVE,
             P.EDITORIAL_RETURN,
         }
@@ -36,6 +37,7 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = {
             P.BIBLIOGRAPHIC_READ,
             P.AUTHORITY_READ,
             P.METADATA_REVISION_READ,
+            P.METADATA_AUDIT_READ,
             P.EDITORIAL_PUBLISH,
             P.EDITORIAL_WITHDRAW,
             P.EDITORIAL_REPUBLISH,

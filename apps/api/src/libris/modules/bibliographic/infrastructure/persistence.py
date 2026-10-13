@@ -13,6 +13,7 @@ from libris.modules.bibliographic.domain.models import (
     ResourceIdentity,
     Revision,
     StaleRevisionError,
+    validate_history_limit,
 )
 
 
@@ -53,6 +54,7 @@ class SemanticRevision(Base):
     source: Mapped[str] = mapped_column(String)
     process: Mapped[str] = mapped_column(String)
     profile: Mapped[str] = mapped_column(String)
+    reason: Mapped[str | None] = mapped_column(String, nullable=True)
     actor_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
 
@@ -87,6 +89,7 @@ class RevisionStore:
                 process=revision.provenance.process,
                 profile=revision.profile,
                 actor_id=revision.actor_id,
+                reason=revision.provenance.reason,
             )
         )
         await session.flush()
@@ -111,8 +114,54 @@ class RevisionStore:
             ResourceIdentity(resource.id, resource.uri),
             stored.number,
             stored.created_at,
-            Provenance(stored.source, stored.process),
+            Provenance(stored.source, stored.process, stored.reason),
             stored.profile,
             stored.actor_id,
         )
         return revision, stored.document
+
+    async def list(
+        self,
+        session: AsyncSession,
+        identifier: UUID,
+        *,
+        limit: int = 100,
+        after_number: int = 0,
+    ) -> tuple[Revision, ...]:
+        validate_history_limit(limit)
+        if type(after_number) is not int or after_number < 0:
+            raise ValueError("Cursor de revisão deve ser não negativo.")
+        resource = await session.get(SemanticResource, identifier)
+        if resource is None:
+            raise ResourceNotFoundError("Recurso não encontrado.")
+        rows = (
+            await session.execute(
+                select(
+                    SemanticRevision.number,
+                    SemanticRevision.created_at,
+                    SemanticRevision.source,
+                    SemanticRevision.process,
+                    SemanticRevision.reason,
+                    SemanticRevision.profile,
+                    SemanticRevision.actor_id,
+                )
+                .where(
+                    SemanticRevision.resource_id == identifier,
+                    SemanticRevision.number > after_number,
+                )
+                .order_by(SemanticRevision.number)
+                .limit(limit)
+            )
+        ).all()
+        identity = ResourceIdentity(resource.id, resource.uri)
+        return tuple(
+            Revision(
+                identity,
+                row.number,
+                row.created_at,
+                Provenance(row.source, row.process, row.reason),
+                row.profile,
+                row.actor_id,
+            )
+            for row in rows
+        )

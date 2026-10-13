@@ -6,7 +6,9 @@ from rdflib import Graph, URIRef
 from rdflib.namespace import RDF
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from libris.modules.bibliographic.application.audit import audit_actor, content_event
 from libris.modules.bibliographic.application.diagnostics import CatalogValidationRejected
+from libris.modules.bibliographic.domain.audit import ActorType, AuditEventType, ExecutionActor
 from libris.modules.bibliographic.domain.errors import CatalogCode, CatalogError
 from libris.modules.bibliographic.domain.models import (
     Provenance,
@@ -15,6 +17,7 @@ from libris.modules.bibliographic.domain.models import (
     StaleRevisionError,
 )
 from libris.modules.bibliographic.domain.profile_registry import ProfileError
+from libris.modules.bibliographic.infrastructure.audit import AuditStore
 from libris.modules.bibliographic.infrastructure.diagnostics import adapt_report
 from libris.modules.bibliographic.infrastructure.ownership import check_snapshot
 from libris.modules.bibliographic.infrastructure.persistence import RevisionStore
@@ -26,7 +29,9 @@ from libris.modules.bibliographic.infrastructure.validation import (
     PROFILE_ID,
     validate_profile,
 )
+from libris.modules.identity.application.service import authorize
 from libris.modules.identity.domain.models import AuthenticatedActor
+from libris.modules.identity.domain.permissions import Permission
 
 
 def prepare_document(graph: Graph, uri: str, profile: str = PROFILE_ID) -> list[dict[str, object]]:
@@ -70,6 +75,7 @@ class BibliographicService:
     def __init__(self, sessions: async_sessionmaker[AsyncSession]) -> None:
         self.sessions = sessions
         self.store = RevisionStore()
+        self.audit = AuditStore()
 
     async def create(
         self,
@@ -79,7 +85,9 @@ class BibliographicService:
         *,
         profile: str = PROFILE_ID,
         actor: AuthenticatedActor | None = None,
+        execution_actor: ExecutionActor | None = None,
     ) -> Revision:
+        actor_id, actor_type = audit_actor(actor, execution_actor)
         document = prepare_document(graph, identity.uri, profile)
         revision = Revision(
             identity,
@@ -87,11 +95,14 @@ class BibliographicService:
             datetime.now(UTC),
             provenance,
             profile,
-            actor.actor_id if actor is not None else None,
+            actor_id,
         )
         async with self.sessions() as session, session.begin():
             await self.store.create(session, identity)
             await self.store.save(session, revision, document)
+            await self.audit.append(
+                session, content_event(revision, AuditEventType.CREATED, actor_type)
+            )
         return revision
 
     async def revise(
@@ -102,33 +113,102 @@ class BibliographicService:
         provenance: Provenance,
         *,
         actor: AuthenticatedActor | None = None,
+        execution_actor: ExecutionActor | None = None,
     ) -> Revision:
-        if expected_revision < 1:
-            raise ValueError("A revisão esperada deve ser positiva.")
+        actor_id, actor_type = audit_actor(actor, execution_actor)
         async with self.sessions() as session, session.begin():
-            # CAS below remains the arbiter if another transaction advances after this read.
-            try:
-                previous, prior_document = await self.store.get(session, identifier, None)
-            except LookupError as exc:
-                raise StaleRevisionError("Recurso ausente; recarregue o registro.") from exc
-            uri = await self.store.advance(session, identifier, expected_revision)
-            document = prepare_document(graph, uri, previous.profile)
-            if previous.profile != PROFILE_ID:
-                prior_graph = parse_document(json.dumps(prior_document), "json-ld")
-                if check_snapshot(prior_graph, URIRef(uri)) != check_snapshot(graph, URIRef(uri)):
-                    raise CatalogError(
-                        CatalogCode.IDENTITY_INVALID,
-                        "O tipo da identidade não muda entre revisões.",
-                    )
-            revision = Revision(
-                ResourceIdentity(identifier, uri),
-                expected_revision + 1,
-                datetime.now(UTC),
+            revision = await self._revise(
+                session,
+                identifier,
+                expected_revision,
+                graph,
                 provenance,
-                previous.profile,
-                actor.actor_id if actor is not None else None,
+                actor_id,
+                actor_type,
+                AuditEventType.REVISED,
             )
-            await self.store.save(session, revision, document)
+        return revision
+
+    async def _revise(
+        self,
+        session: AsyncSession,
+        identifier: UUID,
+        expected_revision: int,
+        graph: Graph,
+        provenance: Provenance,
+        actor_id: str | None,
+        actor_type: ActorType | None,
+        event_type: AuditEventType,
+        source_revision: int | None = None,
+    ) -> Revision:
+        if type(expected_revision) is not int or expected_revision < 1:
+            raise ValueError("A revisão esperada deve ser positiva.")
+        try:
+            previous, prior_document = await self.store.get(session, identifier, None)
+        except LookupError as exc:
+            raise StaleRevisionError("Recurso ausente; recarregue o registro.") from exc
+        uri = await self.store.advance(session, identifier, expected_revision)
+        document = prepare_document(graph, uri, previous.profile)
+        if previous.profile != PROFILE_ID:
+            prior_graph = parse_document(json.dumps(prior_document), "json-ld")
+            if check_snapshot(prior_graph, URIRef(uri)) != check_snapshot(graph, URIRef(uri)):
+                raise CatalogError(
+                    CatalogCode.IDENTITY_INVALID,
+                    "O tipo da identidade não muda entre revisões.",
+                )
+        revision = Revision(
+            ResourceIdentity(identifier, uri),
+            expected_revision + 1,
+            datetime.now(UTC),
+            provenance,
+            previous.profile,
+            actor_id,
+        )
+        await self.store.save(session, revision, document)
+        await self.audit.append(
+            session,
+            content_event(
+                revision,
+                event_type,
+                actor_type,
+                source_revision=source_revision,
+            ),
+        )
+        return revision
+
+    async def restore_content(
+        self,
+        identifier: UUID,
+        source_revision: int,
+        expected_revision: int,
+        provenance: Provenance,
+        *,
+        actor: AuthenticatedActor,
+    ) -> Revision:
+        """Copy an owned historical snapshot as new content, never an editorial restore."""
+        actor_id, actor_type = audit_actor(actor)
+        authorize(actor, (Permission.METADATA_REVISION_READ, Permission.METADATA_REVISION_CREATE))
+        if type(expected_revision) is not int or expected_revision < 1:
+            raise ValueError("A revisão esperada deve ser positiva.")
+        if type(source_revision) is not int or not 1 <= source_revision <= expected_revision:
+            raise ValueError("Revisão de origem deve pertencer ao histórico esperado.")
+        async with self.sessions() as session, session.begin():
+            historical, document = await self.store.get(session, identifier, source_revision)
+            current, _ = await self.store.get(session, identifier, None)
+            if historical.identity != current.identity or historical.profile != current.profile:
+                raise ValueError("Restauração não migra perfil ou identidade.")
+            graph = parse_document(json.dumps(document), "json-ld")
+            revision = await self._revise(
+                session,
+                identifier,
+                expected_revision,
+                graph,
+                provenance,
+                actor_id,
+                actor_type,
+                AuditEventType.RESTORED,
+                source_revision,
+            )
         return revision
 
     async def read(self, identifier: UUID, number: int | None = None) -> tuple[Revision, Graph]:

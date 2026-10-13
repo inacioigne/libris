@@ -9,8 +9,8 @@ complexos está registrada no ADR 0005.
 **Implementado:** `/health`, página inicial `/pt` e `/en`, configuração validada,
 engine/sessões SQLAlchemy assíncronas, Docker Compose e núcleo semântico experimental
 BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/URI,
-snapshots JSONB, revisões e concorrência otimista. Há uma migração Alembic
-experimental; ela não executa no startup. Editor, APIs de catalogação, circulação,
+snapshots JSONB, revisões e concorrência otimista. Há migrações Alembic
+experimentais; elas não executam no startup. Editor, APIs de catalogação, circulação,
 autoridades e pesquisa ainda não estão implementados. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
 `/api/v1/identity/me` e ator opcional nas revisões, sem login no frontend.
@@ -87,6 +87,15 @@ da publicação anterior e ciclo independente da identidade. Ver
 [ADR 0026](docs/decisions/0026-editorial-lifecycle.md).
 A coordenação exige adaptador transacional futuro; não há persistência editorial,
 integração à escrita semântica ou auditoria durável nesta entrega.
+
+
+A M03.04.02 implementa [proveniência, auditoria e versionamento](docs/architecture/provenance-audit-versioning.md):
+eventos imutáveis no mesmo commit das revisões, histórico interno autorizado,
+restauração de conteúdo com CAS e comparação semântica RDF. A migração incremental
+`0003_semantic_audit` preserva snapshots legados, sem backfill. Ver
+[ADR 0027](docs/decisions/0027-provenance-audit-versioning.md) e
+[evidências e pendências](docs/architecture/provenance-audit-versioning-verification.md).
+A persistência do estado editorial da #27 e sua integração atômica continuam pendentes.
 
 
 ## Estrutura
@@ -202,7 +211,8 @@ uv run alembic heads
 uv run alembic upgrade head --sql
 ```
 
-Existem as revisões experimentais `0001_semantic` e `0002_revision_actor`. `alembic current` exige banco
+Existem as revisões experimentais `0001_semantic`, `0002_revision_actor` e
+`0003_semantic_audit`. `alembic current` exige banco
 acessível; `heads` e geração offline inspecionam o ambiente sem modificar o banco.
 Execute `uv run alembic upgrade head` explicitamente quando desejar instalar as
 tabelas experimentais. O downgrade descarta seus dados.
@@ -232,8 +242,9 @@ histórico e concorrência em PostgreSQL real; não há integração com índice
 
 Homologar os perfis candidatos com catalogadores e implementar a API de catalogação
 no Incremento 2, conforme o contrato consolidado de entidades, URIs, referências
-e concorrência. Autenticação/autorização OIDC está implementada na Entrega A; auditoria humana
-completa e entregas B–E continuam pendentes.
+e concorrência. Autenticação/autorização OIDC está implementada na Entrega A;
+auditoria de criação/revisão e histórico interno estão implementados na M03.04.02.
+Persistência editorial, APIs completas e demais entregas operacionais continuam pendentes.
 As tabelas permanecem experimentais; não há esquema bibliográfico definitivo.
 Ver [contrato](docs/architecture/catalogographic-contract.md) e ADRs 0009–0015.
 

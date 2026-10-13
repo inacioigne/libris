@@ -152,9 +152,11 @@ transacional futuro. O contrato não reescreve vínculos ou grafos.
 PreparedEditorialEvent acompanha cada proposta: identidade, estado anterior/posterior,
 operação, escopo, ator, instante, revisão relacionada, versões anterior/posterior e
 justificativa (obrigatória para return/withdraw/archive). Evento preparado não é
-evento gravado. #28 deverá definir identificador/envelope, correlação, proveniência
-completa, histórico durável e armazenamento no commit. Não há publicação de eventos,
-outbox ou sistema paralelo de auditoria.
+evento gravado. A #28 acrescenta [envelopes e armazenamento de auditoria](provenance-audit-versioning.md),
+com identificador, proveniência completa e adaptação explícita desses eventos preparados.
+A gravação junto do CAS de estado editorial continua pendente do adaptador PostgreSQL.
+RETURN/ARCHIVE precisam de extensão governada da taxonomia. Não há publicação de
+eventos, outbox ou sistema paralelo de logs.
 
 ## Evidências e critérios
 

@@ -469,11 +469,15 @@ def test_owned_snapshot_and_revision_preserve_extension() -> None:
     service.store.get = AsyncMock(return_value=(revision, initial))
     service.store.advance = AsyncMock(return_value=identity.uri)
     service.store.save = AsyncMock()
+    service.audit.append = AsyncMock()
     title = next(data.objects(root, BF.title))
     data.set((title, BF.mainTitle, Literal("Título atualizado", lang="pt")))
     result = asyncio.run(
         service.revise(identity.internal_id, 1, data, Provenance("fixture:local", "update"))
     )
+    observed = service.audit.append.call_args.args[1]
+    assert observed.event_type.value == "record.revised"
+    assert observed.identity == identity and observed.revision_number == 2
     saved = service.store.save.call_args.args[2]
     recovered = parse_document(json.dumps(saved), "json-ld")
     assert result.profile == INSTITUTIONAL_PROFILE_ID and result.number == 2

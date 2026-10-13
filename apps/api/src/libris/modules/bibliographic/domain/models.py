@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
@@ -41,10 +41,13 @@ class ResourceIdentity:
 class Provenance:
     source: str
     process: str
+    reason: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source.strip() or not self.process.strip():
             raise ValueError("Origem e processo técnico são obrigatórios.")
+        if self.reason is not None and (not self.reason.strip() or "\x00" in self.reason):
+            raise ValueError("Justificativa fornecida deve ser não vazia.")
 
 
 @dataclass(frozen=True)
@@ -55,6 +58,15 @@ class Revision:
     provenance: Provenance
     profile: str
     actor_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if type(self.number) is not int or self.number < 1:
+            raise ValueError("A revisão deve ser positiva.")
+        if self.created_at.tzinfo is None or self.created_at.utcoffset() is None:
+            raise ValueError("Revisão exige instante com timezone.")
+        object.__setattr__(self, "created_at", self.created_at.astimezone(UTC))
+        if not self.profile.strip():
+            raise ValueError("Revisão exige identificação do perfil.")
 
     @property
     def concurrency_token(self) -> str:
@@ -75,3 +87,8 @@ def require_revision_token(identifier: UUID, number: int, expected: str) -> None
 
 class StaleRevisionError(Exception):
     """The supplied revision is no longer current."""
+
+
+def validate_history_limit(limit: int) -> None:
+    if type(limit) is not int or not 1 <= limit <= 200:
+        raise ValueError("Limite deve estar entre 1 e 200.")
