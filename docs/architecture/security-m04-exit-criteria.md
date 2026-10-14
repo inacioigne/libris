@@ -1,5 +1,10 @@
 # Critérios de saída de segurança — M04
 
+A implementação vigente de autorização backend é a **M04.05 / #38**, descrita em
+[autorização por operação](operation-authorization.md) e comprovada no
+[relatório próprio](identity-m04-05-verification.md). As tabelas datadas abaixo
+preservam o diagnóstico das entregas anteriores, sem representar enforcement atual.
+
 Data: 2026-10-13. Checkout e inventário na [baseline](security-baseline.md);
 resultados atuais na [verificação](security-m04-01-verification.md).
 Esta lista diferencia aceitação documental da #34, conclusão da milestone M04 e
@@ -94,3 +99,19 @@ reescritas como evidência de testes posteriores. O App Router agora contém
 não dependem de login; identidade renderizada provém somente da API. Nenhuma
 permissão de CRUD/shell M05/#37 foi introduzida. Auditoria de segurança #41,
 autorização contextual #38/#39 e homologação abrangente #42 continuam separadas.
+
+## Atualização M04.05 — 2026-10-13
+
+As 17 permissões/seis papéis são preservados, com admin enumerado explicitamente.
+Política fechada por operação/recurso, guard de aplicação e contextos humano/técnico
+estão implementados. create/revise/read não têm fallback sem ator/contexto; histórico
+conserva permissões próprias e conjunção explícita na leitura editorial de auditoria.
+Reader só com read não acessa rascunhos. read_public seleciona a publicação exata.
+Serviços técnicos exigem permissões e allowlist, sem decisões editoriais humanas.
+SYSTEM_ADMIN não é bypass. Payload/header/query não criam contextos confiáveis.
+
+O item M06 da tabela histórica é implementado tecnicamente nesta entrega, com
+[evidências atuais](identity-m04-05-verification.md). M07/M09/M10, M2M, escopo
+institucional e APIs CRUD M05 continuam escopos futuros. Nenhuma homologação de
+produção/Keycloak/navegador é declarada por esta regressão. Relatórios anteriores
+não foram sobrescritos; nenhum estado/issue remoto foi modificado.

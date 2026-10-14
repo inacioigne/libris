@@ -661,3 +661,51 @@ def test_authority_manager_needs_explicit_editorial_capability() -> None:
         asyncio.run(execute(store, S.IN_REVIEW, "libris-authority-manager"))
     assert error.value.code == C.EDITORIAL_PERMISSION_DENIED
     assert not store.changes
+
+
+@pytest.mark.parametrize(
+    "target", [S.IN_REVIEW, S.APPROVED, S.DRAFT, S.PUBLISHED, S.WITHDRAWN, S.ARCHIVED]
+)
+def test_guard_denies_before_editorial_transaction(target: S) -> None:
+    from unittest.mock import MagicMock
+
+    from libris.modules.identity.application.authorization import TechnicalContext
+    from libris.modules.identity.domain.permissions import Permission
+
+    transactions = MagicMock()
+    service = EditorialService(transactions)
+    technical = TechnicalContext(
+        "service:editorial-probe",
+        frozenset({Permission.EDITORIAL_APPROVE, Permission.EDITORIAL_PUBLISH}),
+        frozenset(),
+        "pytest:composition-root",
+    )
+    for kwargs in ({}, {"actor": None}, {"actor": actor("libris-reader")}, {"context": technical}):
+        with pytest.raises(CatalogError) as error:
+            asyncio.run(
+                service.transition(
+                    IDENTITY.internal_id,
+                    target,
+                    expected_version=1,
+                    expected_current_revision=1,
+                    selected_revision=1,
+                    **kwargs,
+                )
+            )
+        assert error.value.code == C.EDITORIAL_PERMISSION_DENIED
+    transactions.assert_not_called()
+
+
+def test_typed_editorial_denial_maps_to_403_without_changing_legacy_catalog_fallback() -> None:
+    from libris.api.problems import classify
+    from libris.modules.bibliographic.application.editorial import EditorialPermissionDenied
+    from libris.modules.identity.domain.exceptions import PermissionDenied
+
+    denial = EditorialPermissionDenied()
+    assert isinstance(denial, CatalogError) and isinstance(denial, PermissionDenied)
+    assert denial.code == C.EDITORIAL_PERMISSION_DENIED
+    assert classify(denial) == (403, "authorization.denied")
+    assert classify(CatalogError(C.EDITORIAL_PERMISSION_DENIED, "Legacy")) == (
+        422,
+        C.EDITORIAL_PERMISSION_DENIED.value,
+    )

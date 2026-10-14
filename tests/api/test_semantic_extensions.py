@@ -54,6 +54,35 @@ from libris.modules.bibliographic.infrastructure.validation import (
     INSTITUTIONAL_PROFILE_ID,
     validate_resolved_profile,
 )
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 ROOT = Path(__file__).parents[2]
 ARTIFACTS = ROOT / "apps/api/src/libris/modules/bibliographic/resources/profiles-v2"
@@ -477,7 +506,13 @@ def test_owned_snapshot_and_revision_preserve_extension() -> None:
     title = next(data.objects(root, BF.title))
     data.set((title, BF.mainTitle, Literal("Título atualizado", lang="pt")))
     result = asyncio.run(
-        service.revise(identity.internal_id, 1, data, Provenance("fixture:local", "update"))
+        service.revise(
+            identity.internal_id,
+            1,
+            data,
+            Provenance("fixture:local", "update"),
+            context=TEST_CONTEXT,
+        )
     )
     observed = service.audit.append.call_args.args[1]
     assert observed.event_type.value == "record.revised"

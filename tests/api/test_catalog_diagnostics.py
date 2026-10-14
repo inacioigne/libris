@@ -60,6 +60,35 @@ from libris.modules.bibliographic.infrastructure.validation import (
     ValidationIssue,
     ValidationReport,
 )
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 FIXTURES = Path(__file__).parents[1] / "fixtures/bibliographic"
 CORE = "urn:libris:profile:core:2.0.0"
@@ -484,6 +513,7 @@ def test_invalid_create_never_opens_transaction() -> None:
                 graph,
                 Provenance("fixture", "test"),
                 profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
         )
 

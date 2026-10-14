@@ -355,7 +355,7 @@ def test_history_denial_precedes_storage(operation: str) -> None:
 
 def test_service_rejects_payload_actor_before_storage() -> None:
     service = BibliographicService(None)  # type: ignore[arg-type]
-    with pytest.raises(ValueError):
+    with pytest.raises(PermissionDenied):
         asyncio.run(
             service.create(
                 IDENTITY, Graph(), Provenance("test", "test"), actor={"actor_id": "forged"}

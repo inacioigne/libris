@@ -29,5 +29,9 @@ class IdentityService:
 
 
 def authorize(actor: AuthenticatedActor, permissions: tuple[Permission, ...]) -> None:
-    if not set(permissions).issubset(actor.permissions):
+    if (
+        not isinstance(actor, AuthenticatedActor)
+        or any(not isinstance(p, Permission) for p in permissions)
+        or not set(permissions).issubset(actor.permissions)
+    ):
         raise PermissionDenied()

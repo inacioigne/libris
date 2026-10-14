@@ -1,5 +1,10 @@
 # Matriz normativa de acesso — M04.01 / #34
 
+A implementação vigente de autorização backend é a **M04.05 / #38**, descrita em
+[autorização por operação](operation-authorization.md) e comprovada no
+[relatório próprio](identity-m04-05-verification.md). As tabelas datadas abaixo
+preservam o diagnóstico das entregas anteriores, sem representar enforcement atual.
+
 Data e checkout: [baseline de 2026-10-13](security-baseline.md).
 Esta matriz consolida o uso das permissões existentes. Requisitos de rotas futuras
 não são enforcement já implementado. O código do enum/mapa é a fonte de concessões;
@@ -39,14 +44,14 @@ realm_access só por configuração explícita. Claims devem ter assinatura vali
 Papéis desconhecidos podem constar de /me, com permissões vazias: autenticação
 válida não é autorização de uma operação privilegiada.
 
-`system:admin` isolado não satisfaz outras permissões. O mapa atual concede
-`frozenset(Permission)` a libris-admin: enum completo explicitamente, sem atalho
-no authorize; adicionar um valor ao enum ampliará esse papel e exige revisão.
+`system:admin` isolado não satisfaz outras permissões. O mapa vigente enumera
+as 17 concessões de libris-admin em frozenset; adicionar um valor ao enum não
+amplia automaticamente esse papel. A matriz é testada com expectativas independentes.
 Frontend só adapta a experiência; decisão final é do backend.
 Permissões catalográficas não autorizam dados pessoais de leitores. Não há escopo
 institucional/por recurso implementado nem regra de quatro olhos.
 
-## Operações por domínio
+## Diagnóstico M04.01 das operações por domínio (histórico)
 
 Colunas separam **pública**, **identidade**, **privilégio** e **interna**. “Interna
 atual / HTTP futuro” significa que há função, mas não endpoint. Permissões indicadas
@@ -83,13 +88,13 @@ Manutenção de autoridades não requer permissões bibliographic:create/update 
 inferência; seu boundary futuro usa authority:manage. Histórico e decisões editoriais
 continuam exigindo suas próprias permissões, inclusive para authority-manager.
 
-## Submatriz editorial vigente
+## Submatriz editorial vigente (estados M03 preservados)
 
 Todas são internas implementadas (domínio IT, integração operacional IO) e HTTP
 futuro M05. Exigem humano autenticado confiável, expected_version,
 expected_current_revision, selected_revision e instante UTC. Enforcement:
 [`EditorialService.transition`](../../apps/api/src/libris/modules/bibliographic/application/editorial.py)
-reutiliza authorize/OPERATION_PERMISSIONS;
+reutiliza AuthorizationGuard/POLICIES; OPERATION_PERMISSIONS é visão derivada;
 [`PostgresEditorialTransactions`](../../apps/api/src/libris/modules/bibliographic/application/editorial_postgres.py)
 compõe CAS e AuditStore no mesmo commit. Não há bypass por admin/update.
 
@@ -113,7 +118,7 @@ test_content_and_editorial_revisions_are_independent;
 [test_editorial_postgres.py](../../tests/integration/test_editorial_postgres.py) cobre
 rollback/CAS/validação/candidata em banco real. Execução atual no relatório separado.
 
-## 401, 403 e falhas internas
+## Diagnóstico M04.01 de falhas internas (histórico)
 
 Sem Bearer, JWT inválido, OIDC desabilitado ou falha de obtenção de chave confiável:
 get_current_actor retorna **401**, WWW-Authenticate: Bearer, detalhe genérico.
@@ -130,7 +135,7 @@ Falha inesperada de infraestrutura pode produzir erro técnico, nunca sucesso an
 não há teste específico de ausência de app.state.identity_service ou de ator None
 em toda operação tipada como obrigatória.
 
-## Execução interna e identidade do ator
+## Diagnóstico M04.01 de contexto interno (histórico)
 
 Chamadas entre módulos usam contratos explícitos, sem acesso direto a tabelas de
 outro domínio. AuthenticatedActor é objeto confiável produzido por IdentityService,
@@ -173,3 +178,19 @@ reescritas como evidência de testes posteriores. O App Router agora contém
 não dependem de login; identidade renderizada provém somente da API. Nenhuma
 permissão de CRUD/shell M05/#37 foi introduzida. Auditoria de segurança #41,
 autorização contextual #38/#39 e homologação abrangente #42 continuam separadas.
+
+## Atualização M04.05 — 2026-10-13
+
+As 17 permissões/seis papéis são preservados, com admin enumerado explicitamente.
+Política fechada por operação/recurso, guard de aplicação e contextos humano/técnico
+estão implementados. create/revise/read não têm fallback sem ator/contexto; histórico
+conserva permissões próprias e conjunção explícita na leitura editorial de auditoria.
+Reader só com read não acessa rascunhos. read_public seleciona a publicação exata.
+Serviços técnicos exigem permissões e allowlist, sem decisões editoriais humanas.
+SYSTEM_ADMIN não é bypass. Payload/header/query não criam contextos confiáveis.
+
+O requisito de autorização backend #38 é implementado tecnicamente nesta entrega, com
+[evidências atuais](identity-m04-05-verification.md). M07/M09/M10, M2M, escopo
+institucional e APIs CRUD M05 continuam escopos futuros. Nenhuma homologação de
+produção/Keycloak/navegador é declarada por esta regressão. Relatórios anteriores
+não foram sobrescritos; nenhum estado/issue remoto foi modificado.

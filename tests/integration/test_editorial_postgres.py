@@ -47,8 +47,37 @@ from libris.modules.bibliographic.infrastructure.validation import (
     AUTHORITY_PROFILE_ID,
     INSTITUTIONAL_PROFILE_ID,
 )
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
 from libris.modules.identity.domain.exceptions import PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 pytestmark = pytest.mark.integration
 PROVENANCE = Provenance("fixture:issue43", "test:editorial")
@@ -119,7 +148,9 @@ def test_persistent_workflow_candidate_return_restore_and_archive() -> None:
             identity = ResourceIdentity.create("https://issue43.example.invalid/resources")
             identifier = identity.internal_id
             graph = graph_for(identity)
-            await service.create(identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             initial = await state(sessions, identifier)
             assert initial.state.version == 1 and initial.state.current_revision == 1
             await publish(sessions, identifier)
@@ -133,7 +164,9 @@ def test_persistent_workflow_candidate_return_restore_and_archive() -> None:
                     Literal("Candidate"),
                 )
             )
-            await service.revise(identifier, 1, graph, PROVENANCE, expected_editorial_version=4)
+            await service.revise(
+                identifier, 1, graph, PROVENANCE, expected_editorial_version=4, context=TEST_CONTEXT
+            )
             public = await service.read_public(identifier)
             assert public[0].number == 1 and isomorphic(public[1], graph_for(identity))
             candidate = (await state(sessions, identifier)).state
@@ -142,7 +175,9 @@ def test_persistent_workflow_candidate_return_restore_and_archive() -> None:
                 await transition(sessions, identifier, target, scope=EditorialScope.CANDIDATE)
             restored = await service.restore_content(identifier, 1, 2, PROVENANCE, actor=actor())
             assert restored.number == 3 and restored.identity == identity
-            assert isomorphic((await service.read(identifier, 3))[1], graph_for(identity))
+            assert isomorphic(
+                (await service.read(identifier, 3, context=TEST_CONTEXT))[1], graph_for(identity)
+            )
             assert (await service.read_public(identifier))[0].number == 1
             for target in (S.IN_REVIEW, S.APPROVED, S.PUBLISHED):
                 await transition(sessions, identifier, target, scope=EditorialScope.CANDIDATE)
@@ -155,7 +190,9 @@ def test_persistent_workflow_candidate_return_restore_and_archive() -> None:
             final = await state(sessions, identifier)
             assert final.state.editorial_state == S.ARCHIVED
             assert final.current.identity == identity
-            assert isomorphic((await service.read(identifier, 1))[1], graph_for(identity))
+            assert isomorphic(
+                (await service.read(identifier, 1, context=TEST_CONTEXT))[1], graph_for(identity)
+            )
             types = [e.event_type for e in final.events]
             assert types.count(E.RETURNED) == 1 and types.count(E.ARCHIVED) == 1
             assert types.count(E.RESTORED) == 2
@@ -164,7 +201,7 @@ def test_persistent_workflow_candidate_return_restore_and_archive() -> None:
             assert all(e.actor_id == actor().actor_id for e in editorial)
             assert all(e.source == PROVENANCE.source for e in editorial)
             with pytest.raises(CatalogError):
-                await service.revise(identifier, 3, graph, PROVENANCE)
+                await service.revise(identifier, 3, graph, PROVENANCE, context=TEST_CONTEXT)
             assert await state(sessions, identifier) == final
             with pytest.raises(PermissionDenied):
                 await HistoryService(sessions).read_editorial(
@@ -182,7 +219,11 @@ def test_transition_failures_roll_back_in_fresh_session(failure: str) -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://issue43.example.invalid/resources")
             await service.create(
-                identity, graph_for(identity), PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                identity,
+                graph_for(identity),
+                PROVENANCE,
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
             identifier = identity.internal_id
             before = await state(sessions, identifier)
@@ -218,7 +259,7 @@ def test_transition_failures_roll_back_in_fresh_session(failure: str) -> None:
                     version=9 if failure == "cas" else None,
                 )
             assert await state(sessions, identifier) == before
-            assert (await service.read(identifier))[0].number == 1
+            assert (await service.read(identifier, context=TEST_CONTEXT))[0].number == 1
 
     asyncio.run(scenario())
 
@@ -227,7 +268,7 @@ def test_state_and_revision_constraints_and_conditional_zero_row_conflict() -> N
     async def scenario() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://issue43.example.invalid/resources")
-            await service.create(identity, graph_for(identity), PROVENANCE)
+            await service.create(identity, graph_for(identity), PROVENANCE, context=TEST_CONTEXT)
             before = await state(sessions, identity.internal_id)
             for values in (
                 {"version": 0},
@@ -311,13 +352,21 @@ def test_publication_all_supported_types_with_local_reference_integrity(kind: st
                 if kind == "Item":
                     work = ResourceIdentity.create("https://types43.example.invalid/resources")
                     await service.create(
-                        work, graph_for(work), PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                        work,
+                        graph_for(work),
+                        PROVENANCE,
+                        profile=INSTITUTIONAL_PROFILE_ID,
+                        context=TEST_CONTEXT,
                     )
                     parent_graph = Graph()
                     parent_graph.add((URIRef(parent.uri), RDF.type, BF.Instance))
                     parent_graph.add((URIRef(parent.uri), BF.instanceOf, URIRef(work.uri)))
                 await service.create(
-                    parent, parent_graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                    parent,
+                    parent_graph,
+                    PROVENANCE,
+                    profile=INSTITUTIONAL_PROFILE_ID,
+                    context=TEST_CONTEXT,
                 )
                 graph = Graph()
                 graph.add((URIRef(identity.uri), RDF.type, BF[kind]))
@@ -345,7 +394,7 @@ def test_publication_all_supported_types_with_local_reference_integrity(kind: st
                         (URIRef(identity.uri), SKOS.prefLabel, Literal("Synthetic", lang="pt"))
                     )
                     graph.add((URIRef(identity.uri), SKOS.inScheme, URIRef("urn:synthetic:scheme")))
-            await service.create(identity, graph, PROVENANCE, profile=profile)
+            await service.create(identity, graph, PROVENANCE, profile=profile, context=TEST_CONTEXT)
             await publish(sessions, identity.internal_id)
             public = await service.read_public(identity.internal_id)
             assert public[0].identity == identity and isomorphic(public[1], graph)
@@ -360,7 +409,9 @@ def test_unclassified_required_reference_blocks_publication_atomically() -> None
             graph = Graph()
             graph.add((URIRef(identity.uri), RDF.type, BF.Instance))
             graph.add((URIRef(identity.uri), BF.instanceOf, URIRef("urn:missing:work")))
-            await service.create(identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             await transition(sessions, identity.internal_id, S.IN_REVIEW)
             await transition(sessions, identity.internal_id, S.APPROVED)
             before = await state(sessions, identity.internal_id)
@@ -433,7 +484,9 @@ def test_concurrent_sessions_reject_stale_decisions(race: str) -> None:
             identity = ResourceIdentity.create("https://race43.example.invalid/resources")
             identifier = identity.internal_id
             graph = graph_for(identity)
-            await service.create(identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             if race == "approval_revision":
                 await transition(sessions, identifier, S.IN_REVIEW)
             elif race == "two_publications":
@@ -442,7 +495,7 @@ def test_concurrent_sessions_reject_stale_decisions(race: str) -> None:
             elif race in {"publication_candidate", "withdraw_republish"}:
                 await publish(sessions, identifier)
                 if race == "publication_candidate":
-                    await service.revise(identifier, 1, graph, PROVENANCE)
+                    await service.revise(identifier, 1, graph, PROVENANCE, context=TEST_CONTEXT)
                     await transition(
                         sessions, identifier, S.IN_REVIEW, scope=EditorialScope.CANDIDATE
                     )
@@ -471,6 +524,7 @@ def test_concurrent_sessions_reject_stale_decisions(race: str) -> None:
                     graph,
                     PROVENANCE,
                     expected_editorial_version=record.version,
+                    context=TEST_CONTEXT,
                 )
 
             if race == "approval_revision":
@@ -501,7 +555,9 @@ def test_concurrent_sessions_reject_stale_decisions(race: str) -> None:
             assert after.state.version == record.version + 1
             assert len(after.events) == len(before.events) + 1
             assert after.current.identity == identity
-            assert isomorphic((await service.read(identifier, 1))[1], graph_for(identity))
+            assert isomorphic(
+                (await service.read(identifier, 1, context=TEST_CONTEXT))[1], graph_for(identity)
+            )
 
     asyncio.run(scenario())
 
@@ -514,8 +570,20 @@ def test_local_cycle_rejected_and_external_classification_explicit() -> None:
             first_graph, second_graph = graph_for(first), graph_for(second)
             first_graph.add((URIRef(first.uri), BF.translationOf, URIRef(second.uri)))
             second_graph.add((URIRef(second.uri), BF.translationOf, URIRef(first.uri)))
-            await service.create(first, first_graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
-            await service.create(second, second_graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                first,
+                first_graph,
+                PROVENANCE,
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
+            )
+            await service.create(
+                second,
+                second_graph,
+                PROVENANCE,
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
+            )
             for target in (S.IN_REVIEW, S.APPROVED):
                 await transition(sessions, first.internal_id, target)
             before = await state(sessions, first.internal_id)
@@ -526,7 +594,9 @@ def test_local_cycle_rejected_and_external_classification_explicit() -> None:
             graph = Graph()
             graph.add((URIRef(external.uri), RDF.type, BF.Instance))
             graph.add((URIRef(external.uri), BF.instanceOf, URIRef("urn:external:work")))
-            await service.create(external, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                external, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             for target in (S.IN_REVIEW, S.APPROVED):
                 await transition(sessions, external.internal_id, target)
 
@@ -543,12 +613,18 @@ def test_local_dependency_cannot_change_between_validation_and_commit() -> None:
             work = ResourceIdentity.create("https://gate43.example.invalid/resources")
             instance = ResourceIdentity.create("https://gate43.example.invalid/resources")
             await service.create(
-                work, graph_for(work), PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                work,
+                graph_for(work),
+                PROVENANCE,
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
             graph = Graph()
             graph.add((URIRef(instance.uri), RDF.type, BF.Instance))
             graph.add((URIRef(instance.uri), BF.instanceOf, URIRef(work.uri)))
-            await service.create(instance, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                instance, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             for target in (S.IN_REVIEW, S.APPROVED):
                 await transition(sessions, instance.internal_id, target)
             entered, release = asyncio.Event(), asyncio.Event()
@@ -566,7 +642,9 @@ def test_local_dependency_cannot_change_between_validation_and_commit() -> None:
             )
             await asyncio.wait_for(entered.wait(), 5)
             revising = asyncio.create_task(
-                service.revise(work.internal_id, 1, graph_for(work), PROVENANCE)
+                service.revise(
+                    work.internal_id, 1, graph_for(work), PROVENANCE, context=TEST_CONTEXT
+                )
             )
             try:
                 await asyncio.sleep(0.1)
@@ -585,7 +663,9 @@ def test_content_audit_failure_rolls_back_editorial_and_snapshot() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://rollback43.example.invalid/resources")
             graph = graph_for(identity)
-            await service.create(identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             await publish(sessions, identity.internal_id)
             before = await state(sessions, identity.internal_id)
 
@@ -596,11 +676,13 @@ def test_content_audit_failure_rolls_back_editorial_and_snapshot() -> None:
 
             service.audit = FailingAudit()
             with pytest.raises(RuntimeError):
-                await service.revise(identity.internal_id, 1, graph, PROVENANCE)
+                await service.revise(
+                    identity.internal_id, 1, graph, PROVENANCE, context=TEST_CONTEXT
+                )
             assert await state(sessions, identity.internal_id) == before
             assert (await service.read_public(identity.internal_id))[0].number == 1
             with pytest.raises(LookupError):
-                await service.read(identity.internal_id, 2)
+                await service.read(identity.internal_id, 2, context=TEST_CONTEXT)
 
     asyncio.run(scenario())
 
@@ -616,7 +698,11 @@ def test_publication_structured_links_and_agent_kind(relationship: str) -> None:
                 (URIRef(agent_identity.uri), RDFS.label, Literal("Synthetic organization"))
             )
             await service.create(
-                agent_identity, agent_graph, PROVENANCE, profile=AUTHORITY_PROFILE_ID
+                agent_identity,
+                agent_graph,
+                PROVENANCE,
+                profile=AUTHORITY_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
             identity = ResourceIdentity.create("https://links43.example.invalid/resources")
             root, agent_node = URIRef(identity.uri), URIRef(agent_identity.uri)
@@ -630,7 +716,11 @@ def test_publication_structured_links_and_agent_kind(relationship: str) -> None:
             else:
                 work = ResourceIdentity.create("https://links43.example.invalid/resources")
                 await service.create(
-                    work, graph_for(work), PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                    work,
+                    graph_for(work),
+                    PROVENANCE,
+                    profile=INSTITUTIONAL_PROFILE_ID,
+                    context=TEST_CONTEXT,
                 )
                 graph = Graph()
                 if relationship == "publication":
@@ -646,7 +736,11 @@ def test_publication_structured_links_and_agent_kind(relationship: str) -> None:
                     instance_graph.add((URIRef(instance.uri), RDF.type, BF.Instance))
                     instance_graph.add((URIRef(instance.uri), BF.instanceOf, URIRef(work.uri)))
                     await service.create(
-                        instance, instance_graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID
+                        instance,
+                        instance_graph,
+                        PROVENANCE,
+                        profile=INSTITUTIONAL_PROFILE_ID,
+                        context=TEST_CONTEXT,
                     )
                     graph.add((root, RDF.type, BF.Item))
                     graph.add((root, BF.itemOf, URIRef(instance.uri)))
@@ -655,7 +749,9 @@ def test_publication_structured_links_and_agent_kind(relationship: str) -> None:
                     graph.add((root, BF.identifiedBy, mark))
                     graph.add((mark, RDF.type, BF.Local))
                     graph.add((mark, RDF.value, Literal("synthetic43")))
-            await service.create(identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity, graph, PROVENANCE, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+            )
             await publish(sessions, identity.internal_id)
             assert isomorphic((await service.read_public(identity.internal_id))[1], graph)
 

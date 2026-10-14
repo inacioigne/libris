@@ -29,6 +29,35 @@ from libris.modules.bibliographic.infrastructure.validation import (
     validate_resolved_profile,
 )
 from libris.modules.bibliographic.infrastructure.validation_policy import add_profile_constraints
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 CORE = "urn:libris:profile:core:2.0.0"
 PREFIXES = """@prefix bf: <http://id.loc.gov/ontologies/bibframe/> .
@@ -370,7 +399,11 @@ def test_violation_prevents_transaction_and_validator_failure_prevents_write() -
     with pytest.raises(ValueError, match="conforme"):
         asyncio.run(
             service.create(
-                identity, graph, Provenance("test", "shacl"), profile=INSTITUTIONAL_PROFILE_ID
+                identity,
+                graph,
+                Provenance("test", "shacl"),
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
         )
     sessions.assert_not_called()
@@ -456,7 +489,11 @@ def test_engine_failure_cannot_open_create_transaction(monkeypatch: pytest.Monke
     with pytest.raises(ShaclValidationError):
         asyncio.run(
             service.create(
-                identity, graph, Provenance("test", "shacl"), profile=INSTITUTIONAL_PROFILE_ID
+                identity,
+                graph,
+                Provenance("test", "shacl"),
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
             )
         )
     sessions.assert_not_called()
@@ -488,7 +525,11 @@ def test_revise_violation_exits_transaction_without_saving() -> None:
     service.editorial.initialize = AsyncMock(return_value=EditorialRecord(identity))
     service.editorial.save = AsyncMock()
     with pytest.raises(ValueError, match="conforme"):
-        asyncio.run(service.revise(identity.internal_id, 1, graph, Provenance("test", "shacl")))
+        asyncio.run(
+            service.revise(
+                identity.internal_id, 1, graph, Provenance("test", "shacl"), context=TEST_CONTEXT
+            )
+        )
     service.store.advance.assert_awaited_once()
     service.store.save.assert_not_awaited()
     service.editorial.save.assert_not_awaited()

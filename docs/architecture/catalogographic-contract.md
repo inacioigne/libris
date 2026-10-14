@@ -38,6 +38,12 @@ comportamento verificável da baseline e registrar a lacuna antes de qualquer al
 incompatível. A descrição do Incremento 1 abaixo foi preservada e atualizada apenas
 onde o estado atual já é demonstrável.
 
+A M04.05 explicita o [contexto e guard de aplicação](operation-authorization.md).
+Nas assinaturas internas abaixo, `actor=` autenticado é adaptador de compatibilidade;
+ausência de ator exige `context=` técnico/humano explícito, sem fallback de autorização.
+`read` é editorial autorizado; público continua usando `read_public`. DTOs, snapshots,
+CAS e especificação catalográfica v1 permanecem compatíveis.
+
 ## Superfícies implementadas e operações
 
 | Nível | Entrada → saída | Pré-condições / erros / limites |
@@ -47,7 +53,7 @@ onde o estado atual já é demonstrável.
 | Contratos auxiliares públicos | CatalogValidationResult, CatalogValueDocument, ProblemDetails | Diagnóstico 1.0, valor discriminado 1.0, envelope HTTP; não são entidades bibliográficas |
 | Serviço interno `BibliographicService.create` | ResourceIdentity + Graph + Provenance + profile + ator opcional → Revision r1 | Perfil legado default; somente três IDs históricos; valida antes de abrir transação; cria snapshot, estado draft e evento created no mesmo commit |
 | Serviço interno `revise` | UUID + expected_revision + Graph completo + Provenance + ator opcional; expected_editorial_version opcional → Revision rN+1 | Revisão positiva obrigatória, URI e perfil armazenados reutilizados; tipo institucional preservado; CAS, validação, revisão, estado e evento revised atômicos; stale/rejeição/falha revertem tudo |
-| Serviço interno `read` | UUID + number opcional → (Revision, Graph) | Sem número lê corrente; histórico proprietário; ResourceNotFoundError se ausente; chamador interno confiável, sem autorização embutida |
+| Serviço interno `read` | UUID + number opcional → (Revision, Graph) | Sem número lê corrente; histórico proprietário; ResourceNotFoundError se ausente; contexto confiável e guard editorial M04.05 |
 | Serviço interno `read_public` | UUID → (Revision, Graph) ou None | Lê revisão publicada exata; None para ausência de publicação/metadados legados, não presume publicação da corrente |
 | Serviço interno `restore_content` | UUID + source_revision + expected_revision + Provenance + actor autenticado; versão editorial opcional → Revision rN+1 | Permissões metadata_revision:read/create; revalida histórico; conserva origem histórica intacta; registra restored/content; não publica automaticamente |
 | Serviços internos `HistoryService` / `EditorialService` | Histórico/paginação/comparação e transition com expectativas de versão/conteúdo → visões/estado editorial | Autorização explícita; `PostgresEditorialTransactions` controla transação, validação e integridade local na publicação; ver contratos complementares |
@@ -406,9 +412,11 @@ flowchart LR
 from libris.modules.bibliographic.infrastructure.validation import INSTITUTIONAL_PROFILE_ID
 
 # Dentro de função async, graph contém somente a entidade e seus auxiliares.
-# await service.create(identity, graph, provenance, profile=INSTITUTIONAL_PROFILE_ID)
+# context é obtido do OIDC validado ou do composition root técnico confiável.
+# await service.create(identity, graph, provenance, profile=INSTITUTIONAL_PROFILE_ID,
+#                      context=context)
 # await service.revise(identity.internal_id, expected_revision=1,
-#                      graph=updated_graph, provenance=provenance)
+#                      graph=updated_graph, provenance=provenance, context=context)
 ```
 
 Da pasta `apps/api`, inspeção sem gravação:

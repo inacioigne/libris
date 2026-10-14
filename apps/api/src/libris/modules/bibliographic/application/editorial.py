@@ -44,22 +44,33 @@ from libris.modules.bibliographic.infrastructure.profiles import (
     load_profile_registry,
 )
 from libris.modules.bibliographic.infrastructure.rdf import BF
-from libris.modules.identity.application.service import authorize
+from libris.modules.identity.application.authorization import (
+    AuthorizationGuard,
+    ExecutionContext,
+    HumanContext,
+    execution_context,
+)
+from libris.modules.identity.domain.authorization import (
+    POLICIES,
+    Operation,
+    ResourceContext,
+    ResourceKind,
+)
 from libris.modules.identity.domain.exceptions import PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor
 from libris.modules.identity.domain.permissions import Permission as P
 
+# Compatibility view of the central policy; no second set of grants.
 OPERATION_PERMISSIONS: Mapping[Op, P] = MappingProxyType(
-    {
-        Op.SUBMIT: P.EDITORIAL_SUBMIT,
-        Op.APPROVE: P.EDITORIAL_APPROVE,
-        Op.RETURN: P.EDITORIAL_RETURN,
-        Op.PUBLISH: P.EDITORIAL_PUBLISH,
-        Op.WITHDRAW: P.EDITORIAL_WITHDRAW,
-        Op.REPUBLISH: P.EDITORIAL_REPUBLISH,
-        Op.ARCHIVE: P.EDITORIAL_ARCHIVE,
-    }
+    {op: next(iter(POLICIES[Operation(f"editorial.{op.value}")].permissions)) for op in Op}
 )
+
+
+class EditorialPermissionDenied(CatalogError, PermissionDenied):
+    """Typed authorization denial; preserve the existing catalog code and catch contract."""
+
+    def __init__(self) -> None:
+        super().__init__(C.EDITORIAL_PERMISSION_DENIED, "Permissão editorial insuficiente.")
 
 
 class CatalogPublicationRejected(CatalogError):
@@ -189,7 +200,10 @@ async def publication_readiness(
 class EditorialService:
     """Authorized orchestration; transaction factory owns state and audit commit."""
 
-    def __init__(self, transactions: TransactionFactory) -> None:
+    def __init__(
+        self, transactions: TransactionFactory, *, authorization: AuthorizationGuard | None = None
+    ) -> None:
+        self.authorization = authorization or AuthorizationGuard()
         self.transactions = transactions
 
     async def transition(
@@ -197,25 +211,57 @@ class EditorialService:
         identifier: UUID,
         target: str,
         *,
-        actor: AuthenticatedActor,
+        actor: AuthenticatedActor | None = None,
+        context: ExecutionContext | None = None,
         expected_version: int,
         expected_current_revision: int,
         selected_revision: int,
         scope: EditorialScope = EditorialScope.RECORD,
         justification: str | None = None,
     ) -> PreparedTransition:
-        # Actor comes from IdentityService / server dependency, never request fields.
+        context = execution_context(context, actor)
+        # Preflight before opening a transaction. Publication target has two explicit
+        # alternatives; the actual operation is checked again against loaded state.
+        candidates = {
+            "in_review": (Operation.EDITORIAL_SUBMIT,),
+            "approved": (Operation.EDITORIAL_APPROVE,),
+            "draft": (Operation.EDITORIAL_RETURN,),
+            "published": (Operation.EDITORIAL_PUBLISH, Operation.EDITORIAL_REPUBLISH),
+            "withdrawn": (Operation.EDITORIAL_WITHDRAW,),
+            "archived": (Operation.EDITORIAL_ARCHIVE,),
+        }.get(target, ())
+        try:
+            if not candidates:
+                raise PermissionDenied()
+            for candidate in candidates:
+                try:
+                    self.authorization.require(
+                        context=context,
+                        operation=candidate,
+                        resource=ResourceContext(ResourceKind.BIBLIOGRAPHIC),
+                    )
+                    break
+                except PermissionDenied:
+                    if candidate == candidates[-1]:
+                        raise
+        except PermissionDenied as error:
+            raise EditorialPermissionDenied() from error
+        if not isinstance(context, HumanContext):
+            raise PermissionDenied("Decisão editorial exige humano.")
+        actor = context.actor
+        audit_actor(actor)
         async with self.transactions() as transaction:
-            audit_actor(actor)
             record = await transaction.read(identifier)
             record.require_expected(expected_version, expected_current_revision)
             operation = transition_operation(record.source(scope), target)
             try:
-                authorize(actor, (OPERATION_PERMISSIONS[operation],))
+                self.authorization.require(
+                    context=context,
+                    operation=Operation(f"editorial.{operation.value}"),
+                    resource=ResourceContext(ResourceKind.BIBLIOGRAPHIC, record.source(scope)),
+                )
             except PermissionDenied as error:
-                raise CatalogError(
-                    C.EDITORIAL_PERMISSION_DENIED, "Permissão editorial insuficiente."
-                ) from error
+                raise EditorialPermissionDenied() from error
             now = datetime.now(UTC)
             readiness = None
             if operation in {Op.PUBLISH, Op.REPUBLISH}:

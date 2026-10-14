@@ -430,9 +430,7 @@ def test_negative_tokens_have_http_bearer_challenge(provider: Provider, case: st
         token = "broken"
     app = create_app(provider.settings)
     with TestClient(app) as client:
-        app.state.identity_service = IdentityService(
-            provider.validator, "client", "libris-api"
-        )
+        app.state.identity_service = IdentityService(provider.validator, "client", "libris-api")
         response = client.get("/api/v1/identity/me", headers={"Authorization": "Bearer " + token})
         assert response.status_code == 401
         assert response.headers["www-authenticate"] == "Bearer"
@@ -585,3 +583,66 @@ def test_keycloak_realm_preserves_resource_server_contract() -> None:
     assert audience["config"]["included.client.audience"] == "libris-api"
     assert audience["config"]["access.token.claim"] == "true"
     assert audience["config"]["id.token.claim"] == "false"
+
+
+@pytest.mark.parametrize("roles", [[], ["unknown"], ["libris-reader"], ["libris-cataloger"]])
+def test_operation_guard_ignores_forged_http_authority(
+    provider: Provider, roles: list[str]
+) -> None:
+    from typing import Annotated
+
+    from fastapi import Body
+
+    from libris.modules.identity.api.dependencies import get_execution_context
+    from libris.modules.identity.application.authorization import AuthorizationGuard, HumanContext
+    from libris.modules.identity.domain.authorization import (
+        Operation,
+        ResourceContext,
+        ResourceKind,
+    )
+
+    app = create_app(provider.settings)
+    guard = AuthorizationGuard()
+
+    @app.post("/test-operation")
+    def protected(
+        context: Annotated[HumanContext, Depends(get_execution_context)],
+        payload: Annotated[dict[str, object], Body()],
+    ) -> dict[str, str]:
+        guard.require(
+            context=context,
+            operation=Operation.BIBLIOGRAPHIC_CREATE,
+            resource=ResourceContext(ResourceKind.BIBLIOGRAPHIC),
+        )
+        return {"actor_id": context.actor.actor_id}
+
+    with TestClient(app) as client:
+        app.state.identity_service = IdentityService(provider.validator, "client", "libris-api")
+        payload = {
+            "actor_id": "forged",
+            "roles": ["libris-admin"],
+            "permissions": [p.value for p in P],
+            "execution_actor": "service:admin",
+        }
+        spoof = {"X-Actor-ID": "forged", "X-Roles": "libris-admin", "X-Permissions": "system:admin"}
+        for token in (None, "invalid", provider.token({"aud": "libris-web"})):
+            headers = spoof | ({"Authorization": "Bearer " + token} if token else {})
+            response = client.post("/test-operation", json=payload, headers=headers)
+            assert response.status_code == 401
+            assert response.headers["www-authenticate"] == "Bearer"
+        token = provider.token({"resource_access": {"libris-api": {"roles": roles}}})
+        response = client.post(
+            "/test-operation?roles=libris-admin",
+            json=payload,
+            headers=spoof | {"Authorization": "Bearer " + token},
+        )
+        assert response.status_code == (200 if "libris-cataloger" in roles else 403)
+        if response.status_code == 200:
+            assert response.json()["actor_id"] == actor_identifier(
+                provider.settings.oidc_issuer_url, "subject"
+            )
+        else:
+            assert response.json()["contract_version"] == "1.0"
+            assert response.json()["code"] == "authorization.denied"
+        assert client.get("/health", headers=spoof).status_code == 200
+        assert client.get("/api/v1/identity/me", headers=spoof).status_code == 401

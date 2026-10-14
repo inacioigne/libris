@@ -1,4 +1,4 @@
-# Identidade e autorização — Entrega A
+# Identidade e autorização — OIDC e M04.05
 
 A API atua como OAuth 2.0 Resource Server: aceita access tokens do provedor externo,
 valida JWT e converte papéis em permissões. Não emite tokens, recebe senhas ou executa
@@ -70,8 +70,8 @@ persistidas precisam receber reviewer/publisher explicitamente; a importação d
 startup não sobrescreve um realm existente.
 
 Múltiplos papéis somam permissões. Papel desconhecido ou ausente não concede nada.
-SYSTEM_ADMIN não é um bypass implícito: libris-admin recebe todas as permissões
-definidas no enum. Extrair resource_access[OIDC_ROLE_CLIENT].roles por padrão;
+SYSTEM_ADMIN não é um bypass implícito: libris-admin recebe as 17 concessões
+explicitamente enumeradas; ampliar o enum não amplia esse papel automaticamente. Extrair resource_access[OIDC_ROLE_CLIENT].roles por padrão;
 realm_access.roles só com OIDC_ROLE_SOURCE=realm. Não ler headers/body para papéis.
 A identidade expõe os papéis externos da origem escolhida, inclusive desconhecidos,
 mas o mapa concede permissões somente aos papéis conhecidos.
@@ -106,9 +106,10 @@ fica em app.state durante o lifespan; não há singleton global de serviço/cach
 
 ## Revisões e proveniência
 
-BibliographicService.create/revise aceitam `actor=actor` como argumento nomeado
-opcional. O chamador HTTP futuro deve obter esse objeto exclusivamente da dependência
-autenticada e passá-lo ao serviço. Não construir actor a partir de JSON do cliente.
+BibliographicService.create/revise/read exigem `context=` confiável; `actor=actor`
+permanece adaptador para humano OIDC autenticado. Sem contexto/ator a operação é
+negada. O chamador HTTP futuro obtém HumanContext exclusivamente de
+get_execution_context e o propaga ao serviço. Não construir actor a partir de JSON do cliente.
 O domínio bibliográfico não importa FastAPI; identity não acessa tabelas bibliográficas.
 
 Revision.actor_id e SemanticRevision.actor_id são opcionais. Origem, processo,
@@ -204,3 +205,26 @@ Inclui assinatura/claims, allowlist, ID tokens, descoberta/JWKS, TTL/rotação/l
 refresh, concorrência de cache, papéis, identidade estável, 401/403, CORS e overrides.
 Integração PostgreSQL testa persistência do ator e histórico sem ator. Esses testes
 não comprovam uma integração real com Keycloak. Ver [relatório](identity-verification.md).
+
+## Enforcement vigente M04.05 / #38
+
+[Contrato de autorização por operação](operation-authorization.md),
+[ADR 0031](../decisions/0031-operation-authorization.md) e
+[verificação própria](identity-m04-05-verification.md) sucedem as descrições de
+confiança interna/ator opcional desta Entrega A. O Resource Server e /me permanecem.
+
+BibliographicService.create/revise/read agora exigem contexto confiável explícito.
+`actor=` autenticado continua como adaptador M03 para HumanContext; `actor=None`
+sem contexto é negado. ExecutionActor isolado classifica auditoria, sem conceder
+acesso. TechnicalContext é configuração do composition root, com identidade/origem,
+permissões e operações limitadas, sem decisões humanas ou SYSTEM_ADMIN.
+HistoryService e EditorialService usam o mesmo guard injetável, sem acesso a tabelas
+de identidade ou duplicação de auditoria. Falhas tipadas de autorização retornam 403
+pelo Problem Details v1 existente. /health público e falhas OIDC 401 são preservados.
+
+Leitura editorial genérica requer read + metadata_revision:read; reader não ganha
+acesso a rascunhos sem contrato institucional. Público usa somente read_public e
+revisão efetivamente publicada. Autoria histórica NULL permanece inalterada;
+novas operações técnicas registram sua identidade explícita, sem backfill.
+Os contextos Python não são prova criptográfica; não deserializar payload/header.
+M2M, governança #39 e homologação operacional #42 permanecem separados.

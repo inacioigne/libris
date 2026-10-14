@@ -7,4 +7,4 @@ class ProviderUnavailable(AuthenticationError):
 
 
 class PermissionDenied(Exception):
-    """An authenticated actor lacks the requested permissions."""
+    """An execution context cannot authorize the requested operation."""

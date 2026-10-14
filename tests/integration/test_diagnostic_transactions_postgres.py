@@ -21,6 +21,35 @@ from libris.modules.bibliographic.infrastructure.validation import (
     INSTITUTIONAL_PROFILE_ID,
     ShaclValidationError,
 )
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 pytestmark = pytest.mark.integration
 
@@ -50,18 +79,26 @@ async def exercise(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
     invalid.add((root, RDF.type, BF.Work))
     try:
         with pytest.raises(CatalogValidationRejected):
-            await service.create(identity, invalid, provenance, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.create(
+                identity,
+                invalid,
+                provenance,
+                profile=INSTITUTIONAL_PROFILE_ID,
+                context=TEST_CONTEXT,
+            )
         with pytest.raises(ResourceNotFoundError):
-            await service.read(identity.internal_id)
-        first = await service.create(identity, graph, provenance, profile=INSTITUTIONAL_PROFILE_ID)
+            await service.read(identity.internal_id, context=TEST_CONTEXT)
+        first = await service.create(
+            identity, graph, provenance, profile=INSTITUTIONAL_PROFILE_ID, context=TEST_CONTEXT
+        )
         with pytest.raises(CatalogValidationRejected) as rejection:
-            await service.revise(identity.internal_id, 1, invalid, provenance)
+            await service.revise(identity.internal_id, 1, invalid, provenance, context=TEST_CONTEXT)
         assert rejection.value.result.conforms is False
         assert rejection.value.result.profile_release == INSTITUTIONAL_PROFILE_ID
-        stored, restored = await service.read(identity.internal_id)
+        stored, restored = await service.read(identity.internal_id, context=TEST_CONTEXT)
         assert stored == first and isomorphic(graph, restored)
         with pytest.raises(ResourceNotFoundError):
-            await service.read(identity.internal_id, 2)
+            await service.read(identity.internal_id, 2, context=TEST_CONTEXT)
 
         def fail(*args: object, **kwargs: object) -> Graph:
             raise ShaclValidationError("engine_failure", "Falha técnica sintética.")
@@ -69,10 +106,14 @@ async def exercise(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
         with monkeypatch.context() as patch:
             patch.setattr(validation, "_load_shapes", fail)
             with pytest.raises(ShaclValidationError):
-                await service.revise(identity.internal_id, 1, graph, provenance)
-        stored, restored = await service.read(identity.internal_id)
+                await service.revise(
+                    identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT
+                )
+        stored, restored = await service.read(identity.internal_id, context=TEST_CONTEXT)
         assert stored == first and isomorphic(graph, restored)
-        second = await service.revise(identity.internal_id, 1, graph, provenance)
+        second = await service.revise(
+            identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT
+        )
         assert second.number == 2
     finally:
         await engine.dispose()

@@ -27,6 +27,35 @@ from libris.modules.bibliographic.infrastructure.rdf import (
     new_graph,
     parse_document,
 )
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 pytestmark = pytest.mark.integration
 
@@ -59,43 +88,47 @@ async def exercise_postgres(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
         )
     provenance = Provenance("fixture:synthetic", "pytest:stage2")
     try:
-        revision = await service.create(identity, graph, provenance)
-        recovered, restored = await service.read(identity.internal_id)
+        revision = await service.create(identity, graph, provenance, context=TEST_CONTEXT)
+        recovered, restored = await service.read(identity.internal_id, context=TEST_CONTEXT)
         assert recovered == revision
         assert recovered.created_at.utcoffset().total_seconds() == 0  # type: ignore[union-attr]
         assert isomorphic(graph, restored)
         monkeypatch.setenv("RESOURCE_BASE_URI", "https://example.invalid/changed-base")
         graph.add((URIRef(identity.uri), DCTERMS.description, Literal("Revisão 2")))
-        newer = await service.revise(identity.internal_id, 1, graph, provenance)
+        newer = await service.revise(
+            identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT
+        )
         assert newer.number == 2
         assert newer.identity == identity
-        prior, old_graph = await service.read(identity.internal_id, 1)
+        prior, old_graph = await service.read(identity.internal_id, 1, context=TEST_CONTEXT)
         assert prior == revision
         assert isomorphic(old_graph, restored)
         assert len(old_graph) + 1 == len(graph)
         with pytest.raises(StaleRevisionError):
-            await service.revise(identity.internal_id, 1, graph, provenance)
+            await service.revise(identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT)
         invalid = new_graph()
         with pytest.raises(ValueError):
-            await service.revise(identity.internal_id, 2, invalid, provenance)
+            await service.revise(identity.internal_id, 2, invalid, provenance, context=TEST_CONTEXT)
         # A real SHACL violation (root remains valid) also rolls back the CAS.
         invalid_title = new_graph()
         for triple in graph:
             if triple[1] != BF.mainTitle:
                 invalid_title.add(triple)
         with pytest.raises(ValueError, match="conforme"):
-            await service.revise(identity.internal_id, 2, invalid_title, provenance)
-        current, _ = await service.read(identity.internal_id)
+            await service.revise(
+                identity.internal_id, 2, invalid_title, provenance, context=TEST_CONTEXT
+            )
+        current, _ = await service.read(identity.internal_id, context=TEST_CONTEXT)
         assert current.profile == revision.profile
         assert current.number == 2  # failed validation rolls back the CAS update
         results = await asyncio.gather(
-            service.revise(identity.internal_id, 2, graph, provenance),
-            service.revise(identity.internal_id, 2, graph, provenance),
+            service.revise(identity.internal_id, 2, graph, provenance, context=TEST_CONTEXT),
+            service.revise(identity.internal_id, 2, graph, provenance, context=TEST_CONTEXT),
             return_exceptions=True,
         )
         assert sum(isinstance(result, StaleRevisionError) for result in results) == 1
         assert sum(not isinstance(result, Exception) for result in results) == 1
-        current, restored = await service.read(identity.internal_id)
+        current, restored = await service.read(identity.internal_id, context=TEST_CONTEXT)
         assert current.number == 3
         assert isomorphic(graph, restored)
         async with sessions() as session:
@@ -128,6 +161,6 @@ async def exercise_postgres(url: str, monkeypatch: pytest.MonkeyPatch) -> None:
                     .values(current_revision=999)
                 )
         with pytest.raises(LookupError):
-            await service.read(identity.internal_id, 999)
+            await service.read(identity.internal_id, 999, context=TEST_CONTEXT)
     finally:
         await engine.dispose()

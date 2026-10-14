@@ -34,6 +34,7 @@ from libris.modules.bibliographic.domain.models import StaleRevisionError
 from libris.modules.bibliographic.domain.profile_registry import ProfileError
 from libris.modules.bibliographic.infrastructure.rdf import RdfDocumentError
 from libris.modules.bibliographic.infrastructure.validation import ShaclValidationError
+from libris.modules.identity.domain.exceptions import PermissionDenied
 
 logger = logging.getLogger(__name__)
 
@@ -191,6 +192,8 @@ def adapt_pydantic_error(error: ValidationError) -> tuple[Diagnostic, ...]:
 
 
 def classify(error: Exception) -> tuple[int, str]:
+    if isinstance(error, PermissionDenied):
+        return 403, "authorization.denied"
     if isinstance(error, CatalogError):
         return CODE_STATUS.get(error.code, 422), error.code.value
     if isinstance(error, StaleRevisionError):
@@ -312,6 +315,7 @@ def install_problem_handlers(app: FastAPI) -> None:
     app.add_middleware(RequestCorrelationMiddleware)
     for exception in (
         CatalogError,
+        PermissionDenied,
         StaleRevisionError,
         ResourceNotFoundError,
         ProfileError,

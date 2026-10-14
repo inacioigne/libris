@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from libris.modules.identity.application.authorization import AuthorizationGuard, HumanContext
 from libris.modules.identity.application.service import IdentityService, authorize
 from libris.modules.identity.domain.exceptions import AuthenticationError, PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor
@@ -44,3 +45,13 @@ def require_permissions(*permissions: Permission) -> Callable[..., Authenticated
         return actor
 
     return dependency
+
+
+async def get_execution_context(
+    actor: Annotated[AuthenticatedActor, Depends(get_current_actor)],
+) -> HumanContext:
+    return HumanContext(actor)
+
+
+def get_authorization_guard() -> AuthorizationGuard:
+    return AuthorizationGuard()

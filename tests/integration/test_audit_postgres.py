@@ -40,9 +40,38 @@ from libris.modules.bibliographic.infrastructure.persistence import (
 )
 from libris.modules.bibliographic.infrastructure.rdf import BF
 from libris.modules.bibliographic.infrastructure.validation import INSTITUTIONAL_PROFILE_ID
+from libris.modules.identity.application.authorization import TechnicalContext
+from libris.modules.identity.domain.authorization import Operation
 from libris.modules.identity.domain.exceptions import PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor, actor_identifier
+from libris.modules.identity.domain.permissions import Permission as ContextPermission
 from libris.modules.identity.infrastructure.role_mapper import map_permissions
+
+TEST_CONTEXT = TechnicalContext(
+    "service:regression-fixture",
+    frozenset(
+        {
+            ContextPermission.BIBLIOGRAPHIC_CREATE,
+            ContextPermission.BIBLIOGRAPHIC_UPDATE,
+            ContextPermission.BIBLIOGRAPHIC_READ,
+            ContextPermission.AUTHORITY_READ,
+            ContextPermission.AUTHORITY_MANAGE,
+            ContextPermission.METADATA_REVISION_READ,
+        }
+    ),
+    frozenset(
+        {
+            Operation.BIBLIOGRAPHIC_CREATE,
+            Operation.BIBLIOGRAPHIC_UPDATE,
+            Operation.AUTHORITY_MANAGE,
+            Operation.METADATA_REVISION_READ,
+            Operation.BIBLIOGRAPHIC_READ_EDITORIAL,
+            Operation.AUTHORITY_READ_EDITORIAL,
+        }
+    ),
+    "pytest:isolated-regression",
+)
+
 
 pytestmark = pytest.mark.integration
 
@@ -94,7 +123,9 @@ def test_content_history_restore_and_authorization() -> None:
                 identity, graph, provenance, profile=INSTITUTIONAL_PROFILE_ID, actor=human
             )
             graph.add((URIRef(identity.uri), DCTERMS.description, Literal("New content")))
-            second = await service.revise(identity.internal_id, 1, graph, provenance)
+            second = await service.revise(
+                identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT
+            )
             history = HistoryService(sessions)
             restored = await service.restore_content(
                 identity.internal_id,
@@ -122,11 +153,11 @@ def test_content_history_restore_and_authorization() -> None:
             assert [event.event_type for event in events] == [E.CREATED, E.REVISED, E.RESTORED]
             assert [event.actor_type for event in events] == [
                 ActorType.HUMAN,
-                None,
+                ActorType.SERVICE,
                 ActorType.HUMAN,
             ]
             assert events[0].actor_id == human.actor_id and events[0].reason == provenance.reason
-            assert events[1].actor_id is None and events[2].source_revision == 1
+            assert events[1].actor_id == TEST_CONTEXT.actor_id and events[2].source_revision == 1
             assert all(event.occurred_at.utcoffset().total_seconds() == 0 for event in events)
             assert (
                 await history.read_event(identity.internal_id, events[0].event_id, actor=human)
@@ -144,7 +175,7 @@ def test_content_history_restore_and_authorization() -> None:
                 await service.restore_content(identity.internal_id, 1, 2, provenance, actor=human)
             with pytest.raises(LookupError):
                 await history.read_revision(identity.internal_id, 999, actor=human)
-            assert (await service.read(identity.internal_id))[0].number == 3
+            assert (await service.read(identity.internal_id, context=TEST_CONTEXT))[0].number == 3
 
     asyncio.run(scenario())
 
@@ -165,7 +196,7 @@ def test_audit_failure_rolls_back_resource_revision_and_cas(
 
             monkeypatch.setattr(service.audit, "append", fail)
             with pytest.raises(RuntimeError):
-                await service.create(identity, graph, provenance)
+                await service.create(identity, graph, provenance, context=TEST_CONTEXT)
             async with sessions() as session:
                 assert await session.get(SemanticResource, identity.internal_id) is None
                 assert (
@@ -185,16 +216,18 @@ def test_audit_failure_rolls_back_resource_revision_and_cas(
                     == 0
                 )
             monkeypatch.setattr(service.audit, "append", real_append)
-            await service.create(identity, graph, provenance)
+            await service.create(identity, graph, provenance, context=TEST_CONTEXT)
             monkeypatch.setattr(service.audit, "append", fail)
             with pytest.raises(RuntimeError):
-                await service.revise(identity.internal_id, 1, graph, provenance)
-            assert (await service.read(identity.internal_id))[0].number == 1
+                await service.revise(
+                    identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT
+                )
+            assert (await service.read(identity.internal_id, context=TEST_CONTEXT))[0].number == 1
             async with sessions() as session:
                 events = await AuditStore().list(session, identity.internal_id)
                 assert len(events) == 1 and events[0].event_type == E.CREATED
                 with pytest.raises(LookupError):
-                    await service.read(identity.internal_id, 2)
+                    await service.read(identity.internal_id, 2, context=TEST_CONTEXT)
 
     asyncio.run(scenario())
 
@@ -204,10 +237,10 @@ def test_real_concurrent_transactions_leave_one_revision_and_event() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://catalog.example.invalid/resources")
             graph, provenance = graph_for(identity), Provenance("fixture", "test")
-            await service.create(identity, graph, provenance)
+            await service.create(identity, graph, provenance, context=TEST_CONTEXT)
             results = await asyncio.gather(
-                service.revise(identity.internal_id, 1, graph, provenance),
-                service.revise(identity.internal_id, 1, graph, provenance),
+                service.revise(identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT),
+                service.revise(identity.internal_id, 1, graph, provenance, context=TEST_CONTEXT),
                 return_exceptions=True,
             )
             assert sum(isinstance(result, StaleRevisionError) for result in results) == 1
@@ -233,7 +266,9 @@ def test_postgres_blocks_audit_mutation(operation: str) -> None:
     async def scenario() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://catalog.example.invalid/resources")
-            await service.create(identity, graph_for(identity), Provenance("fixture", "test"))
+            await service.create(
+                identity, graph_for(identity), Provenance("fixture", "test"), context=TEST_CONTEXT
+            )
             statements = {
                 "UPDATE": "UPDATE experimental_semantic_audit_events SET source='tampered' "
                 "WHERE resource_id=:id",
@@ -254,7 +289,7 @@ def test_deterministic_order_and_events_without_content_revision() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://catalog.example.invalid/resources")
             first = await service.create(
-                identity, graph_for(identity), Provenance("fixture", "test")
+                identity, graph_for(identity), Provenance("fixture", "test"), context=TEST_CONTEXT
             )
             human = actor()
             change = prepare_transition(
@@ -283,7 +318,7 @@ def test_deterministic_order_and_events_without_content_revision() -> None:
                 identity.internal_id, actor=human, after=(lower.occurred_at, lower.event_id)
             )
             assert tail == (upper,)
-            assert (await service.read(identity.internal_id))[0].number == 1
+            assert (await service.read(identity.internal_id, context=TEST_CONTEXT))[0].number == 1
             with pytest.raises(DBAPIError):
                 async with sessions() as session, session.begin():
                     await AuditStore().append(session, lower)
@@ -314,7 +349,9 @@ def test_direct_sql_constraints_and_referential_integrity(changes: dict[str, obj
     async def scenario() -> None:
         async with context() as (sessions, service):
             identity = ResourceIdentity.create("https://catalog.example.invalid/resources")
-            await service.create(identity, graph_for(identity), Provenance("fixture", "test"))
+            await service.create(
+                identity, graph_for(identity), Provenance("fixture", "test"), context=TEST_CONTEXT
+            )
             values = dict(
                 event_id=uuid4(),
                 resource_id=identity.internal_id,
@@ -346,6 +383,12 @@ def test_technical_actor_persistence(kind: ActorType) -> None:
                 graph_for(identity),
                 Provenance("fixture", "test"),
                 execution_actor=technical,
+                context=TechnicalContext(
+                    technical.actor_id,
+                    frozenset({ContextPermission.BIBLIOGRAPHIC_CREATE}),
+                    frozenset({Operation.BIBLIOGRAPHIC_CREATE}),
+                    "pytest:technical-audit",
+                ),
             )
             async with sessions() as session:
                 events = await AuditStore().list(session, identity.internal_id)

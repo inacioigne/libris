@@ -290,3 +290,7 @@ adicionada uma licença arbitrária. Avaliar também os termos das distribuiçõ
 Elasticsearch antes de redistribuição. Para orientação FastAPI atualizada opcional,
 `uvx library-skills` instala skills interativamente a partir das dependências;
 escolha o agente usado no projeto quando solicitado.
+
+A M04.05 / #38 consolida [RBAC por operação e guard de aplicação](docs/architecture/operation-authorization.md),
+com contextos confiáveis explícitos, escopo técnico limitado e preservação dos contratos
+M03; [evidências atuais](docs/architecture/identity-m04-05-verification.md). Sem novas APIs CRUD.

@@ -31,9 +31,18 @@ from libris.modules.bibliographic.infrastructure.validation import (
     PROFILE_ID,
     validate_profile,
 )
-from libris.modules.identity.application.service import authorize
+from libris.modules.identity.application.authorization import (
+    AuthorizationGuard,
+    ExecutionContext,
+    HumanContext,
+    TechnicalContext,
+    execution_context,
+)
+from libris.modules.identity.domain.authorization import Operation as O
+from libris.modules.identity.domain.authorization import ResourceContext
+from libris.modules.identity.domain.authorization import ResourceKind as K
+from libris.modules.identity.domain.exceptions import PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor
-from libris.modules.identity.domain.permissions import Permission
 
 
 def prepare_document(graph: Graph, uri: str, profile: str = PROFILE_ID) -> list[dict[str, object]]:
@@ -74,11 +83,67 @@ def prepare_document(graph: Graph, uri: str, profile: str = PROFILE_ID) -> list[
 class BibliographicService:
     """Internal operations; owns transactions and never mutates earlier revisions."""
 
-    def __init__(self, sessions: async_sessionmaker[AsyncSession]) -> None:
+    def __init__(
+        self,
+        sessions: async_sessionmaker[AsyncSession],
+        *,
+        authorization: AuthorizationGuard | None = None,
+    ) -> None:
+        self.authorization = authorization or AuthorizationGuard()
         self.sessions = sessions
         self.store = RevisionStore()
         self.audit = AuditStore()
         self.editorial = EditorialStore()
+
+    def _context(
+        self,
+        context: ExecutionContext | None,
+        actor: AuthenticatedActor | None,
+        execution_actor: ExecutionActor | None = None,
+    ) -> ExecutionContext | None:
+        # ExecutionActor is audit metadata, never a credential or a permission grant.
+        if execution_actor is not None:
+            if (
+                not isinstance(context, TechnicalContext)
+                or context.actor_id != execution_actor.actor_id
+                or actor is not None
+            ):
+                raise PermissionDenied("Ator técnico exige contexto autorizado correspondente.")
+        return execution_context(context, actor)
+
+    def _audit_context(
+        self, context: ExecutionContext | None
+    ) -> tuple[str | None, ActorType | None]:
+        if isinstance(context, HumanContext):
+            return audit_actor(context.actor)
+        if isinstance(context, TechnicalContext):
+            kind = ActorType(context.actor_id.split(":", 1)[0])
+            return audit_actor(None, ExecutionActor(context.actor_id, kind))
+        raise PermissionDenied("Contexto obrigatório para escrita.")
+
+    def _require_content(
+        self, context: ExecutionContext | None, profile: str, *, create: bool
+    ) -> None:
+        kind = K.AUTHORITY if profile == AUTHORITY_PROFILE_ID else K.BIBLIOGRAPHIC
+        operation = (
+            O.AUTHORITY_MANAGE
+            if kind == K.AUTHORITY
+            else O.BIBLIOGRAPHIC_CREATE
+            if create
+            else O.BIBLIOGRAPHIC_UPDATE
+        )
+        self.authorization.require(
+            context=context, operation=operation, resource=ResourceContext(kind)
+        )
+
+    def _require_existing(self, context: ExecutionContext | None, *, create: bool) -> None:
+        for profile in (PROFILE_ID, AUTHORITY_PROFILE_ID):
+            try:
+                self._require_content(context, profile, create=create)
+                return
+            except PermissionDenied:
+                if profile == AUTHORITY_PROFILE_ID:
+                    raise
 
     async def create(
         self,
@@ -89,8 +154,11 @@ class BibliographicService:
         profile: str = PROFILE_ID,
         actor: AuthenticatedActor | None = None,
         execution_actor: ExecutionActor | None = None,
+        context: ExecutionContext | None = None,
     ) -> Revision:
-        actor_id, actor_type = audit_actor(actor, execution_actor)
+        context = self._context(context, actor, execution_actor)
+        self._require_content(context, profile, create=True)
+        actor_id, actor_type = self._audit_context(context)
         document = prepare_document(graph, identity.uri, profile)
         revision = Revision(
             identity,
@@ -121,8 +189,13 @@ class BibliographicService:
         actor: AuthenticatedActor | None = None,
         execution_actor: ExecutionActor | None = None,
         expected_editorial_version: int | None = None,
+        context: ExecutionContext | None = None,
     ) -> Revision:
-        actor_id, actor_type = audit_actor(actor, execution_actor)
+        context = self._context(context, actor, execution_actor)
+        # Kind is owned by storage: preflight the two explicit alternatives, then
+        # check the stored profile before any mutation (never trust the proposed graph).
+        self._require_existing(context, create=False)
+        actor_id, actor_type = self._audit_context(context)
         async with self.sessions() as session, session.begin():
             revision = await self._revise(
                 session,
@@ -134,6 +207,7 @@ class BibliographicService:
                 actor_type,
                 AuditEventType.REVISED,
                 expected_editorial_version=expected_editorial_version,
+                context=context,
             )
         return revision
 
@@ -149,18 +223,29 @@ class BibliographicService:
         event_type: AuditEventType,
         source_revision: int | None = None,
         expected_editorial_version: int | None = None,
+        context: ExecutionContext | None = None,
     ) -> Revision:
+        if event_type == AuditEventType.RESTORED:
+            self.authorization.require(
+                context=context,
+                operation=O.METADATA_REVISION_RESTORE,
+                resource=ResourceContext(K.METADATA),
+            )
+        else:
+            self._require_existing(context, create=False)
         if type(expected_revision) is not int or expected_revision < 1:
             raise ValueError("A revisão esperada deve ser positiva.")
         await write_gate(session)
         resource = await self.editorial.lock_resource(session, identifier)
-        state = await self.editorial.initialize(session, resource)
-        if expected_editorial_version is not None:
-            state.require_expected(expected_editorial_version, expected_revision)
         try:
             previous, prior_document = await self.store.get(session, identifier, None)
         except LookupError as exc:
             raise StaleRevisionError("Recurso ausente; recarregue o registro.") from exc
+        if event_type != AuditEventType.RESTORED:
+            self._require_content(context, previous.profile, create=False)
+        state = await self.editorial.initialize(session, resource)
+        if expected_editorial_version is not None:
+            state.require_expected(expected_editorial_version, expected_revision)
         uri = await self.store.advance(session, identifier, expected_revision)
         document = prepare_document(graph, uri, previous.profile)
         if previous.profile != PROFILE_ID:
@@ -204,12 +289,18 @@ class BibliographicService:
         expected_revision: int,
         provenance: Provenance,
         *,
-        actor: AuthenticatedActor,
+        actor: AuthenticatedActor | None = None,
         expected_editorial_version: int | None = None,
+        context: ExecutionContext | None = None,
     ) -> Revision:
         """Copy an owned historical snapshot as new content, never an editorial restore."""
-        actor_id, actor_type = audit_actor(actor)
-        authorize(actor, (Permission.METADATA_REVISION_READ, Permission.METADATA_REVISION_CREATE))
+        context = self._context(context, actor)
+        self.authorization.require(
+            context=context,
+            operation=O.METADATA_REVISION_RESTORE,
+            resource=ResourceContext(K.METADATA),
+        )
+        actor_id, actor_type = self._audit_context(context)
         if type(expected_revision) is not int or expected_revision < 1:
             raise ValueError("A revisão esperada deve ser positiva.")
         if type(source_revision) is not int or not 1 <= source_revision <= expected_revision:
@@ -233,12 +324,42 @@ class BibliographicService:
                 AuditEventType.RESTORED,
                 source_revision,
                 expected_editorial_version,
+                context,
             )
         return revision
 
-    async def read(self, identifier: UUID, number: int | None = None) -> tuple[Revision, Graph]:
+    async def read(
+        self,
+        identifier: UUID,
+        number: int | None = None,
+        *,
+        actor: AuthenticatedActor | None = None,
+        context: ExecutionContext | None = None,
+    ) -> tuple[Revision, Graph]:
+        context = self._context(context, actor)
+        for kind, operation in (
+            (K.BIBLIOGRAPHIC, O.BIBLIOGRAPHIC_READ_EDITORIAL),
+            (K.AUTHORITY, O.AUTHORITY_READ_EDITORIAL),
+        ):
+            try:
+                self.authorization.require(
+                    context=context, operation=operation, resource=ResourceContext(kind)
+                )
+                break
+            except PermissionDenied:
+                if kind == K.AUTHORITY:
+                    raise
         async with self.sessions() as session:
             revision, document = await self.store.get(session, identifier, number)
+            kind = K.AUTHORITY if revision.profile == AUTHORITY_PROFILE_ID else K.BIBLIOGRAPHIC
+            operation = (
+                O.AUTHORITY_READ_EDITORIAL
+                if kind == K.AUTHORITY
+                else O.BIBLIOGRAPHIC_READ_EDITORIAL
+            )
+            self.authorization.require(
+                context=context, operation=operation, resource=ResourceContext(kind)
+            )
         return revision, parse_document(json.dumps(document), "json-ld")
 
     async def read_public(self, identifier: UUID) -> tuple[Revision, Graph] | None:
@@ -249,5 +370,15 @@ class BibliographicService:
             state = await self.editorial.get(session, identifier)
             if state is None or state.public_revision is None:
                 return None
+            self.authorization.require(
+                context=None,
+                operation=O.BIBLIOGRAPHIC_READ_PUBLIC,
+                resource=ResourceContext(
+                    K.BIBLIOGRAPHIC,
+                    state.editorial_state,
+                    state.public_revision,
+                    state.public_revision,
+                ),
+            )
             revision, document = await self.store.get(session, identifier, state.public_revision)
         return revision, parse_document(json.dumps(document), "json-ld")
