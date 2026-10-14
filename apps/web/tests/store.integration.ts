@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { readFile } from "node:fs/promises";
+import { migrateDatabase } from "./migrations";
 import { Pool } from "pg";
 import { config, json } from "./helpers";
 import { PostgresAuthStore, type Session } from "../src/server/auth/store";
@@ -21,12 +21,7 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0",
       "Database must start empty; never touch working data");
     await pool.query("CREATE TABLE public.legacy_probe (value text); INSERT INTO public.legacy_probe VALUES ('preserved')");
-    const up = await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8");
-    const down = await readFile(new URL("../migrations/0001_oidc_sessions.down.sql", import.meta.url), "utf8");
-    await pool.query(up);
-    const quotasUp = await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8");
-    const quotasDown = await readFile(new URL("../migrations/0002_auth_quotas.down.sql", import.meta.url), "utf8");
-    await pool.query(quotasUp);
+    await migrateDatabase(connectionString);
     const first = new PostgresAuthStore(pool, cfg), second = new PostgresAuthStore(pool, cfg);
     const state = randomId(), browser = randomId(), transaction = { verifier: randomId(), nonce: randomId(), returnTo: "/en?original=1" };
     await first.putTransaction(state, browser, transaction, Date.now() + 300000);
@@ -107,19 +102,14 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
       await pool.query("UPDATE libris_web.auth_quotas SET window_started=statement_timestamp()-interval '61 seconds' WHERE route='login'");
       assert.equal((await replica.takeQuota("login", policy)).allowed, true);
       await first.createSession(id, session);
-      await pool.query(quotasDown);
+      await pool.query("ALTER TABLE libris_web.auth_quotas RENAME TO unavailable_auth_quotas");
       assert.ok(await replica.withSession(id, async (handle) => handle.value));
       await assert.rejects(replica.takeQuota("login", policy));
       assert.equal((await pool.query("SELECT value FROM public.legacy_probe")).rows[0].value, "preserved");
-      await pool.query(quotasUp);
+      await pool.query("ALTER TABLE libris_web.unavailable_auth_quotas RENAME TO auth_quotas");
       assert.equal((await replica.takeQuota("login", policy)).allowed, true);
-      await pool.query(quotasDown);
     } finally { await otherPool.end(); }
-    await pool.query(down);
-    assert.equal((await pool.query("SELECT value FROM public.legacy_probe")).rows[0].value, "preserved");
-    assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema='libris_web'")).rows[0].count, "0");
-    await pool.query(up);
-    assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
+    await migrateDatabase(connectionString); // Alembic head is idempotent.
     assert.equal((await pool.query("SELECT value FROM public.legacy_probe")).rows[0].value, "preserved");
   } finally { await pool.end(); }
 });

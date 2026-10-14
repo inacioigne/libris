@@ -108,8 +108,8 @@ Foram consultados [instalação do Next.js](https://nextjs.org/docs/app/getting-
 A M04.03 conecta login/callback/logout e consulta server-side /identity/me;
 o [ensaio web com Keycloak real](identity-web-verification.md) é isolado
 e não substitui homologação do navegador/produção.
-[ADR 0030](../decisions/0030-web-oidc-sessions.md) separa migrações web
-das migrações bibliográficas experimentais e mantém o Resource Server existente.
+[ADR 0034](../decisions/0034-alembic-web-schema.md) centraliza a execução no Alembic,
+mantendo as tabelas web no schema separado `libris_web` e o Resource Server existente.
 
 A M04.04 acrescenta [shell e guardas administrativas](admin-access.md) em `/pt/admin`
 e `/en/admin`, reutilizando a sessão BFF e permissões de /identity/me.

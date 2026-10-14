@@ -120,17 +120,17 @@ nem endereço de NAT é interpretado. São quotas globais, não individuais; ata
 pode esgotá-las. Algoritmo, concorrência e riscos no ADR 0033. Backoff de discovery
 adicional de dez segundos por processo; refresh e JWKS mantêm seus controles próprios.
 
-Instalar explicitamente em banco de destino já com migração 0001:
+Instalar explicitamente no banco de destino (mesmo banco usado pelo BFF):
 
 ```bash
-cd apps/web
-npm run session:migrate -- 0002_auth_quotas
+cd apps/api
+uv run alembic upgrade head
 ```
 
-Em instalação nova, executar 0001 (comando padrão) e depois 0002. Runtime precisa
-SELECT/INSERT/UPDATE/DELETE na tabela, sem DDL. Nunca aplicar downgrade em banco de
-trabalho. A migração 0002.down remove somente quotas; testes isolados comprovam
-preservação de sessão/transação/legado. Três linhas no máximo, sem necessidade de prune.
+A revisão 0005 cria/adota também as tabelas das instalações SQL 0001/0002.
+Runtime precisa SELECT/INSERT/UPDATE/DELETE no schema web, sem DDL. O downgrade
+de 0005 conserva os dados web; downgrades anteriores mantêm riscos históricos.
+Três linhas de quota no máximo, sem necessidade de prune.
 
 ## Operação e homologação
 
@@ -149,3 +149,6 @@ já instalado (TEST_WEB_CHROME_PATH opcional), perfil temporário, sem nova depe
 Verifica hidratação/navigation Link, CSP sem violações legítimas, bloqueio de script
 sem nonce e login/logout com provedor simulado assinado. Não prova Keycloak real,
 TLS público, todos os browsers ou acessibilidade manual. Relatório distingue execuções.
+
+A revisão Alembic 0005_web_auth cria/adota as quotas no schema `libris_web`,
+preservando instalações SQL 0001/0002; ver [ADR 0034](../decisions/0034-alembic-web-schema.md).

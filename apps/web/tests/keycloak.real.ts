@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { spawn, type ChildProcess } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
+import { migrateDatabase } from "./migrations";
 import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
 import { TokenCipher } from "../src/server/auth/crypto";
@@ -57,8 +57,7 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
   const fetchWeb = (path: string, init?: RequestInit) => fetch(origin + path, { ...init, redirect: "manual" });
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
-    await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
-    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
+    await migrateDatabase(connection);
     await ready(issuer + "/.well-known/openid-configuration");
     const admin = await fetch(issuer.replace("/libris", "/master") + "/protocol/openid-connect/token", {
       method: "POST", body: new URLSearchParams({ client_id: "admin-cli", grant_type: "password", username, password }),

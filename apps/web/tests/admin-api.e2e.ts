@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawn, type ChildProcess } from "node:child_process";
 import { createServer, type Server } from "node:http";
-import { readFile } from "node:fs/promises";
+import { migrateDatabase } from "./migrations";
 import { randomBytes } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
@@ -70,8 +70,7 @@ test("admin SSR -> encrypted PostgreSQL session -> real FastAPI JWT/JWKS/RBAC; s
   });
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
-    await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
-    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
+    await migrateDatabase(connection);
     api = spawn(new URL("../../api/.venv/bin/python", import.meta.url).pathname, [
       "-m", "uvicorn", "libris.main:app", "--host", "127.0.0.1", "--port", String(apiPort), "--no-access-log",
     ], { cwd: new URL("../../api", import.meta.url), env: { ...process.env, APP_ENV: "development",

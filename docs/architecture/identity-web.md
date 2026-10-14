@@ -83,6 +83,17 @@ exportar ambiente privado ou configurar apps/web/.env.local ignorado pelo Git.
 Compose propaga as variáveis da raiz; URL pg deve usar host postgres na rede.
 Senhas com caracteres reservados exigem codificação na URL.
 
+Antes de iniciar o web, execute em `apps/api`, com `DATABASE_URL` administrativo
+apontando para o mesmo banco de `WEB_SESSION_DATABASE_URL`:
+
+```bash
+uv run alembic upgrade head
+```
+
+No Compose, a partir da raiz: `docker compose run --rm --no-deps api alembic upgrade head`.
+A imagem API precisa incluir a revisão nova (`docker compose build api`).
+A URL administrativa usa `postgresql+asyncpg://`; a do BFF usa `postgresql://`.
+
 Gerar chave diretamente em arquivo privado ou secret manager, sem imprimir
 segredos em terminal compartilhado. Exemplo local sem chave fixa:
 
@@ -94,15 +105,15 @@ node -e 'require("node:fs").writeFileSync("/tmp/libris-web-keys.json",JSON.strin
 export WEB_SESSION_KEYS="$(cat /tmp/libris-web-keys.json)"
 export WEB_SESSION_ACTIVE_KEY=k1
 npm ci
-npm run session:migrate
 npm run dev
 ```
 
-A migração `apps/web/migrations/0001_oidc_sessions.up.sql` cria somente schema web,
-duas tabelas e índices de expiração. Aplicar uma única vez por banco antes de
-ativar login, com papel administrativo. A aplicação nunca migra no startup.
-Arquivo down é destrutivo para sessões e transações: somente ensaiar em banco
-descartável. Não executar downgrade Alembic ou modificar volume de trabalho.
+A revisão Alembic `0005_web_auth` cria/adota o schema `libris_web`, sessões,
+transações e quotas, conforme [ADR 0034](../decisions/0034-alembic-web-schema.md).
+Bancos que receberam os SQL históricos 0001/0002 são validados e preservados;
+objetos incompatíveis abortam a migração. Não repetir os scripts SQL antigos nem
+usar `stamp head`. O downgrade dessa revisão conserva o schema web e seus dados;
+re-upgrade valida novamente. A aplicação nunca migra no startup.
 Não há criação automática de usuários/papéis PostgreSQL; DBA concede acesso
 mínimo ao schema a um usuário de runtime separado.
 
@@ -239,8 +250,12 @@ cd ../..
 bash scripts/check.sh
 ```
 
+Os harnesses de integração/HTTP/Keycloak exigem também as dependências Python
+instaladas em `apps/api/.venv`, pois executam o Alembic para preparar o banco.
+Os testes de adoção e downgrade seguro ficam em `tests/integration/test_web_migrations_postgres.py`.
+
 Suíte padrão: RSA efêmero + HTTP simulado e MemoryStore apenas de teste.
-Persistência: PostgreSQL real, migração upgrade/downgrade/re-upgrade, legado
+Persistência: PostgreSQL real preparado pelo Alembic, legado
 preservado, ciphertext, consumo concorrente, refresh/logout entre stores e rollback.
 HTTP: servidor Next construído, provedor simulado com JWT assinados e API simulada,
 HTML real/headers/rotas/cookies/CSRF/replay/403/logout; não é Keycloak real.
@@ -293,8 +308,8 @@ A origem de teste alternativa não substitui a configuração canônica do Compo
 A [política HTTP M04.07](http-security.md) acrescenta validação CORS por
 ambiente, CSP com nonce no SSR Next.js, headers/cache, limites de entrada e quotas
 compartilhadas PostgreSQL. Reutiliza PKCE, state/binding/consumo único, sessão cifrada,
-CSRF e autorização existentes. Instalação exige a migração web **0002_auth_quotas**
-explicitamente, após 0001; nenhuma migração executa no startup. Em produção web,
+CSRF e autorização existentes. Instalação exige `alembic upgrade head` explicitamente; a revisão **0005_web_auth**
+cria/adota as tabelas em `libris_web`, inclusive quotas (ADR 0034). Nenhuma migração executa no startup. Em produção web,
 WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
 Resultados, falhas corrigidas e limites no [relatório próprio](http-security-m04-07-verification.md).
 As evidências/tabelas históricas acima não foram reclassificadas como homologação

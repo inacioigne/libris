@@ -154,6 +154,8 @@ cp .env.example .env
 # Defina também KEYCLOAK_ADMIN_USERNAME e KEYCLOAK_ADMIN_PASSWORD.
 docker compose config --quiet
 docker compose up --build -d
+# Ação administrativa explícita: instala/atualiza tabelas da API e do BFF.
+docker compose run --rm --no-deps api alembic upgrade head
 docker compose ps
 docker compose logs -f api web
 ```
@@ -174,8 +176,8 @@ Host/navegador precisam resolver `keycloak.localhost` em `127.0.0.1`; consulte o
 As portas de PostgreSQL, Elasticsearch, API e web podem ser alteradas no `.env`.
 Ajuste `CORS_ORIGINS` se mudar a porta do frontend. Dentro do Compose use hosts `postgres`, `elasticsearch` e `api`,
 independentemente das portas publicadas. `API_INTERNAL_URL` é usado pelo BFF para consultar /api/v1/identity/me
-com Bearer server-side. Configure as variáveis WEB_* e aplique a migração web
-explicitamente conforme [identidade web](docs/architecture/identity-web.md).
+com Bearer server-side. Configure as variáveis WEB_* e mantenha DATABASE_URL e WEB_SESSION_DATABASE_URL
+no mesmo banco. O Alembic prepara também o schema separado libris_web; veja [identidade web](docs/architecture/identity-web.md).
 
 A senha do exemplo é descartável e pública. O Compose é exclusivamente local,
 publica portas em `127.0.0.1` e desativa segurança do Elasticsearch. Não usar essa
@@ -250,8 +252,9 @@ uv run alembic upgrade head --sql
 Existem as revisões experimentais `0001_semantic`, `0002_revision_actor` e
 `0003_semantic_audit` e `0004_semantic_editorial`. `alembic current` exige banco
 acessível; `heads` e geração offline inspecionam o ambiente sem modificar o banco.
-Execute `uv run alembic upgrade head` explicitamente quando desejar instalar as
-tabelas experimentais. O downgrade descarta seus dados.
+Execute `uv run alembic upgrade head` explicitamente para instalar as tabelas
+experimentais e o schema `libris_web` (revisão 0005). O downgrade de 0005 preserva
+as tabelas web; downgrades bibliográficos anteriores podem descartar dados.
 
 ```bash
 cd apps/web
@@ -306,8 +309,8 @@ eventos administrativos e contrato futuro M2M fechado. Ver
 A [política HTTP M04.07](docs/architecture/http-security.md) acrescenta validação CORS por
 ambiente, CSP com nonce no SSR Next.js, headers/cache, limites de entrada e quotas
 compartilhadas PostgreSQL. Reutiliza PKCE, state/binding/consumo único, sessão cifrada,
-CSRF e autorização existentes. Instalação exige a migração web **0002_auth_quotas**
-explicitamente, após 0001; nenhuma migração executa no startup. Em produção web,
+CSRF e autorização existentes. Instalação exige `alembic upgrade head` explicitamente; a revisão **0005_web_auth**
+cria/adota as tabelas em `libris_web`, inclusive quotas (ADR 0034). Nenhuma migração executa no startup. Em produção web,
 WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
 Resultados, falhas corrigidas e limites no [relatório próprio](docs/architecture/http-security-m04-07-verification.md).
 As evidências/tabelas históricas acima não foram reclassificadas como homologação

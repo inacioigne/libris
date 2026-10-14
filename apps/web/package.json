@@ -12,7 +12,6 @@
     "typecheck": "tsc --noEmit",
     "test": "node --conditions=react-server --import tsx --test tests/*.test.ts",
     "test:integration": "node --conditions=react-server --import tsx --test tests/*.integration.ts",
-    "session:migrate": "node --import tsx scripts/migrate.ts",
     "session:prune": "node --import tsx scripts/prune.ts",
     "test:http": "node --conditions=react-server --import tsx --test tests/*.e2e.ts",
     "test:keycloak": "node --conditions=react-server --import tsx --test tests/*.real.ts"

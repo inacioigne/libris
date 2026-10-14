@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawn } from "node:child_process";
 import { createServer, type Server } from "node:http";
-import { readFile } from "node:fs/promises";
+import { migrateDatabase } from "./migrations";
 import { createHash, randomBytes } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
@@ -105,8 +105,7 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
   const sessionCookies = (response: Response) => response.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; ");
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
-    await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
-    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
+    await migrateDatabase(process.env.TEST_WEB_HTTP_DATABASE_URL!);
     let ready = false;
     for (let attempt = 0; attempt < 150; attempt++) {
       try { if ((await fetchWeb("/en")).ok) { ready = true; break; } } catch { /* startup */ }
