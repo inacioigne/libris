@@ -65,7 +65,11 @@ async function until(browser: DevTools, expression: string) {
   const diagnostic = await browser.evaluate("JSON.stringify({protocol: location.protocol, host: location.hostname, path: location.pathname, auth: new URL(location.href).searchParams.get('auth'), violations: window.cspViolations, returnTo: document.querySelector('input[name=returnTo]')?.value})");
   throw new Error("Browser assertion timed out: " + String(diagnostic) + " failures=" + JSON.stringify(browser.failures) + " documents=" + JSON.stringify(browser.documents) + " origins=" + JSON.stringify(browser.origins));
 }
-export async function probeBrowser(origin: string, attackUrl: string): Promise<void> {
+export async function probeBrowser(origin: string, attackUrl: string, real?: {
+  username: string; password: string; issuer: string; authorized: boolean;
+  expireSession?: () => Promise<void>;
+  providerUnavailable?: () => Promise<() => Promise<void>>;
+}): Promise<void> {
   const profile = await mkdtemp(join(tmpdir(), "libris-m0407-chrome-"));
   // --no-sandbox only for this disposable local harness on restricted hosts.
   const child = spawn(process.env.TEST_WEB_CHROME_PATH ?? "/usr/bin/google-chrome", [
@@ -97,6 +101,51 @@ export async function probeBrowser(origin: string, attackUrl: string): Promise<v
       window.cspViolations = [];
       document.addEventListener('securitypolicyviolation', (event) => window.cspViolations.push(event.effectiveDirective));
     ` });
+    if (real) {
+      // All credentials stay in this disposable browser/profile and CDP memory.
+      await browser.send("Page.navigate", { url: origin + "/oidc/callback?state=invalid&code=synthetic" });
+      await until(browser, "location.pathname === '/pt' && document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+      await browser.send("Page.navigate", { url: origin + "/en/admin" });
+      await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+      assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
+      await browser.evaluate("document.querySelector('form[action=\"/oidc/login\"]').requestSubmit()");
+      await until(browser, "!!document.querySelector('#kc-form-login')");
+      assert.equal(await browser.evaluate("location.origin"), new URL(real.issuer).origin);
+      await browser.evaluate(`document.querySelector('#username').value = ${JSON.stringify(real.username)};
+        document.querySelector('#password').value = ${JSON.stringify(real.password)};
+        document.querySelector('#kc-form-login').requestSubmit()`);
+      await until(browser, "location.pathname === '/en/admin' && document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/logout\"]')");
+      assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), real.authorized);
+      assert.equal(await browser.evaluate("document.documentElement.outerHTML.includes('access_token') || document.documentElement.outerHTML.includes('refresh_token')"), false);
+      assert.deepEqual(await browser.evaluate("window.cspViolations"), []);
+      await browser.send("Page.navigate", { url: origin + "/pt/admin" });
+      await until(browser, "document.readyState === 'complete' && document.documentElement.lang === 'pt-BR' && !!document.querySelector('form[action=\"/oidc/logout\"]')");
+      assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), real.authorized);
+      assert.deepEqual(await browser.evaluate("window.cspViolations"), []);
+      if (real.expireSession) {
+        await real.expireSession();
+        await browser.send("Page.navigate", { url: origin + "/en/admin" });
+        await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+        assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
+        return;
+      }
+      if (real.providerUnavailable) {
+        const restore = await real.providerUnavailable();
+        try {
+          await browser.send("Page.navigate", { url: origin + "/en/admin" });
+          // An uncertain refresh revokes the session under the existing contract.
+          await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+          assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
+        } finally { await restore(); }
+        return;
+      }
+      await browser.evaluate("document.querySelector('form[action=\"/oidc/logout\"]').requestSubmit()");
+      await until(browser, "location.pathname === '/realms/libris/protocol/openid-connect/logout'");
+      await browser.send("Page.navigate", { url: origin + "/en/admin" });
+      await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+      assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
+      return;
+    }
     await browser.send("Page.navigate", { url: origin + "/en" });
     await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
     // Wait for React hydration, then a Link must navigate without reloading the document.

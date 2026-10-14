@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { spawn, type ChildProcess } from "node:child_process";
+import { execFile, spawn, type ChildProcess } from "node:child_process";
+import { promisify } from "node:util";
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { migrateDatabase } from "./migrations";
@@ -8,6 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
 import { TokenCipher } from "../src/server/auth/crypto";
 import { parseSession } from "../src/server/auth/store";
+import { probeBrowser } from "./browser";
 
 async function freePort(): Promise<number> {
   const server = createServer();
@@ -143,10 +145,19 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     const beforeRefresh = beforeRow.payload;
     const beforeTokens = parseSession(cipher.open(beforeRefresh, `session:${beforeRow.id_hash}`));
     await delay(12000);
-    const refreshed = await (await fetchWeb("/en", { headers: { Cookie: session } })).text();
+    const refreshResponse = await fetchWeb("/en", { headers: { Cookie: session, "X-Request-ID": "untrusted-sentinel" } });
+    const correlation = refreshResponse.headers.get("x-request-id");
+    assert.match(correlation ?? "", /^[0-9a-f-]{36}$/);
+    const refreshed = await refreshResponse.text();
     assert.match(refreshed, /Authenticated session/);
     const loginPayload = (await pool.query("SELECT payload FROM libris_web.sessions")).rows[0].payload as string;
     await delay(100);
+    const correlated = logs.split("\n").filter((line) => line.includes(correlation!));
+    assert.ok(correlated.some((line) => line.includes('"component":"api"') && line.includes("authentication.succeeded")),
+      "Real API authentication preserves SSR correlation");
+    assert.ok(correlated.some((line) => line.includes('"component":"bff"') && line.includes("session.refreshed")),
+      "Committed BFF refresh shares API correlation");
+    assert.ok(!logs.includes("untrusted-sentinel"));
     assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "1");
     assert.notEqual(loginPayload, beforeRefresh, "Real refresh persisted new encrypted tokens");
     const afterTokens = parseSession(cipher.open(loginPayload, `session:${beforeRow.id_hash}`));
@@ -166,6 +177,45 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     const confirmation = await fetch(logoutUrl, { redirect: "manual", headers: { Cookie: cookies(providerResponse) } });
     assert.ok([200, 302, 303].includes(confirmation.status), "RP logout reached provider");
     assert.ok(!logs.includes(accountPassword) && !logs.includes(adminToken));
+    if (process.env.TEST_WEB_BROWSER_ENABLED === "1") {
+      // Reader authenticates but cannot enter the administrative shell.
+      await probeBrowser(origin, "", { username: account, password: accountPassword, issuer, authorized: false });
+      const cataloger = await (await fetch(adminBase + "/clients/" + clients[0].id + "/roles/libris-cataloger", {
+        headers: adminHeaders(),
+      })).json() as unknown;
+      assert.equal((await fetch(adminBase + "/users/" + userId + "/role-mappings/clients/" + clients[0].id, {
+        method: "POST", headers: adminHeaders(), body: JSON.stringify([cataloger]),
+      })).status, 204);
+      await probeBrowser(origin, "", { username: account, password: accountPassword, issuer, authorized: true });
+      await probeBrowser(origin, "", { username: account, password: accountPassword, issuer, authorized: true,
+        expireSession: async () => {
+          const row = (await pool.query("SELECT id_hash,payload FROM libris_web.sessions")).rows[0] as { id_hash: string; payload: string };
+          const value = parseSession(cipher.open(row.payload, `session:${row.id_hash}`));
+          await pool.query("UPDATE libris_web.sessions SET payload = $1, expires_at = 1 WHERE id_hash = $2", [
+            cipher.seal({ ...value, expiresAt: 1 }, `session:${row.id_hash}`), row.id_hash,
+          ]);
+        },
+      });
+      const container = process.env.TEST_KEYCLOAK_CONTAINER;
+      if (container) {
+        assert.match(container, /^libris-m0409-[0-9a-f]{16}-kc$/);
+        const docker = promisify(execFile);
+        const owner = (await docker("docker", ["inspect", "--format", '{{index .Config.Labels "libris.verification"}}', container])).stdout.trim();
+        assert.equal(owner + "-kc", container, "Only the runner-owned disposable provider may be paused");
+        await probeBrowser(origin, "", { username: account, password: accountPassword, issuer, authorized: true,
+          providerUnavailable: async () => {
+            const row = (await pool.query("SELECT id_hash,payload FROM libris_web.sessions")).rows[0] as { id_hash: string; payload: string };
+            const value = parseSession(cipher.open(row.payload, `session:${row.id_hash}`));
+            await pool.query("UPDATE libris_web.sessions SET payload = $1 WHERE id_hash = $2", [
+              cipher.seal({ ...value, accessExpiresAt: 1 }, `session:${row.id_hash}`), row.id_hash,
+            ]);
+            await docker("docker", ["pause", container]);
+            return async () => { await docker("docker", ["unpause", container]); };
+          },
+        });
+      }
+      assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
+    }
   } finally {
     await stop(web); await stop(api);
     if (userId && adminToken) assert.equal((await fetch(adminBase + "/users/" + userId, { method: "DELETE", headers: adminHeaders() })).status, 204);

@@ -1,5 +1,11 @@
 # Verificação — Entrega A, Incremento 2 da fase 3
 
+**Evidência posterior:** a [verificação M04.09 / #42 de 2026-10-14](identity-m04-09-verification.md)
+registra o checkout `cec0be2`, correções, matriz de cobertura, novas execuções e
+limites de homologação. O [roteiro reproduzível](identity-m04-09-homologation.md)
+separa gate offline e integrações descartáveis opt-in. O relato da Entrega A
+abaixo permanece integralmente como evidência histórica de 2026-10-10.
+
 Data: 2026-10-10. Nenhum commit realizado.
 
 ## Resultado e escopo

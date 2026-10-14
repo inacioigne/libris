@@ -134,11 +134,31 @@ def test_valid_token_and_actor(provider: Provider) -> None:
         ({"exp": "9999999999"}, None),
         ({"exp": True}, None),
         ({"exp": float("nan")}, None),
+        ({}, "iss"),
+        ({"aud": 42}, None),
+        *[
+            ({name: value}, None)
+            for name in ("exp", "nbf", "iat")
+            for value in (None, True, "9999999999", [], {}, float("inf"), float("-inf"))
+        ],
+        ({"nbf": float("nan")}, None),
+        ({"iat": float("nan")}, None),
     ],
 )
 def test_invalid_claims(provider: Provider, changes: dict[str, object], omit: str | None) -> None:
     with pytest.raises(AuthenticationError):
         asyncio.run(provider.validator.validate(provider.token(changes, omit=omit)))
+
+
+def test_signed_non_string_issuer(provider: Provider) -> None:
+    # PyJWT's high-level encoder refuses this claim before the validator sees it.
+    claims = jwt.decode(provider.token(), options={"verify_signature": False})
+    claims["iss"] = 42
+    token = jwt.api_jws.encode(
+        json.dumps(claims).encode(), provider.private, algorithm="RS256", headers={"kid": "one"}
+    )
+    with pytest.raises(AuthenticationError):
+        asyncio.run(provider.validator.validate(token))
 
 
 def test_signature_and_manipulated_roles(provider: Provider) -> None:

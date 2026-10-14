@@ -1,5 +1,33 @@
 # Critérios de saída de segurança — M04
 
+## Avaliação vigente M04.09 — 2026-10-14
+
+As tabelas históricas posteriores são preservadas. A avaliação atual está na
+[verificação M04.09 / #42](identity-m04-09-verification.md), com
+[roteiro opt-in reproduzível](identity-m04-09-homologation.md).
+Checkout `cec0be2`, main, alterações locais sem commits: gate offline 1668 API
+e 157 web; integração final 73 API, 1 store, 2 HTTP e 1 Keycloak web,
+sem falhas/skips. PostgreSQL 17.11, Keycloak 26.8.0, FastAPI/Next construídos e
+Chrome reais em recursos novos descartáveis. Falhas iniciais e repetições estão
+no relatório; nenhuma contagem histórica foi reutilizada.
+
+| IDs | Situação comprovada atual | Condição restante |
+| --- | --- | --- |
+| M01/M02/M06/M11 | atendidos tecnicamente localmente: arquitetura/JWT/RBAC/guard e regressão física M03 | revisão do mantenedor; novos endpoints/contratos requerem nova avaliação |
+| M03/M04/M05 | atendidos no ambiente isolado: Keycloak, sessão/refresh/logout, SSR/RBAC pt/en e browser real | configuração da implantação alvo, DNS/HTTPS e acessibilidade manual |
+| M07 | testes reais de concessão/revogação/disable/expiração/admin events atendidos; operacional parcial | aprovação institucional de papéis/responsáveis/prazos; M2M/multiunidade diferidos |
+| M08 | controles e testes HTTP/CSP/CSRF/CORS/quota atendidos; implantação parcial | validar TLS/ingress/logs/capacidade da implantação específica |
+| M09 | emissão/correlação/privacidade e distinção M03 atendidas; operação parcial | best effort, destino/coleta/retenção/expurgo/acesso exigem decisões externas |
+| M10 | suíte offline, runner separado, roteiro e E2E reais atendidos tecnicamente | revisão das evidências e aceite explícito dos riscos remanescentes |
+| M12 | parcial, sem aprovação institucional/produção | revisão operacional da implantação alvo, segredos/rede/TLS/backups/logs/carga |
+
+Não declarar M04 integralmente homologada nem antecipar rotas M05 somente por gate
+verde. As entregas técnicas #42 são verificáveis; seu critério de saída geral
+permanece parcial até revisão/aceite dos riscos e condições acima. Integração local
+real não é aprovação institucional/produção. Os estados remotos não foram alterados.
+
+## Evidências e critérios históricos
+
 A implementação vigente de autorização backend é a **M04.05 / #38**, descrita em
 [autorização por operação](operation-authorization.md) e comprovada no
 [relatório próprio](identity-m04-05-verification.md). As tabelas datadas abaixo

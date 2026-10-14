@@ -100,6 +100,11 @@ export class AuthService {
 
   private async callbackAccepted(url: URL, browser: string | undefined, oldSession?: string) {
     boundedCallback(url);
+    const redirect = new URL(this.config.redirectUri);
+    // Enforce the registered callback at the application boundary before consuming
+    // state or attempting a non-idempotent grant with a derived redirect URI.
+    if (url.origin !== redirect.origin || url.pathname !== redirect.pathname ||
+        url.username || url.password || url.hash) throw new CallbackRejected();
     const params = url.searchParams;
     const state = params.get("state") ?? undefined;
     if (!validId(state) || !validId(browser)) throw new CallbackRejected();

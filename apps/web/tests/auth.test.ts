@@ -107,6 +107,47 @@ test("session fixation prevented by ID rotation and old session revocation", asy
   assert.notEqual(first.id, second.id);
   assert.equal((await f.service.identity(first.id)).status, "expired");
 });
+for (const target of ["http://evil.invalid/oidc/callback", "http://localhost:3000/other", "http://localhost:3000/oidc/callback#fragment"]) {
+  test(`callback rejects mismatched URI before consuming or exchanging: ${target}`, async () => {
+    const f = await fixture();
+    const url = new URL(target); url.search = f.callback.search;
+    await assert.rejects(f.service.callback(url, f.login.browser));
+    assert.equal(f.store.transactions.size, 1);
+    assert.equal(f.store.sessions.size, 0);
+    assert.equal(f.mock.requests.filter((r) => r.url.endsWith("/token")).length, 0);
+  });
+}
+for (const missing of ["access_token", "id_token", "token_type", "expires_in"] as const) {
+  test(`incomplete token response (${missing}) consumes attempt without session or retry`, async () => {
+    const f = await fixture();
+    const provider = new OpenIdProvider(f.cfg, async (url, init, limit) => {
+      const response = await f.mock.transport(url, init, limit);
+      if (!String(url).endsWith("/token")) return response;
+      const body = await response.json() as Record<string, unknown>;
+      delete body[missing]; return json(body);
+    });
+    const service = new AuthService(f.cfg, f.store, provider);
+    await assert.rejects(service.callback(f.callback, f.login.browser));
+    await assert.rejects(service.callback(f.callback, f.login.browser));
+    assert.equal(f.store.sessions.size, 0);
+    assert.equal(f.store.transactions.size, 0);
+    assert.equal(f.mock.requests.filter((r) => r.url.endsWith("/token")).length, 1);
+  });
+}
+test("reauthentication persistence failure leaves old session revoked and never replays grant", async () => {
+  const f = await fixture();
+  const first = await f.service.callback(f.callback, f.login.browser);
+  const login = await f.service.start("/en");
+  f.mock.setNonce(login.url.searchParams.get("nonce") ?? "");
+  f.callback.searchParams.set("state", login.state);
+  f.store.createSession = async () => { throw new Error("synthetic storage failure"); };
+  await assert.rejects(f.service.callback(f.callback, login.browser, first.id));
+  assert.equal((await f.service.identity(first.id)).status, "expired");
+  assert.equal(f.store.sessions.size, 0);
+  const exchanges = f.mock.requests.filter((r) => r.url.endsWith("/token")).length;
+  await assert.rejects(f.service.callback(f.callback, login.browser, first.id));
+  assert.equal(f.mock.requests.filter((r) => r.url.endsWith("/token")).length, exchanges);
+});
 test("expired access token refreshes once for concurrent requests and persists rotated refresh", async () => {
   const f = await fixture();
   const { id } = await f.service.callback(f.callback, f.login.browser);

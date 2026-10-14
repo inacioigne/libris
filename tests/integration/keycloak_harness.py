@@ -84,6 +84,20 @@ def string(value: object, stage: str) -> str:
     return value
 
 
+def loopback_probe_cookies(browser: httpx.Client, issuer: str) -> None:
+    """Emulate secure loopback cookies only in the explicitly isolated HTTP probe."""
+    parsed = urlsplit(issuer)
+    if (
+        os.environ.get("TEST_KEYCLOAK_ISOLATED") != "1"
+        or parsed.scheme != "http"
+        or parsed.hostname not in {"127.0.0.1", "keycloak.localhost"}
+    ):
+        return
+    for cookie in browser.cookies.jar:
+        if cookie.domain == parsed.hostname and cookie.path == "/realms/libris/":
+            cookie.secure = False
+
+
 class KeycloakProbe:
     def __init__(self, client: httpx.Client, api_url: str) -> None:
         self.client = client
@@ -191,9 +205,7 @@ class KeycloakProbe:
             # Keycloak 26.8 treats .localhost as secure; stdlib CookieJar does not.
             # Emulate the browser loopback exception only in this HTTP dev probe.
             # Cookies remain private, and this is never used for a product session.
-            for cookie in browser.cookies.jar:
-                if cookie.domain == "keycloak.localhost" and cookie.path == "/realms/libris/":
-                    cookie.secure = False
+            loopback_probe_cookies(browser, ISSUER)
             response = browser.post(
                 form.action,
                 data={

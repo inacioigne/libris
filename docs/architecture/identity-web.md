@@ -24,6 +24,11 @@ transação atomicamente antes da troca; falha, cancelamento e replay não criam
 sessão. A biblioteca valida ID token RS256 por JWKS, issuer, audience libris-web,
 expiração e nonce. Somente o access token é encaminhado à API.
 
+A M04.09 reforça também o boundary de aplicação: callback exige origem e pathname
+iguais à redirect URI registrada, sem userinfo/fragmento, **antes** de consumir
+state ou contatar o token endpoint. [Testes e evidências atuais](identity-m04-09-verification.md),
+[roteiro consolidado](identity-m04-09-homologation.md).
+
 ```mermaid
 sequenceDiagram
     participant B as Navegador

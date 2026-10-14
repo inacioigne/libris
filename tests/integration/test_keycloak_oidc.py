@@ -5,8 +5,15 @@ import subprocess
 import sys
 from pathlib import Path
 
+import httpx
 import pytest
-from keycloak_harness import CALLBACK, ProbeFailure, callback_code, challenge
+from keycloak_harness import (
+    CALLBACK,
+    ProbeFailure,
+    callback_code,
+    challenge,
+    loopback_probe_cookies,
+)
 
 
 def test_pkce_rfc7636_vector() -> None:
@@ -32,6 +39,57 @@ def test_callback_rejects_tampering(location: str) -> None:
 
 def test_callback_accepts_matching_state() -> None:
     assert callback_code(CALLBACK + "?code=test&state=expected", "expected") == "test"
+
+
+@pytest.mark.parametrize(
+    "issuer,isolated,adapted",
+    [
+        ("http://127.0.0.1:8080/realms/libris", "1", True),
+        ("http://keycloak.localhost:8080/realms/libris", "1", True),
+        ("http://127.0.0.1:8080/realms/libris", "0", False),
+        ("https://127.0.0.1:8080/realms/libris", "1", False),
+        ("http://example.invalid:8080/realms/libris", "1", False),
+    ],
+)
+def test_probe_cookie_exception_is_local_and_opt_in(
+    issuer: str, isolated: str, adapted: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from http.cookiejar import Cookie
+    from urllib.parse import urlsplit
+
+    monkeypatch.setenv("TEST_KEYCLOAK_ISOLATED", isolated)
+    host = urlsplit(issuer).hostname
+    assert host is not None
+    with httpx.Client() as browser:
+        for domain, path in [
+            (host, "/realms/libris/"),
+            (host, "/other/"),
+            ("other.invalid", "/realms/libris/"),
+        ]:
+            browser.cookies.jar.set_cookie(
+                Cookie(
+                    0,
+                    "probe",
+                    "synthetic",
+                    None,
+                    False,
+                    domain,
+                    True,
+                    False,
+                    path,
+                    True,
+                    True,
+                    None,
+                    True,
+                    None,
+                    None,
+                    {},
+                )
+            )
+        loopback_probe_cookies(browser, issuer)
+        cookies = list(browser.cookies.jar)
+        assert cookies[0].secure is not adapted
+        assert all(cookie.secure for cookie in cookies[1:])
 
 
 @pytest.mark.keycloak
