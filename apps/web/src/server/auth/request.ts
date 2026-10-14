@@ -1,14 +1,14 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { authService } from "./runtime";
-import { sessionCookie } from "./security";
+import { sessionCookie, uniqueCookie } from "./security";
 import type { IdentityResult } from "./service";
 
 export async function requestIdentity(): Promise<IdentityResult> {
   try {
     const service = authService();
     return await service.identity(
-      (await cookies()).get(sessionCookie(service.config))?.value,
+      uniqueCookie(await headers(), sessionCookie(service.config)),
     );
   } catch {
     return { status: "unavailable" };

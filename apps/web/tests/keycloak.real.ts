@@ -58,6 +58,7 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
     await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
+    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
     await ready(issuer + "/.well-known/openid-configuration");
     const admin = await fetch(issuer.replace("/libris", "/master") + "/protocol/openid-connect/token", {
       method: "POST", body: new URLSearchParams({ client_id: "admin-cli", grant_type: "password", username, password }),

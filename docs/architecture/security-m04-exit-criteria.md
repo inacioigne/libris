@@ -121,3 +121,16 @@ O item M06 da tabela histórica é implementado tecnicamente nesta entrega, com
 institucional e APIs CRUD M05 continuam escopos futuros. Nenhuma homologação de
 produção/Keycloak/navegador é declarada por esta regressão. Relatórios anteriores
 não foram sobrescritos; nenhum estado/issue remoto foi modificado.
+
+
+## Atualização M04.07 — 2026-10-14
+
+A [política HTTP M04.07](http-security.md) acrescenta validação CORS por
+ambiente, CSP com nonce no SSR Next.js, headers/cache, limites de entrada e quotas
+compartilhadas PostgreSQL. Reutiliza PKCE, state/binding/consumo único, sessão cifrada,
+CSRF e autorização existentes. Instalação exige a migração web **0002_auth_quotas**
+explicitamente, após 0001; nenhuma migração executa no startup. Em produção web,
+WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
+Resultados, falhas corrigidas e limites no [relatório próprio](http-security-m04-07-verification.md).
+As evidências/tabelas históricas acima não foram reclassificadas como homologação
+atual; carga, TLS público, operação institucional e pentest continuam pendentes.

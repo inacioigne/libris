@@ -299,3 +299,16 @@ A M04.06 / #39 define [governança de identidades e contas de serviço](docs/arc
 com cliente humano vinculado por azp assinado, revogação com validade residual de JWT,
 eventos administrativos e contrato futuro M2M fechado. Ver
 [evidências próprias](docs/architecture/identity-m04-06-verification.md); sem multi-tenancy.
+
+
+## Atualização M04.07 — 2026-10-14
+
+A [política HTTP M04.07](docs/architecture/http-security.md) acrescenta validação CORS por
+ambiente, CSP com nonce no SSR Next.js, headers/cache, limites de entrada e quotas
+compartilhadas PostgreSQL. Reutiliza PKCE, state/binding/consumo único, sessão cifrada,
+CSRF e autorização existentes. Instalação exige a migração web **0002_auth_quotas**
+explicitamente, após 0001; nenhuma migração executa no startup. Em produção web,
+WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
+Resultados, falhas corrigidas e limites no [relatório próprio](docs/architecture/http-security-m04-07-verification.md).
+As evidências/tabelas históricas acima não foram reclassificadas como homologação
+atual; carga, TLS público, operação institucional e pentest continuam pendentes.

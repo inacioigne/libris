@@ -1,4 +1,5 @@
 import "server-only";
+import type { QuotaPolicy } from "./quotas";
 
 export interface AuthConfig {
   issuer: string;
@@ -12,6 +13,7 @@ export interface AuthConfig {
   keys: ReadonlyMap<string, Buffer>;
   activeKey: string;
   sessionSeconds: number;
+  quotas: QuotaPolicy;
 }
 function required(
   env: Readonly<Record<string, string | undefined>>,
@@ -22,6 +24,7 @@ function required(
   return value;
 }
 export function trustedUrl(value: string, localHttp: boolean): URL {
+  if (/[\\\s\u0000-\u001f\u007f]/.test(value)) throw new Error("Invalid authentication URL");
   const url = new URL(value);
   if (
     url.username ||
@@ -50,7 +53,7 @@ export function readConfig(
   
   const origin = trustedUrl(required(env, "WEB_ORIGIN"), localHttp);
   
-  if (origin.pathname !== "/" || origin.search)
+  if (required(env, "WEB_ORIGIN") !== origin.origin)
     throw new Error("Invalid public origin");
   const issuer = required(env, "WEB_OIDC_ISSUER");
   const issuerUrl = trustedUrl(issuer, localHttp);
@@ -99,7 +102,21 @@ export function readConfig(
   const scopes = env.WEB_OIDC_SCOPES ?? "openid profile";
   if (!scopes.split(" ").includes("openid") || scopes.length > 512)
     throw new Error("OpenID scope required");
+  function quotaNumber(key: string, fallback: number, max: number): number {
+    const value = Number(env[key] ?? fallback);
+    if (!Number.isInteger(value) || value < 1 || value > max) throw new Error("Invalid authentication quota");
+    return value;
+  }
+  const quotas: QuotaPolicy = {
+    windowSeconds: quotaNumber("WEB_AUTH_RATE_WINDOW_SECONDS", 60, 3600),
+    limits: {
+      login: quotaNumber("WEB_AUTH_LOGIN_LIMIT", 120, 10000),
+      callback: quotaNumber("WEB_AUTH_CALLBACK_LIMIT", 240, 10000),
+      logout: quotaNumber("WEB_AUTH_LOGOUT_LIMIT", 240, 10000),
+    },
+  };
   return {
+    quotas,
     issuer,
     clientId: required(env, "WEB_OIDC_CLIENT_ID"),
     origin: origin.origin,

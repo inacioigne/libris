@@ -57,7 +57,9 @@ function tokenSession(tokens: TokenResponse, config: AuthConfig, now: number, pr
 }
 export class OpenIdProvider implements OidcProvider {
   private configuration?: Promise<oidc.Configuration>;
-  constructor(private readonly config: AuthConfig, private readonly transport: typeof boundedFetch = boundedFetch) {}
+  private retryAfter = 0;
+  constructor(private readonly config: AuthConfig, private readonly transport: typeof boundedFetch = boundedFetch,
+    private readonly clock: () => number = Date.now) {}
   private async load(): Promise<oidc.Configuration> {
     // Only configured issuer-origin endpoints can be contacted, including discovery and JWKS.
     const issuerOrigin = new URL(this.config.issuer).origin;
@@ -86,7 +88,12 @@ export class OpenIdProvider implements OidcProvider {
     return config;
   }
   private getConfiguration(): Promise<oidc.Configuration> {
-    this.configuration ??= this.load().catch((error: unknown) => { this.configuration = undefined; throw error; });
+    if (!this.configuration && this.clock() < this.retryAfter) return Promise.reject(new ProviderTemporaryError());
+    this.configuration ??= this.load().catch((error: unknown) => {
+      this.configuration = undefined;
+      this.retryAfter = this.clock() + 10000;
+      throw error;
+    });
     return this.configuration;
   }
   async authorize(state: string, nonce: string, verifier: string): Promise<URL> {

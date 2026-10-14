@@ -16,8 +16,11 @@ async function main(): Promise<void> {
   });
 
   try {
+    // Choose one incremental migration explicitly. Never run either at startup.
+    const migration = process.argv[2] ?? "0001_oidc_sessions";
+    if (!["0001_oidc_sessions", "0002_auth_quotas"].includes(migration)) throw new Error("Unknown migration");
     const sql = await readFile(
-      new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url),
+      new URL(`../migrations/${migration}.up.sql`, import.meta.url),
       "utf8"
     );
 
@@ -30,6 +33,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error("Web session migration failed:", error);
+  console.error("Web session migration failed:", error instanceof Error ? error.name : "UnknownError");
   process.exitCode = 1;
 });

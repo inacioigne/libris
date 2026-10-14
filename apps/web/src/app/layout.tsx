@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+export const dynamic = "force-dynamic";
+
 // The locale layout owns <html> so each language has the correct document language.
 export default function RootLayout({ children }: { children: ReactNode }) {
   return children;

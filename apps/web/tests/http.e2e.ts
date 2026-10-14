@@ -6,6 +6,7 @@ import { readFile } from "node:fs/promises";
 import { createHash, randomBytes } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { Pool } from "pg";
+import { probeBrowser } from "./browser";
 import { jwt, jwk } from "./helpers";
 
 async function listen(server: Server): Promise<number> {
@@ -23,10 +24,15 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
   const codes = new Map<string, { nonce: string; challenge: string; redirect: string }>();
   let apiStatus = 200, apiCalls = 0, refreshes = 0;
   let permissions = ["bibliographic:read"];
-  let issuer = "";
+  let issuer = "", attackPolicy = "";
   const upstream = createServer(async (request, response) => {
     const url = new URL(request.url!, issuer);
     response.setHeader("Content-Type", "application/json");
+    if (url.pathname === "/csp-attack") {
+      response.setHeader("Content-Type", "text/html");
+      response.setHeader("Content-Security-Policy", attackPolicy);
+      return response.end("<!doctype html><html><body><script>window.injectionExecuted=true</script><p>CSP probe</p></body></html>");
+    }
     if (url.pathname.endsWith("openid-configuration")) return response.end(JSON.stringify({
       issuer, authorization_endpoint: issuer + "/auth", token_endpoint: issuer + "/token",
       jwks_uri: issuer + "/jwks", end_session_endpoint: issuer + "/logout",
@@ -100,6 +106,7 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
     await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
+    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
     let ready = false;
     for (let attempt = 0; attempt < 150; attempt++) {
       try { if ((await fetchWeb("/en")).ok) { ready = true; break; } } catch { /* startup */ }
@@ -107,13 +114,33 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
       await delay(100);
     }
     assert.ok(ready, "Next server failed to start");
-    const anonymous = await (await fetchWeb("/en")).text();
+    const anonymousResponse = await fetchWeb("/en");
+    const csp = anonymousResponse.headers.get("Content-Security-Policy")!;
+    assert.doesNotMatch(csp, /unsafe-inline|unsafe-eval|upgrade-insecure-requests/);
+    attackPolicy = csp;
+    const nonce = csp.match(/'nonce-([^']+)'/)?.[1];
+    assert.ok(nonce);
+    assert.equal(anonymousResponse.headers.get("X-Content-Type-Options"), "nosniff");
+    assert.equal(anonymousResponse.headers.get("Strict-Transport-Security"), null);
+    assert.equal(anonymousResponse.headers.get("X-Powered-By"), null);
+    const anonymous = await anonymousResponse.text();
+    const scripts = [...anonymous.matchAll(/<script\b([^>]*)>/g)];
+    assert.ok(scripts.length > 0);
+    for (const script of scripts) assert.ok(script[1].includes(`nonce="${nonce}"`), "Every SSR/hydration script must carry the response nonce");
+    const nextPage = await fetchWeb("/pt");
+    assert.notEqual(nextPage.headers.get("Content-Security-Policy"), csp);
+    const asset = anonymous.match(/<script[^>]+src="([^"]+)"/)?.[1];
+    assert.ok(asset);
+    const assetResponse = await fetchWeb(asset);
+    assert.equal(assetResponse.status, 200);
+    assert.match(assetResponse.headers.get("Cache-Control")!, /immutable/);
+    assert.doesNotMatch(assetResponse.headers.get("Cache-Control")!, /no-store/);
     assert.match(anonymous, /Sign in/); assert.equal(apiCalls, 0);
     const checkPrivate = (response: Response) => {
       assert.match(response.headers.get("Cache-Control")!, /private/);
       assert.match(response.headers.get("Cache-Control")!, /no-store/);
       assert.equal(response.headers.get("Pragma"), "no-cache");
-      assert.equal(response.headers.get("Referrer-Policy"), "no-referrer");
+      assert.equal(response.headers.get("Referrer-Policy"), new URL(response.url).pathname.startsWith("/oidc/") ? "no-referrer" : "same-origin");
     };
     const blocked = (html: string) => {
       assert.doesNotMatch(html, /id="capabilities-title"|aria-label="Administrative navigation"|id="cataloging"/);
@@ -243,6 +270,22 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     const unavailable = await fetchWeb("/en/admin", { headers: { Cookie: session } }); checkPrivate(unavailable);
     const unavailableHtml = await unavailable.text(); blocked(unavailableHtml); assert.match(unavailableHtml, /Service unavailable/);
     await pool.query("ALTER TABLE libris_web.unavailable_sessions RENAME TO sessions");
+    if (process.env.TEST_WEB_BROWSER_ENABLED === "1") await probeBrowser(origin, issuer + "/csp-attack");
+    const oversized = await fetchWeb("/oidc/login", { method: "POST", headers: { Origin: origin,
+      "Content-Type": "application/x-www-form-urlencoded" }, body: "returnTo=" + "x".repeat(5000) });
+    assert.equal(oversized.status, 413); checkPrivate(oversized);
+    assert.equal((await fetchWeb("/oidc/callback?code=" + "x".repeat(4097))).status, 413);
+    await pool.query("UPDATE libris_web.auth_quotas SET attempts=240 WHERE route='callback'");
+    const throttled = await fetchWeb("/oidc/callback");
+    assert.equal(throttled.status, 429); checkPrivate(throttled);
+    assert.ok(Number(throttled.headers.get("Retry-After")) > 0);
+    await pool.query("UPDATE libris_web.auth_quotas SET window_started=statement_timestamp()-interval '61 seconds' WHERE route='callback'");
+    assert.equal((await fetchWeb("/oidc/callback")).status, 303);
+    await pool.query("ALTER TABLE libris_web.auth_quotas RENAME TO unavailable_quotas");
+    const quotaUnavailable = await fetchWeb("/oidc/callback");
+    assert.equal(quotaUnavailable.status, 503); checkPrivate(quotaUnavailable);
+    assert.equal(await quotaUnavailable.text(), "");
+    await pool.query("ALTER TABLE libris_web.unavailable_quotas RENAME TO auth_quotas");
     assert.equal(refreshes, 0);
     assert.ok(!output.includes("http-access-secret") && !output.includes("http-refresh-secret"));
   } finally {

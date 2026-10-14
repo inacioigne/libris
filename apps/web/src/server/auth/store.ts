@@ -2,6 +2,7 @@ import "server-only";
 import { Pool, type PoolClient } from "pg";
 import type { AuthConfig } from "./config";
 import { TokenCipher } from "./crypto";
+import { postgresQuota, type AuthRoute, type QuotaPolicy, type QuotaResult } from "./quotas";
 import { digest } from "./security";
 
 export interface LoginTransaction { verifier: string; nonce: string; returnTo: string }
@@ -16,6 +17,7 @@ export interface SessionHandle {
   revoke(): Promise<void>;
 }
 export interface AuthStore {
+  takeQuota(route: AuthRoute, policy: QuotaPolicy): Promise<QuotaResult>;
   putTransaction(state: string, browser: string, value: LoginTransaction, expiresAt: number): Promise<void>;
   consumeTransaction(state: string, browser: string, now: number): Promise<LoginTransaction | null>;
   createSession(id: string, value: Session): Promise<void>;
@@ -45,6 +47,9 @@ export function parseSession(value: unknown): Session {
 export class PostgresAuthStore implements AuthStore {
   private readonly cipher: TokenCipher;
   constructor(readonly pool: Pool, config: AuthConfig) { this.cipher = new TokenCipher(config); }
+  takeQuota(route: AuthRoute, policy: QuotaPolicy): Promise<QuotaResult> {
+    return postgresQuota(this.pool, route, policy);
+  }
   async putTransaction(state: string, browser: string, value: LoginTransaction, expiresAt: number) {
     const hash = digest(state);
     await this.pool.query("INSERT INTO libris_web.auth_transactions VALUES ($1,$2,$3,$4)",
@@ -98,5 +103,5 @@ export class PostgresAuthStore implements AuthStore {
 }
 export function createPool(config: AuthConfig): Pool {
   return new Pool({ connectionString: config.databaseUrl, max: 5, connectionTimeoutMillis: 5000,
-    idleTimeoutMillis: 30000, query_timeout: 12000 });
+    idleTimeoutMillis: 30000, query_timeout: 12000, statement_timeout: 10000, lock_timeout: 1000 });
 }

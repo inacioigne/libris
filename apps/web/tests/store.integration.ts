@@ -24,6 +24,9 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
     const up = await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8");
     const down = await readFile(new URL("../migrations/0001_oidc_sessions.down.sql", import.meta.url), "utf8");
     await pool.query(up);
+    const quotasUp = await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8");
+    const quotasDown = await readFile(new URL("../migrations/0002_auth_quotas.down.sql", import.meta.url), "utf8");
+    await pool.query(quotasUp);
     const first = new PostgresAuthStore(pool, cfg), second = new PostgresAuthStore(pool, cfg);
     const state = randomId(), browser = randomId(), transaction = { verifier: randomId(), nonce: randomId(), returnTo: "/en?original=1" };
     await first.putTransaction(state, browser, transaction, Date.now() + 300000);
@@ -90,6 +93,28 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
     await pool.query("UPDATE libris_web.sessions SET payload='corrupt'");
     assert.equal(await second.withSession(id, async (handle) => handle.value), null);
     assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
+    // Independent pools model replicas, with PostgreSQL clock/atomic row updates.
+    const otherPool = new Pool({ connectionString, max: 4 });
+    try {
+      const replica = new PostgresAuthStore(otherPool, cfg);
+      const policy = { windowSeconds: 60, limits: { login: 5, callback: 10, logout: 10 } };
+      const quotas = await Promise.all(Array.from({ length: 20 }, (_, i) =>
+        (i % 2 ? first : replica).takeQuota("login", policy)));
+      assert.equal(quotas.filter((q) => q.allowed).length, 5);
+      assert.ok(quotas.every((q) => q.retryAfter > 0 && q.retryAfter <= 60));
+      assert.equal((await replica.takeQuota("callback", policy)).allowed, true);
+      // Advance persisted window explicitly; no wall-clock sleeps.
+      await pool.query("UPDATE libris_web.auth_quotas SET window_started=statement_timestamp()-interval '61 seconds' WHERE route='login'");
+      assert.equal((await replica.takeQuota("login", policy)).allowed, true);
+      await first.createSession(id, session);
+      await pool.query(quotasDown);
+      assert.ok(await replica.withSession(id, async (handle) => handle.value));
+      await assert.rejects(replica.takeQuota("login", policy));
+      assert.equal((await pool.query("SELECT value FROM public.legacy_probe")).rows[0].value, "preserved");
+      await pool.query(quotasUp);
+      assert.equal((await replica.takeQuota("login", policy)).allowed, true);
+      await pool.query(quotasDown);
+    } finally { await otherPool.end(); }
     await pool.query(down);
     assert.equal((await pool.query("SELECT value FROM public.legacy_probe")).rows[0].value, "preserved");
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema='libris_web'")).rows[0].count, "0");

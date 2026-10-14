@@ -71,6 +71,7 @@ test("admin SSR -> encrypted PostgreSQL session -> real FastAPI JWT/JWKS/RBAC; s
   try {
     assert.equal((await pool.query("SELECT count(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).rows[0].count, "0");
     await pool.query(await readFile(new URL("../migrations/0001_oidc_sessions.up.sql", import.meta.url), "utf8"));
+    await pool.query(await readFile(new URL("../migrations/0002_auth_quotas.up.sql", import.meta.url), "utf8"));
     api = spawn(new URL("../../api/.venv/bin/python", import.meta.url).pathname, [
       "-m", "uvicorn", "libris.main:app", "--host", "127.0.0.1", "--port", String(apiPort), "--no-access-log",
     ], { cwd: new URL("../../api", import.meta.url), env: { ...process.env, APP_ENV: "development",
@@ -93,7 +94,7 @@ test("admin SSR -> encrypted PostgreSQL session -> real FastAPI JWT/JWKS/RBAC; s
       ["libris-admin", "system", undefined],
     ] as const) {
       const now = Math.floor(Date.now() / 1000);
-      const accessToken = jwt({ iss: issuer, aud: "libris-api", sub: "synthetic-admin-probe", typ: "Bearer", iat: now, exp: now + 300,
+      const accessToken = jwt({ iss: issuer, aud: "libris-api", sub: "synthetic-admin-probe", azp: "libris-web", typ: "Bearer", iat: now, exp: now + 300,
         resource_access: { "libris-api": { roles: [role] } } });
       issuedTokens.push(accessToken);
       const id = randomId();
@@ -104,7 +105,7 @@ test("admin SSR -> encrypted PostgreSQL session -> real FastAPI JWT/JWKS/RBAC; s
         const response = await fetchWeb(`/${locale}/admin?permissions=system:admin&roles=libris-admin`, `libris-session=${id}`);
         assert.equal(response.status, 200);
         assert.match(response.headers.get("Cache-Control")!, /private.*no-store|no-store.*private/);
-        assert.equal(response.headers.get("Referrer-Policy"), "no-referrer");
+        assert.equal(response.headers.get("Referrer-Policy"), "same-origin");
         const html = await response.text();
         assert.doesNotMatch(html, /synthetic-admin-probe|forged/); assert.ok(!html.includes(accessToken));
         if (expected) assert.match(html, new RegExp(`id="${expected}"`));

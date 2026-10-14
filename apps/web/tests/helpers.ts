@@ -1,3 +1,4 @@
+import type { AuthRoute, QuotaPolicy } from "../src/server/auth/quotas";
 import { readConfig } from "../src/server/auth/config";
 import type { AuthStore, LoginTransaction, Session, SessionHandle } from "../src/server/auth/store";
 import { createSign, generateKeyPairSync } from "node:crypto";
@@ -11,6 +12,18 @@ export const config = () => readConfig({
   WEB_SESSION_ACTIVE_KEY: "test", API_INTERNAL_URL: "http://localhost:8000",
 });
 export class MemoryStore implements AuthStore {
+  quotaClock = Date.now;
+  quotas = new Map<AuthRoute, { started: number; attempts: number }>();
+  async takeQuota(route: AuthRoute, policy: QuotaPolicy) {
+    const now = this.quotaClock();
+    let row = this.quotas.get(route);
+    if (!row || row.started + policy.windowSeconds * 1000 <= now) {
+      row = { started: now, attempts: 0 }; this.quotas.set(route, row);
+    }
+    row.attempts++;
+    return { allowed: row.attempts <= policy.limits[route],
+      retryAfter: Math.max(1, Math.ceil((row.started + policy.windowSeconds * 1000 - now) / 1000)) };
+  }
   transactions = new Map<string, { browser: string; value: LoginTransaction; expiresAt: number }>();
   sessions = new Map<string, Session>();
   locks = new Map<string, Promise<void>>();

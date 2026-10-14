@@ -234,3 +234,16 @@ definida no [contrato M04.06](identity-governance.md), com
 azp assinado igual a OIDC_HUMAN_CLIENT_ID após validação JWT; serviços externos
 não são promovidos a humanos por receberem roles. Configurar o cliente interativo
 sem service accounts ou token exchange para impersonação. /me conserva seu DTO.
+
+
+## Atualização M04.07 — 2026-10-14
+
+A [política HTTP M04.07](http-security.md) acrescenta validação CORS por
+ambiente, CSP com nonce no SSR Next.js, headers/cache, limites de entrada e quotas
+compartilhadas PostgreSQL. Reutiliza PKCE, state/binding/consumo único, sessão cifrada,
+CSRF e autorização existentes. Instalação exige a migração web **0002_auth_quotas**
+explicitamente, após 0001; nenhuma migração executa no startup. Em produção web,
+WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
+Resultados, falhas corrigidas e limites no [relatório próprio](http-security-m04-07-verification.md).
+As evidências/tabelas históricas acima não foram reclassificadas como homologação
+atual; carga, TLS público, operação institucional e pentest continuam pendentes.

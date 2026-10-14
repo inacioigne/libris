@@ -24,7 +24,8 @@ export function returnPath(value: string): string {
 export function assertSameOrigin(request: Request, config: AuthConfig): void {
   if (request.headers.get("origin") !== config.origin ||
       request.headers.get("host") !== new URL(config.origin).host ||
-      request.headers.get("sec-fetch-site") === "cross-site") throw new Error("Request origin rejected");
+      (request.headers.has("sec-fetch-site") &&
+        !["same-origin", "none"].includes(request.headers.get("sec-fetch-site") ?? ""))) throw new Error("Request origin rejected");
 }
 export function cookieOptions(config: AuthConfig, maxAge: number, path = "/") {
   return { httpOnly: true, secure: new URL(config.origin).protocol === "https:",
@@ -37,3 +38,20 @@ export const transactionCookie = (state: string, config?: AuthConfig) =>
   `${config && new URL(config.origin).protocol === "https:" ? "__Host-" : ""}libris-oidc-${digest(state).slice(0, 32)}`;
 export const transactionCookiePath = (config: AuthConfig) =>
   new URL(config.origin).protocol === "https:" ? "/" : "/oidc/callback";
+
+// Next's parsed cookie map collapses duplicates; inspect the original header instead.
+export function uniqueCookie(headers: Headers, name: string): string | undefined {
+  const values = (headers.get("cookie") ?? "").split(";").map((part) => part.trim())
+    .filter((part) => part.includes("=") && part.slice(0, part.indexOf("=")) === name)
+    .map((part) => part.slice(part.indexOf("=") + 1));
+  if (values.length > 1) throw new Error("Ambiguous cookie");
+  return values[0];
+}
+export class PayloadTooLarge extends Error {}
+export function boundedCallback(url: URL): void {
+  if (Buffer.byteLength(url.search, "utf8") > 8192) throw new PayloadTooLarge();
+  const entries = [...url.searchParams];
+  if (entries.length > 8 || entries.some(([key, value]) => key.length > 64 || value.length > 4096)) {
+    throw new PayloadTooLarge();
+  }
+}

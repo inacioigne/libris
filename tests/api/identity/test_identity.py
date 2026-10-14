@@ -381,7 +381,8 @@ def test_expiration_infinity(provider: Provider) -> None:
 
 
 def test_bearer_cors_preflight() -> None:
-    with TestClient(create_app(Settings(_env_file=None))) as client:
+    app = create_app(Settings(_env_file=None, cors_origins=["http://localhost:3000"]))
+    with TestClient(app) as client:
         response = client.options(
             "/api/v1/identity/me",
             headers={

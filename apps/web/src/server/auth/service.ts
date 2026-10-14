@@ -5,7 +5,7 @@ import {
   ProviderTemporaryError,
   type OidcProvider,
 } from "./oidc";
-import { randomId, returnPath, validId } from "./security";
+import { boundedCallback, randomId, returnPath, validId } from "./security";
 import type { AuthStore, SessionHandle } from "./store";
 
 export interface Identity {
@@ -78,6 +78,7 @@ export class AuthService {
   }
   
   async callback(url: URL, browser: string | undefined, oldSession?: string) {
+    boundedCallback(url);
     const params = url.searchParams;
     const state = params.get("state") ?? undefined;
     if (!validId(state) || !validId(browser)) throw new CallbackRejected();
