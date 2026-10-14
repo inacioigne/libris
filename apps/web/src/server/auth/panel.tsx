@@ -34,11 +34,11 @@ export async function AuthPanel({
     unavailable: t.unavailable,
   }[result.status];
   const buttonClass =
-    "rounded-lg border border-teal-800 bg-white px-5 py-3 font-semibold text-teal-900";
+    "rounded-lg border border-teal-800 dark:border-teal-400 bg-white dark:bg-gray-900 px-5 py-3 font-semibold text-teal-900 dark:text-teal-200";
   return (
     <section
       aria-labelledby="auth-title"
-      className="mt-10 max-w-3xl rounded-2xl border border-slate-200 bg-white p-7"
+      className="mt-10 max-w-3xl rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-7"
     >
       <h2 id="auth-title" className="text-xl font-semibold">
         {t.authTitle}

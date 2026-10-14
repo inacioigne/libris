@@ -154,10 +154,14 @@ test("baseline text and focus colors meet WCAG contrast ratios; manual browser a
     return (values[0] + 0.05) / (values[1] + 0.05);
   };
   const css = await readFile(new URL("../src/app/globals.css", import.meta.url), "utf8");
-  assert.match(css, /background: #f6f8f7; color: #172d29/);
-  assert.match(css, /:focus-visible \{ outline: 3px solid #0f766e/);
+  assert.match(css, /background: #f6f8f7;\s+color: #172d29/);
+  assert.match(css, /:focus-visible \{\s+outline: 3px solid #0f766e/);
   for (const background of ["ffffff", "f6f8f7"]) {
     assert.ok(contrast("172d29", background) >= 4.5);
     assert.ok(contrast("0f766e", background) >= 3);
+  }
+  for (const background of ["111827", "1f2937"]) {
+    assert.ok(contrast("f3f4f6", background) >= 4.5);
+    assert.ok(contrast("5eead4", background) >= 3);
   }
 });
