@@ -294,3 +294,8 @@ escolha o agente usado no projeto quando solicitado.
 A M04.05 / #38 consolida [RBAC por operação e guard de aplicação](docs/architecture/operation-authorization.md),
 com contextos confiáveis explícitos, escopo técnico limitado e preservação dos contratos
 M03; [evidências atuais](docs/architecture/identity-m04-05-verification.md). Sem novas APIs CRUD.
+
+A M04.06 / #39 define [governança de identidades e contas de serviço](docs/architecture/identity-governance.md),
+com cliente humano vinculado por azp assinado, revogação com validade residual de JWT,
+eventos administrativos e contrato futuro M2M fechado. Ver
+[evidências próprias](docs/architecture/identity-m04-06-verification.md); sem multi-tenancy.

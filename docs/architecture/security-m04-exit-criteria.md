@@ -5,6 +5,12 @@ A implementação vigente de autorização backend é a **M04.05 / #38**, descri
 [relatório próprio](identity-m04-05-verification.md). As tabelas datadas abaixo
 preservam o diagnóstico das entregas anteriores, sem representar enforcement atual.
 
+Para M07, a [governança M04.06 / #39](identity-governance.md) entrega procedimentos,
+fronteira de cliente humano e contrato técnico futuro fechado. A
+[verificação M04.06](identity-m04-06-verification.md) contém os testes offline e o
+ensaio real descartável de concessão/revogação/expiração/eventos. Não equivale a
+M2M operacional, auditoria ampliada #41 ou homologação #42.
+
 Data: 2026-10-13. Checkout e inventário na [baseline](security-baseline.md);
 resultados atuais na [verificação](security-m04-01-verification.md).
 Esta lista diferencia aceitação documental da #34, conclusão da milestone M04 e

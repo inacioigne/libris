@@ -12,13 +12,27 @@ class TokenValidator(Protocol):
 
 
 class IdentityService:
-    def __init__(self, validator: TokenValidator, role_source: str, role_client: str) -> None:
+    def __init__(
+        self,
+        validator: TokenValidator,
+        role_source: str,
+        role_client: str,
+        human_client: str = "libris-web",
+    ) -> None:
         self.validator = validator
         self.role_source = role_source
         self.role_client = role_client
+        if not human_client.strip():
+            raise ValueError("Cliente humano OIDC obrigatório.")
+        self.human_client = human_client
 
     async def authenticate(self, token: str) -> AuthenticatedActor:
         claims = await self.validator.validate(token)
+        # Only the configured interactive client may enter the human boundary.
+        # azp is trusted only after TokenValidator verifies the signed JWT.
+        # The provider must disable service accounts/token exchange for this client.
+        if claims.get("azp") != self.human_client:
+            raise AuthenticationError()
         issuer, subject = claims.get("iss"), claims.get("sub")
         if not isinstance(issuer, str) or not isinstance(subject, str) or not subject.strip():
             raise AuthenticationError()

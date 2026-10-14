@@ -84,6 +84,7 @@ class Provider:
             "exp": now + 600,
             "iat": now - 1,
             "typ": "Bearer",
+            "azp": "libris-web",
             "resource_access": {"libris-api": {"roles": ["libris-cataloger"]}},
         }
         claims.update(changes or {})
@@ -569,12 +570,16 @@ def test_keycloak_realm_preserves_resource_server_contract() -> None:
         ROLE_PERMISSIONS
     )
     assert not realm.get("users")
+    assert realm["adminEventsEnabled"] is True
+    assert realm["adminEventsDetailsEnabled"] is False
+    assert len(realm["clients"]) == 2  # No externally accepted service client yet.
     web = next(client for client in realm["clients"] if client["clientId"] == "libris-web")
     assert "basic" in web["defaultClientScopes"]  # Keycloak 25+ maps required sub here.
     assert web["attributes"]["pkce.code.challenge.method"] == "S256"
     assert web["redirectUris"] == ["http://localhost:3000/oidc/callback"]
     assert web["standardFlowEnabled"] and web["publicClient"]
     assert not web["implicitFlowEnabled"] and not web["directAccessGrantsEnabled"]
+    assert web["serviceAccountsEnabled"] is False
     audience = next(
         mapper
         for mapper in web["protocolMappers"]
@@ -646,3 +651,86 @@ def test_operation_guard_ignores_forged_http_authority(
             assert response.json()["code"] == "authorization.denied"
         assert client.get("/health", headers=spoof).status_code == 200
         assert client.get("/api/v1/identity/me", headers=spoof).status_code == 401
+
+
+@pytest.mark.parametrize("client", [None, "", "libris-service", "other-web", ["libris-web"], 42])
+def test_only_signed_interactive_client_can_enter_human_boundary(
+    provider: Provider, client: object
+) -> None:
+    app = create_app(provider.settings)
+    token = provider.token(
+        {
+            "azp": client,
+            "sub": "ordinary-subject-without-service-prefix",
+            "resource_access": {"libris-api": {"roles": ["libris-admin"]}},
+            "actor_id": "human:forged",
+            "source": "interactive",
+        },
+        omit="azp" if client is None else None,
+    )
+    with TestClient(app) as http:
+        app.state.identity_service = IdentityService(provider.validator, "client", "libris-api")
+        response = http.get(
+            "/api/v1/identity/me?azp=libris-web",
+            headers={
+                "Authorization": "Bearer " + token,
+                "X-Client-ID": "libris-web",
+                "X-Actor-ID": "human:forged",
+                "X-Roles": "libris-admin",
+            },
+        )
+        assert response.status_code == 401
+        assert response.headers["www-authenticate"] == "Bearer"
+        assert response.json()["contract_version"] == "1.0"
+
+
+def test_interactive_client_configuration_is_applied_by_lifespan(provider: Provider) -> None:
+    settings = provider.settings.model_copy(update={"oidc_human_client_id": "institution-web"})
+    app = create_app(settings)
+    with TestClient(app):
+        service = app.state.identity_service
+        # Keep the real lifespan configuration; substitute only network/key retrieval.
+        service.validator = provider.validator
+        with pytest.raises(AuthenticationError):
+            asyncio.run(service.authenticate(provider.token()))
+        actor = asyncio.run(service.authenticate(provider.token({"azp": "institution-web"})))
+        assert actor.actor_id == actor_identifier(settings.oidc_issuer_url, "subject")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, oidc_human_client_id=" ")
+    with pytest.raises(ValueError):
+        IdentityService(provider.validator, "client", "libris-api", "")
+
+
+def test_role_revocation_affects_new_tokens_not_signed_access_tokens(provider: Provider) -> None:
+    async def scenario() -> None:
+        service = IdentityService(provider.validator, "client", "libris-api")
+        before = provider.token()
+        original = await service.authenticate(before)
+        authorize(original, (P.BIBLIOGRAPHIC_CREATE,))
+        # Represents a new issuance after external role removal; no JWT introspection.
+        after = provider.token({"resource_access": {"libris-api": {"roles": []}}})
+        revoked = await service.authenticate(after)
+        assert revoked.actor_id == original.actor_id
+        assert revoked.permissions == frozenset()
+        with pytest.raises(PermissionDenied):
+            authorize(revoked, (P.BIBLIOGRAPHIC_CREATE,))
+        residual = await service.authenticate(before)
+        assert residual == original
+        authorize(residual, (P.BIBLIOGRAPHIC_CREATE,))
+        expired = provider.token({"exp": 1})
+        with pytest.raises(AuthenticationError):
+            await service.authenticate(expired)
+
+    asyncio.run(scenario())
+
+
+def test_client_binding_requires_signature_and_does_not_classify_subject_prefix(
+    provider: Provider,
+) -> None:
+    service = IdentityService(provider.validator, "client", "libris-api")
+    with pytest.raises(AuthenticationError):
+        forged = provider.token({"azp": "libris-web"}, private=provider.other)
+        asyncio.run(service.authenticate(forged))
+    # A subject is opaque; only the provider/client configuration defines trust.
+    actor = asyncio.run(service.authenticate(provider.token({"sub": "service-account-human-name"})))
+    assert actor.subject == "service-account-human-name"

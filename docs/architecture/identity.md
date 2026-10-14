@@ -22,6 +22,7 @@ OIDC é NEXT_PUBLIC. O Compose Docker já propaga a configuração para a API.
 | OIDC_HTTP_TIMEOUT_SECONDS | 5 | Timeout HTTP por operação, >0 e <=60 segundos |
 | OIDC_ROLE_SOURCE | client | client ou realm; realm exige escolha explícita |
 | OIDC_ROLE_CLIENT | libris-api | Client confiável para extração de papéis |
+| OIDC_HUMAN_CLIENT_ID | libris-web | Cliente interativo permitido em azp assinado; outros clientes são recusados |
 | OIDC_ACCESS_TOKEN_CLAIM | typ | Claim assinada no payload que distingue access token |
 | OIDC_ACCESS_TOKEN_VALUE | Bearer | Valor esperado; Keycloak emite ID para ID tokens |
 
@@ -227,4 +228,9 @@ acesso a rascunhos sem contrato institucional. Público usa somente read_public 
 revisão efetivamente publicada. Autoria histórica NULL permanece inalterada;
 novas operações técnicas registram sua identidade explícita, sem backfill.
 Os contextos Python não são prova criptográfica; não deserializar payload/header.
-M2M, governança #39 e homologação operacional #42 permanecem separados.
+M2M operacional e homologação #42 permanecem separados. A governança #39 está
+definida no [contrato M04.06](identity-governance.md), com
+[evidências próprias](identity-m04-06-verification.md). IdentityService exige
+azp assinado igual a OIDC_HUMAN_CLIENT_ID após validação JWT; serviços externos
+não são promovidos a humanos por receberem roles. Configurar o cliente interativo
+sem service accounts ou token exchange para impersonação. /me conserva seu DTO.

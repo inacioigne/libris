@@ -23,7 +23,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.database = database
         client = httpx.AsyncClient(trust_env=False)
         app.state.identity_service = IdentityService(
-            OIDCValidator(config, client), config.oidc_role_source, config.oidc_role_client
+            OIDCValidator(config, client),
+            config.oidc_role_source,
+            config.oidc_role_client,
+            config.oidc_human_client_id,
         )
         try:
             yield

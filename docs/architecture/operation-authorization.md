@@ -39,9 +39,10 @@ aprovação/publicação. Não há roles humanas no contexto técnico. `Executio
 é apenas metadado de auditoria; isoladamente não autoriza. Quando fornecido junto do
 contexto, deve corresponder à mesma identidade técnica.
 
-Não foi implementado M2M OIDC. A configuração OIDC humana atual pressupõe clients
-sem service accounts privilegiadas; um JWT machine-to-machine futuro exige classificação
-confiável no servidor e política própria (#39), nunca promoção automática por roles,
+Não foi implementado M2M OIDC. A [governança M04.06](identity-governance.md) exige
+azp assinado do cliente interativo configurado, sem service accounts ou token exchange
+para impersonação; um JWT machine-to-machine futuro exige classificação
+confiável no servidor e política própria, nunca promoção automática por roles,
 `source/process`, prefixos arbitrários do subject ou payload. HumanContext(TechnicalContext)
 é recusado. Não há novos segredos, tokens ou infraestrutura de credenciais.
 

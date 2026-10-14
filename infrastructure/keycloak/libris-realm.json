@@ -2,6 +2,8 @@
   "realm": "libris",
   "enabled": true,
   "registrationAllowed": false,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": false,
   "roles": {
     "client": {
       "libris-api": [

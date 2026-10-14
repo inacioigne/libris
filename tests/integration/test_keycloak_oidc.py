@@ -48,3 +48,18 @@ def test_real_keycloak_code_pkce_and_resource_server() -> None:
     # The harness emits only fixed, sanitized evidence. Never echo stderr or environment.
     assert result.returncode == 0, result.stdout
     print(result.stdout, end="")
+
+
+@pytest.mark.keycloak
+def test_real_keycloak_governance() -> None:
+    if os.environ.get("TEST_KEYCLOAK_GOVERNANCE") != "1":
+        pytest.skip("governance requires a newly created disposable Keycloak")
+    result = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("keycloak_governance_harness.py"))],
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout
+    print(result.stdout, end="")

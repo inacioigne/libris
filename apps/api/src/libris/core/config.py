@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     oidc_http_timeout_seconds: float = Field(default=5, gt=0, le=60)
     oidc_role_source: Literal["client", "realm"] = "client"
     oidc_role_client: str = "libris-api"
+    oidc_human_client_id: str = "libris-web"
     oidc_access_token_claim: str = "typ"
     oidc_access_token_value: str = "Bearer"
 
@@ -56,6 +57,7 @@ class Settings(BaseSettings):
         for value in (
             self.oidc_audience,
             self.oidc_role_client,
+            self.oidc_human_client_id,
             self.oidc_access_token_claim,
             self.oidc_access_token_value,
         ):

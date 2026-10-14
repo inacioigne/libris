@@ -5,6 +5,11 @@ A implementação vigente de autorização backend é a **M04.05 / #38**, descri
 [relatório próprio](identity-m04-05-verification.md). As tabelas datadas abaixo
 preservam o diagnóstico das entregas anteriores, sem representar enforcement atual.
 
+A [governança M04.06 / #39](identity-governance.md) define concessão/revogação,
+aprovação e revisão de papéis; o boundary humano exige o cliente interativo em azp
+assinado. M2M externo é recusado, TechnicalContext continua interno. Não há
+isolamento institucional implementado nem concessão multiunidade implícita.
+
 Data e checkout: [baseline de 2026-10-13](security-baseline.md).
 Esta matriz consolida o uso das permissões existentes. Requisitos de rotas futuras
 não são enforcement já implementado. O código do enum/mapa é a fonte de concessões;

@@ -26,7 +26,7 @@ from libris.modules.identity.infrastructure.role_mapper import (
     map_permissions,
 )
 
-ISSUER = "http://keycloak.localhost:8081/realms/libris"
+ISSUER = os.environ.get("TEST_KEYCLOAK_ISSUER", "http://keycloak.localhost:8081/realms/libris")
 CALLBACK = "http://localhost:3000/oidc/callback"
 
 
