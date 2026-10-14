@@ -238,7 +238,9 @@ class EditorialService:
                     self.authorization.require(
                         context=context,
                         operation=candidate,
-                        resource=ResourceContext(ResourceKind.BIBLIOGRAPHIC),
+                        resource=ResourceContext(
+                            ResourceKind.BIBLIOGRAPHIC, resource_id=identifier
+                        ),
                     )
                     break
                 except PermissionDenied:
@@ -258,7 +260,9 @@ class EditorialService:
                 self.authorization.require(
                     context=context,
                     operation=Operation(f"editorial.{operation.value}"),
-                    resource=ResourceContext(ResourceKind.BIBLIOGRAPHIC, record.source(scope)),
+                    resource=ResourceContext(
+                        ResourceKind.BIBLIOGRAPHIC, record.source(scope), resource_id=identifier
+                    ),
                 )
             except PermissionDenied as error:
                 raise EditorialPermissionDenied() from error

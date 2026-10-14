@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
+from uuid import UUID
 
 from libris.modules.identity.domain.permissions import Permission as P
 
@@ -107,3 +108,4 @@ class ResourceContext:
     state: str | None = None
     public_revision: int | None = None
     selected_revision: int | None = None
+    resource_id: UUID | None = None

@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { trustedUrl } from "./auth/config";
 
@@ -26,10 +26,12 @@ export function contentSecurityPolicy(nonce: string, development: boolean, https
   ].join("; ");
 }
 export function secureProxy(request: NextRequest, env: Readonly<Record<string, string | undefined>> = process.env): NextResponse {
+  const correlation = randomUUID();
   let policy: HttpPolicy;
   try { policy = httpPolicy(env); }
   catch {
     const failed = new NextResponse(null, { status: 503 });
+    failed.headers.set("X-Request-ID", correlation);
     failed.headers.set("Cache-Control", "no-store, private");
     failed.headers.set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
     failed.headers.set("X-Content-Type-Options", "nosniff");
@@ -43,9 +45,11 @@ export function secureProxy(request: NextRequest, env: Readonly<Record<string, s
   const csp = contentSecurityPolicy(nonce, !policy.production && env.NODE_ENV === "development", policy.production, policy.providerOrigin);
   const headers = new Headers(request.headers);
   // Replace client-supplied nonce/CSP before SSR. Next extracts this nonce for its scripts.
+  headers.set("x-request-id", correlation);
   headers.set("x-nonce", nonce);
   headers.set("Content-Security-Policy", csp);
   const response = NextResponse.next({ request: { headers } });
+  response.headers.set("X-Request-ID", correlation);
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", request.nextUrl.pathname.startsWith("/oidc/") ? "no-referrer" : "same-origin");

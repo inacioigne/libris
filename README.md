@@ -110,6 +110,12 @@ Ver [ADR 0028](docs/decisions/0028-editorial-transactions.md) e
 Não há APIs CRUD públicas ou homologação institucional.
 
 
+A M04.08 acrescenta [eventos estruturados de segurança](docs/architecture/security-audit.md)
+na API/BFF, com ator confiável, correlação e privacidade, separados da auditoria M03.
+Emissão por logs não garante armazenamento durável; retenção/acesso operacional
+seguem contrato próprio. Ver [evidências locais](docs/architecture/security-audit-m04-08-verification.md)
+e [ADR 0035](docs/decisions/0035-security-audit-emission.md).
+
 ## Estrutura
 
 ```text

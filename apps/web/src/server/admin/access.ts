@@ -1,4 +1,6 @@
 import "server-only";
+import { headers } from "next/headers";
+import { currentCorrelation, SecurityAudit, withCorrelation } from "../security-audit";
 import type { Identity, IdentityResult } from "../auth/service";
 import { satisfiesPermissions, shellRequirement, type PermissionRequirement } from "./navigation";
 
@@ -27,10 +29,23 @@ export async function guardAdminContent<T>(
   renderAuthorized: (access: Extract<AdminAccess, { status: "authorized" }>) => T | Promise<T>,
   renderBlocked: (access: Exclude<AdminAccess, { status: "authorized" }>) => T | Promise<T>,
   requirement: PermissionRequirement = shellRequirement,
+  audit: SecurityAudit = new SecurityAudit(),
 ): Promise<T> {
+  let correlation: string | null = currentCorrelation();
+  try { correlation = (await headers()).get("x-request-id"); } catch { /* Internal callers have no HTTP context. */ }
+  return withCorrelation(correlation, async () => {
   let result: IdentityResult;
   try { result = await resolveIdentity(); }
   catch { result = { status: "unavailable" }; }
   const access = evaluateAdminAccess(result, requirement);
+  if (access.status !== "authorized") {
+    const actor = result.status === "authenticated" && /^oidc:sha256:[0-9a-f]{64}$/.test(result.identity.actor_id)
+      ? result.identity.actor_id : null;
+    audit.record("access.administrative_denied", "admin.access",
+      access.status === "service_unavailable" ? "unavailable" : "denied",
+      access.status === "access_denied" ? "insufficient_permissions" : access.status === "service_unavailable"
+        ? "provider_unavailable" : access.status === "session_expired" ? "session_expired" : "login_required", actor);
+  }
   return access.status === "authorized" ? renderAuthorized(access) : renderBlocked(access);
+  });
 }

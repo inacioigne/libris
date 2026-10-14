@@ -6,6 +6,7 @@ trusted composition roots may construct them; never deserialize request fields.
 
 import re
 from dataclasses import dataclass
+from uuid import UUID
 
 from libris.modules.identity.domain.authorization import (
     POLICIES,
@@ -16,6 +17,20 @@ from libris.modules.identity.domain.authorization import (
 from libris.modules.identity.domain.exceptions import PermissionDenied
 from libris.modules.identity.domain.models import AuthenticatedActor, actor_identifier
 from libris.modules.identity.domain.permissions import Permission
+from libris.modules.security_audit.application.emission import (
+    SecuritySink,
+    correlation_id,
+    emit_safely,
+)
+from libris.modules.security_audit.domain.events import (
+    Action,
+    ActorType,
+    EventType,
+    Outcome,
+    Reason,
+    SecurityEvent,
+)
+from libris.modules.security_audit.infrastructure.logging import LoggingSecuritySink
 
 
 @dataclass(frozen=True)
@@ -76,7 +91,81 @@ def execution_context(
 
 
 class AuthorizationGuard:
+    def __init__(self, observer: SecuritySink | None = None) -> None:
+        self.observer = observer if observer is not None else LoggingSecuritySink()
+
     def require(
+        self,
+        *,
+        context: ExecutionContext | None,
+        operation: Operation,
+        resource: ResourceContext,
+    ) -> None:
+        try:
+            self._require(context=context, operation=operation, resource=resource)
+        except PermissionDenied as error:
+            reasons = {
+                "Operação/recurso não autorizado.": Reason.INVALID_OPERATION_RESOURCE,
+                "Projeção não publicada.": Reason.UNPUBLISHED_PROJECTION,
+                "Operação fora do escopo técnico.": Reason.TECHNICAL_SCOPE,
+                "Contexto confiável obrigatório.": Reason.MISSING_CONTEXT,
+                "Permissões insuficientes.": Reason.INSUFFICIENT_PERMISSIONS,
+            }
+            self._observe(
+                context, operation, resource, reasons.get(str(error), Reason.INVALID_CONTEXT)
+            )
+            raise
+        self._observe(context, operation, resource, Reason.NONE)
+
+    def _observe(
+        self,
+        context: ExecutionContext | None,
+        operation: Operation,
+        resource: ResourceContext,
+        reason: Reason,
+    ) -> None:
+        actor_id = None
+        actor_type = ActorType.UNKNOWN
+        if isinstance(context, (HumanContext, TechnicalContext)):
+            try:
+                context.__post_init__()
+            except PermissionDenied:
+                pass
+            else:
+                if isinstance(context, HumanContext):
+                    actor_id, actor_type = context.actor.actor_id, ActorType.HUMAN
+                else:
+                    actor_id, actor_type = context.actor_id, ActorType.TECHNICAL
+        granted = reason == Reason.NONE
+        emit_safely(
+            self.observer,
+            SecurityEvent(
+                event_type=(
+                    EventType.AUTHORIZATION_GRANTED if granted else EventType.AUTHORIZATION_DENIED
+                ),
+                correlation_id=correlation_id(),
+                actor_id=actor_id,
+                actor_type=actor_type,
+                action=operation if isinstance(operation, Operation) else Action.UNKNOWN_OPERATION,
+                outcome=Outcome.SUCCESS if granted else Outcome.DENIED,
+                reason=reason,
+                resource_type=(
+                    resource.kind
+                    if isinstance(resource, ResourceContext)
+                    and isinstance(resource.kind, ResourceKind)
+                    else None
+                ),
+                resource_id=(
+                    resource.resource_id
+                    if isinstance(resource, ResourceContext)
+                    and isinstance(resource.resource_id, UUID)
+                    else None
+                ),
+                component="authorization",
+            ),
+        )
+
+    def _require(
         self,
         *,
         context: ExecutionContext | None,

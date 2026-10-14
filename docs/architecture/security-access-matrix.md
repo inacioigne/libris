@@ -199,3 +199,15 @@ O requisito de autorização backend #38 é implementado tecnicamente nesta entr
 institucional e APIs CRUD M05 continuam escopos futuros. Nenhuma homologação de
 produção/Keycloak/navegador é declarada por esta regressão. Relatórios anteriores
 não foram sobrescritos; nenhum estado/issue remoto foi modificado.
+
+
+## Atualização M04.08 — 2026-10-14
+
+A [auditoria de segurança #41](security-audit.md) emite envelopes JSON fechados
+para autenticação, decisões de autorização, sessões BFF, quotas e negação administrativa.
+Correlação por requisição propaga BFF → API; ator só vem do boundary confiável.
+[ADR 0035](../decisions/0035-security-audit-emission.md) define emissão best effort,
+sem tabela/migração ou alteração semântica da auditoria M03. Retenção/acesso e coleta
+durável dependem do destino operacional; não há expurgo automático nem homologação
+de produção. Resultados desta execução no [relatório separado](security-audit-m04-08-verification.md);
+as tabelas e verificações históricas anteriores permanecem evidências datadas.

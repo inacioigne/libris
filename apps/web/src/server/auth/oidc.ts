@@ -6,7 +6,25 @@ import type { LoginTransaction, Session } from "./store";
 import { randomId } from "./security";
 
 export class ProviderTemporaryError extends Error {}
-export class ProviderRejectedError extends Error {}
+export class ProviderRejectedError extends Error {
+  constructor(readonly auditOutcome: "denied" | "error" = "denied") { super("Provider rejected"); }
+}
+export function providerFailureOutcome(error: unknown): "denied" | "error" | "unavailable" {
+  let cause: unknown = error;
+  for (let depth = 0; depth < 5 && cause instanceof Error; depth++) {
+    if (cause instanceof ProviderTemporaryError) return "unavailable";
+    if (cause instanceof ProviderRejectedError) return cause.auditOutcome;
+    if (cause instanceof oidc.ResponseBodyError || cause instanceof oidc.AuthorizationResponseError) return "denied";
+    if (cause instanceof oidc.ClientError) {
+      if (cause.code === "OAUTH_TIMEOUT" || cause.code === "OAUTH_ABORT") return "error";
+      // Continue into a nested transport failure before classifying a validation error.
+      if (!(cause.cause instanceof Error)) return "denied";
+    }
+    if (cause instanceof TypeError || cause.name === "TimeoutError" || cause.name === "AbortError") return "error";
+    cause = cause.cause;
+  }
+  return error instanceof oidc.ClientError ? "denied" : "error";
+}
 export interface OidcProvider {
   authorize(state: string, nonce: string, verifier: string): Promise<URL>;
   exchange(url: URL, state: string, transaction: LoginTransaction, now: number): Promise<Session>;
@@ -123,7 +141,7 @@ export class OpenIdProvider implements OidcProvider {
         if (cause instanceof ProviderTemporaryError) throw cause;
         cause = cause.cause;
       }
-      throw new ProviderRejectedError();
+      throw new ProviderRejectedError(providerFailureOutcome(error) === "denied" ? "denied" : "error");
     }
   }
   async logout(returnTo: string): Promise<URL | null> {

@@ -4,6 +4,7 @@ import { migrateDatabase } from "./migrations";
 import { Pool } from "pg";
 import { config, json } from "./helpers";
 import { PostgresAuthStore, type Session } from "../src/server/auth/store";
+import { SecurityAudit, serializeSecurityEvent, type SecurityEvent } from "../src/server/security-audit";
 import { AuthService } from "../src/server/auth/service";
 import type { OidcProvider } from "../src/server/auth/oidc";
 import { digest, randomId } from "../src/server/auth/security";
@@ -59,10 +60,13 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
       assert.equal(new Headers(init?.headers).get("Authorization"), "Bearer fresh-secret-access");
       return json({ actor_id: "oidc:sha256:test", roles: [], permissions: [] });
     };
-    const a = new AuthService(cfg, first, provider, Date.now, api), b = new AuthService(cfg, second, provider, Date.now, api);
+    const events: SecurityEvent[] = [];
+    const audit = new SecurityAudit({ emit(event) { events.push(event); } });
+    const a = new AuthService(cfg, first, provider, Date.now, api, audit), b = new AuthService(cfg, second, provider, Date.now, api, audit);
     const results = await Promise.all(Array.from({ length: 10 }, (_, i) => (i % 2 ? a : b).identity(id)));
     assert.ok(results.every((result) => result.status === "authenticated"));
     assert.equal(refreshes, 1);
+    assert.equal(events.filter((event) => event.event_type === "session.refreshed").length, 1);
     const fresh = await second.withSession(id, async (handle) => handle.value);
     assert.equal(fresh?.refreshToken, "rotated-secret-refresh");
     // Rollback does not accidentally commit revocation.
@@ -83,6 +87,12 @@ test("isolated PostgreSQL: explicit migration, encryption, atomic transactions, 
     assert.equal((await a.identity(id)).status, "expired");
     assert.equal((await b.identity(id)).status, "expired");
     await assert.rejects(a.logout(id, session.csrf, "/en"));
+    const confirmedLogout = events.filter((event) => event.event_type === "session.logout" && event.outcome === "success");
+    assert.equal(confirmedLogout.length, 1);
+    assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions WHERE id_hash=$1", [digest(id)])).rows[0].count, "0");
+    const logs = events.map(serializeSecurityEvent).join("\n");
+    for (const secret of [id, session.csrf, session.subject, session.accessToken, session.refreshToken!])
+      assert.ok(!logs.includes(secret));
     // Ciphertext corruption/deleted keys fail closed and remove unusable sessions.
     await first.createSession(id, session);
     await pool.query("UPDATE libris_web.sessions SET payload='corrupt'");

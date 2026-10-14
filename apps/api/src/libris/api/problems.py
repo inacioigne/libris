@@ -106,9 +106,17 @@ class RequestCorrelationMiddleware:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
-        supplied = dict(scope.get("headers", [])).get(b"x-request-id", b"")
+        identifiers = [
+            value for key, value in scope.get("headers", []) if key.lower() == b"x-request-id"
+        ]
+        supplied = identifiers[0] if len(identifiers) == 1 else b""
         try:
-            identifier = str(UUID(supplied.decode("ascii")))
+            if len(supplied) != 36:
+                raise ValueError("Noncanonical correlation")
+            decoded = supplied.decode("ascii")
+            identifier = str(UUID(decoded))
+            if identifier != decoded:
+                raise ValueError("Noncanonical correlation")
         except (ValueError, UnicodeDecodeError):
             identifier = str(uuid4())
         scope.setdefault("state", {})["request_id"] = identifier
@@ -311,8 +319,9 @@ async def handle_request_validation(request: Request, error: Exception) -> JSONR
     )
 
 
-def install_problem_handlers(app: FastAPI) -> None:
-    app.add_middleware(RequestCorrelationMiddleware)
+def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
+    if correlation:
+        app.add_middleware(RequestCorrelationMiddleware)
     for exception in (
         CatalogError,
         PermissionDenied,

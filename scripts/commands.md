@@ -1,0 +1,1 @@
+docker compose run --rm --no-deps api alembic upgrade head

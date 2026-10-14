@@ -1,4 +1,5 @@
 import "server-only";
+import { currentCorrelation, withCorrelation } from "../security-audit";
 import { NextRequest, NextResponse } from "next/server";
 import type { AuthRoute } from "./quotas";
 import type { AuthService } from "./service";
@@ -17,6 +18,7 @@ import {
 } from "./security";
 
 export function privateResponse(response: NextResponse): NextResponse {
+  response.headers.set("X-Request-ID", currentCorrelation());
   response.headers.set("Cache-Control", "no-store, private");
   response.headers.set("Pragma", "no-cache");
   response.headers.set("Referrer-Policy", "no-referrer");
@@ -61,14 +63,18 @@ async function admission(service: AuthService, route: AuthRoute): Promise<NextRe
   try {
     const quota = await service.store.takeQuota(route, service.config.quotas);
     if (!quota.allowed) {
+      service.audit.record("access.quota_exceeded", route, "denied", "quota_exceeded");
       const response = rejected(429);
       response.headers.set("Retry-After", String(quota.retryAfter));
       return response;
     }
-  } catch { return rejected(503); }
+  } catch {
+    service.audit.record("authentication.failed", route, "unavailable", "storage_unavailable");
+    return rejected(503);
+  }
 }
 
-export async function loginHandler(
+async function loginHandlerCorrelated(
   request: NextRequest,
   service: AuthService,
 ): Promise<NextResponse> {
@@ -79,6 +85,7 @@ export async function loginHandler(
     if ([...params.keys()].some((key) => key !== "returnTo")) throw new Error("Invalid form");
     destination = returnPath(params.get("returnTo") ?? "/pt");
   } catch (error) {
+    service.audit.record("authentication.failed", "login", "denied", "invalid_request");
     return rejected(error instanceof PayloadTooLarge ? 413 : 403);
   }
   const limited = await admission(service, "login");
@@ -93,19 +100,23 @@ export async function loginHandler(
     );
     return response;
   } catch {
+    service.audit.record("authentication.failed", "login", "unavailable", "provider_unavailable");
     const target = new URL(destination, service.config.origin);
     target.searchParams.set("auth", "error");
     return privateResponse(NextResponse.redirect(target, 303));
   }
 }
 
-export async function callbackHandler(
+async function callbackHandlerCorrelated(
   request: NextRequest,
   service: AuthService,
 ): Promise<NextResponse> {
   const incoming = new URL(request.url);
   try { boundedCallback(incoming); }
-  catch { return rejected(413); }
+  catch {
+    service.audit.record("authentication.failed", "callback", "denied", "invalid_request");
+    return rejected(413);
+  }
   const limited = await admission(service, "callback");
   if (limited) return limited;
   // Never derive redirect_uri or public origin from untrusted forwarded headers.
@@ -153,10 +164,11 @@ export async function callbackHandler(
     );
   return privateResponse(response);
 }
-export async function logoutHandler(
+async function logoutHandlerCorrelated(
   request: NextRequest,
   service: AuthService,
 ): Promise<NextResponse> {
+  let attempted = false;
   try {
     assertSameOrigin(request, service.config);
     const params = await form(request);
@@ -164,6 +176,7 @@ export async function logoutHandler(
     const id = uniqueCookie(request.headers, sessionCookie(service.config)) ?? "";
     const limited = await admission(service, "logout");
     if (limited) return limited;
+    attempted = true;
     const target = await service.logout(
       id,
       params.get("csrf") ?? "",
@@ -177,6 +190,19 @@ export async function logoutHandler(
     );
     return response;
   } catch (error) {
+    if (!attempted) service.audit.record("session.logout", "logout", "denied", "invalid_request");
     return rejected(error instanceof PayloadTooLarge ? 413 : 403);
   }
+}
+
+export function loginHandler(request: NextRequest, service: AuthService): Promise<NextResponse> {
+  return withCorrelation(request.headers.get("x-request-id"), () => loginHandlerCorrelated(request, service));
+}
+
+export function callbackHandler(request: NextRequest, service: AuthService): Promise<NextResponse> {
+  return withCorrelation(request.headers.get("x-request-id"), () => callbackHandlerCorrelated(request, service));
+}
+
+export function logoutHandler(request: NextRequest, service: AuthService): Promise<NextResponse> {
+  return withCorrelation(request.headers.get("x-request-id"), () => logoutHandlerCorrelated(request, service));
 }

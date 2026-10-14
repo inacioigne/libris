@@ -30,6 +30,7 @@ class OIDCValidator:
         self._keys: list[dict[str, object]] = []
         self._expires = 0.0
         self._retry_after = 0.0
+        self._provider_unavailable = False
         self._jwks_uri: str | None = None
         self._lock = asyncio.Lock()
 
@@ -60,6 +61,8 @@ class OIDCValidator:
     async def _refresh(self) -> None:
         now = self.clock()
         if now < self._retry_after:
+            if self._provider_unavailable:
+                raise ProviderUnavailable()
             raise AuthenticationError()
         self._retry_after = now + self.settings.oidc_jwks_refresh_interval
         if self._jwks_uri is None:
@@ -120,7 +123,12 @@ class OIDCValidator:
         async with self._lock:
             key = self._matching_key(kid, algorithm)
             if self.clock() >= self._expires or key is None:
-                await self._refresh()
+                try:
+                    await self._refresh()
+                except ProviderUnavailable:
+                    self._provider_unavailable = True
+                    raise
+                self._provider_unavailable = False
                 key = self._matching_key(kid, algorithm)
             if key is None:
                 raise AuthenticationError()

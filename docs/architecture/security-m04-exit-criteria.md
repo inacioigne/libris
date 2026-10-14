@@ -134,3 +134,15 @@ WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
 Resultados, falhas corrigidas e limites no [relatório próprio](http-security-m04-07-verification.md).
 As evidências/tabelas históricas acima não foram reclassificadas como homologação
 atual; carga, TLS público, operação institucional e pentest continuam pendentes.
+
+
+## Atualização M04.08 — 2026-10-14
+
+A [auditoria de segurança #41](security-audit.md) emite envelopes JSON fechados
+para autenticação, decisões de autorização, sessões BFF, quotas e negação administrativa.
+Correlação por requisição propaga BFF → API; ator só vem do boundary confiável.
+[ADR 0035](../decisions/0035-security-audit-emission.md) define emissão best effort,
+sem tabela/migração ou alteração semântica da auditoria M03. Retenção/acesso e coleta
+durável dependem do destino operacional; não há expurgo automático nem homologação
+de produção. Resultados desta execução no [relatório separado](security-audit-m04-08-verification.md);
+as tabelas e verificações históricas anteriores permanecem evidências datadas.

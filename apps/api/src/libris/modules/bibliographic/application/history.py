@@ -64,6 +64,7 @@ class HistoryService:
         actor: AuthenticatedActor | None,
         permission: Permission,
         context: ExecutionContext | None = None,
+        resource_id: UUID | None = None,
     ) -> None:
         operation = {
             Permission.METADATA_REVISION_READ: O.METADATA_REVISION_READ,
@@ -72,7 +73,7 @@ class HistoryService:
         self.authorization.require(
             context=execution_context(context, actor),
             operation=operation,
-            resource=ResourceContext(K.METADATA),
+            resource=ResourceContext(K.METADATA, resource_id=resource_id),
         )
 
     async def read_revision(
@@ -83,7 +84,7 @@ class HistoryService:
         actor: AuthenticatedActor | None = None,
         context: ExecutionContext | None = None,
     ) -> tuple[Revision, Graph]:
-        self._authorize(actor, Permission.METADATA_REVISION_READ, context)
+        self._authorize(actor, Permission.METADATA_REVISION_READ, context, identifier)
         if number is not None and (type(number) is not int or number < 1):
             raise ValueError("Revisão deve ser positiva.")
         async with self.sessions() as session:
@@ -99,7 +100,7 @@ class HistoryService:
         limit: int = 100,
         after_number: int = 0,
     ) -> tuple[RevisionHistoryEntry, ...]:
-        self._authorize(actor, Permission.METADATA_REVISION_READ, context)
+        self._authorize(actor, Permission.METADATA_REVISION_READ, context, identifier)
         async with self.sessions() as session:
             revisions = await self.revisions.list(
                 session,
@@ -125,7 +126,7 @@ class HistoryService:
         limit: int = 100,
         after: tuple[datetime, UUID] | None = None,
     ) -> tuple[AuditEvent, ...]:
-        self._authorize(actor, Permission.METADATA_AUDIT_READ, context)
+        self._authorize(actor, Permission.METADATA_AUDIT_READ, context, identifier)
         async with self.sessions() as session:
             return await self.audit.list(session, identifier, limit=limit, after=after)
 
@@ -137,7 +138,7 @@ class HistoryService:
         actor: AuthenticatedActor | None = None,
         context: ExecutionContext | None = None,
     ) -> AuditEvent:
-        self._authorize(actor, Permission.METADATA_AUDIT_READ, context)
+        self._authorize(actor, Permission.METADATA_AUDIT_READ, context, identifier)
         async with self.sessions() as session:
             return await self.audit.get(session, identifier, event_id)
 
@@ -168,7 +169,7 @@ class HistoryService:
         self.authorization.require(
             context=execution_context(context, actor),
             operation=O.METADATA_EDITORIAL_HISTORY,
-            resource=ResourceContext(K.METADATA),
+            resource=ResourceContext(K.METADATA, resource_id=identifier),
         )
         async with self.sessions() as session, session.begin():
             await write_gate(session)
