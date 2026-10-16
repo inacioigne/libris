@@ -19,7 +19,7 @@ export async function AuthPanel({
     for (const item of Array.isArray(value) ? value : [value])
       query.append(key, item);
   }
-  const returnTo = `/${locale}${query.size ? `?${query}` : ""}`;
+  const returnTo = `/${locale}/opac${query.size ? `?${query}` : ""}`;
   const feedback =
     searchParams.auth === "cancelled"
       ? t.cancelled
@@ -62,7 +62,7 @@ export async function AuthPanel({
       {result.csrf ? (
         <form action="/oidc/logout" method="post">
           <input type="hidden" name="csrf" value={result.csrf} />
-          <input type="hidden" name="returnTo" value={`/${locale}`} />
+          <input type="hidden" name="returnTo" value={`/${locale}/opac`} />
           <button type="submit" className={buttonClass}>
             {t.logout}
           </button>

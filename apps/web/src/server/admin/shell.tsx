@@ -3,14 +3,6 @@ import type { ReactNode } from "react";
 import { messages, type Locale } from "../../i18n/messages";
 import type { AdminAccess } from "./access";
 import { adminNavigation, type AdminNavigationItem } from "./navigation";
-import { ThemeSelector } from "../../components/ThemeSelector";
-import Image from "next/image";
-import Link from "next/link";
-import { ThemeToggleButton } from "@/components/shared/ThemeToggleButton";
-import { AppHeader } from "@/layout/AppHeader";
-import { AppSidebar } from "@/layout/AppSidebar";
-import { useSidebar } from "@/context/SidebarContext";
-import { Dasboard } from "@/layout/Dasboard";
 
 const actionClass =
   "inline-block rounded-lg border border-teal-800 dark:border-teal-400 bg-white dark:bg-gray-900 px-5 py-3 font-semibold text-teal-900 dark:text-teal-200";
@@ -30,18 +22,8 @@ export function AdminFrame({
       <a href="#content" className="skip-link">
         {t.skip}
       </a>
-      {/* <AppSidebar />
-      <div className="flex min-h-screen flex-col xl:pl-72.5">
-        <AppHeader />
-        <main
-          id="content"
-          tabIndex={-1}
-          className="mx-auto max-w-6xl px-6 pb-20"
-        >
-          {children}
-        </main>
-      </div> */}
-      <Dasboard locale={locale}>{children}</Dasboard>
+
+      <main id="content" tabIndex={-1} className="mx-auto max-w-7xl px-6 py-10">{children}</main>
 
       <footer className="border-t border-slate-200 dark:border-gray-700 px-6 py-8 text-center text-sm text-slate-600 dark:text-gray-400">
         {t.footer}
@@ -54,7 +36,7 @@ function Logout({ locale, csrf }: { locale: Locale; csrf: string }) {
   return (
     <form action="/oidc/logout" method="post">
       <input type="hidden" name="csrf" value={csrf} />
-      <input type="hidden" name="returnTo" value={`/${locale}`} />
+      <input type="hidden" name="returnTo" value={`/${locale}/opac`} />
       <button type="submit" className={actionClass}>
         {messages[locale].logout}
       </button>
@@ -119,7 +101,7 @@ export function AdminAccessState({
             {t.retry}
           </a>
         )}
-        <a href={`/${locale}`} className={actionClass}>
+        <a href={`/${locale}/opac`} className={actionClass}>
           {t.backHome}
         </a>
         {access.csrf && <Logout locale={locale} csrf={access.csrf} />}

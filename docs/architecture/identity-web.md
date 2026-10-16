@@ -143,12 +143,12 @@ Proxy deve preservar Host público e encaminhar Origin do navegador; não substi
 Host por origem interna nem confiar em X-Forwarded-* arbitrários.
 Callback é GET limitado por state/binding/nonce/PKCE e uso único.
 
-A M04.04 restringe retorno a /pt, /en, /pt/admin e /en/admin canônicos,
+O retorno é restrito a /pt, /en, /pt/opac, /en/opac, /pt/admin e /en/admin canônicos,
 incluindo query normal; outros caminhos são rejeitados.
 Rejeita destino absoluto/protocol-relative, backslashes, whitespace/controles,
 fragmentos, dot segments, separadores codificados e dupla codificação.
 Erro/cancelamento após consumo válido mantém destino/idioma confiáveis;
-sem transação confiável usa /pt com erro genérico.
+sem transação confiável usa /pt/opac com erro genérico.
 Cabeçalhos de autenticação: Cache-Control=no-store, private, Pragma=no-cache,
 Referrer-Policy=no-referrer. Páginas autenticadas são dinâmicas sem cache público.
 Não configurar proxy para registrar query/cookies/Bearer em /oidc/*: códigos,
@@ -215,7 +215,7 @@ política do host; a M04.02 documenta a diferença ::1/publicação 127.0.0.1.
    Client público libris-web: Code, PKCE S256, basic/roles/profile, sem implicit
    ou password grant. Client libris-api é audiência do access token, não ID token.
 2. Registrar callback exato http://localhost:3000/oidc/callback e post-logout exatos
-   http://localhost:3000/pt e /en. JSON novo já traz post.logout.redirect.uris;
+   http://localhost:3000/pt, /en, /pt/opac e /en/opac. JSON novo já traz post.logout.redirect.uris;
    realm persistido exige atualização administrativa, import não sobrescreve.
 3. Criar somente no provedor isolado usuário temporário e senha aleatória;
    atribuir client roles libris-api explicitamente; nenhum usuário/senha no Git.
@@ -296,7 +296,7 @@ Para esse exemplo, iniciar container Keycloak novo sem volumes persistentes, dat
 em tmpfs, porta publicada 127.0.0.1:55464 → 8081 e KC_HOSTNAME com a origem acima.
 Derivar realm de `infrastructure/keycloak/libris-realm.json` em arquivo temporário
 sem usuários: registrar callback http://127.0.0.1:55465/oidc/callback,
-webOrigins=http://127.0.0.1:55465 e post.logout.redirect.uris com /pt##/en.
+webOrigins=http://127.0.0.1:55465 e post.logout.redirect.uris com /pt##/en##/pt/opac##/en/opac.
 Credenciais bootstrap aleatórias via --env-file privado (modo 0600).
 O harness inicia/encerra Next e FastAPI em processos próprios; API usa porta
 efêmera e issuer idêntico ao BFF/provedor. Cookies do provedor ficam somente em
@@ -331,3 +331,22 @@ sem tabela/migração ou alteração semântica da auditoria M03. Retenção/ace
 durável dependem do destino operacional; não há expurgo automático nem homologação
 de produção. Resultados desta execução no [relatório separado](security-audit-m04-08-verification.md);
 as tabelas e verificações históricas anteriores permanecem evidências datadas.
+
+
+## Página inicial OPAC — 2026-10-15
+
+A página inicial usa `/pt/opac` e `/en/opac`. `/` encaminha para `/pt/opac`;
+`/pt` e `/en` permanecem compatíveis e encaminham ao OPAC conservando todos os
+parâmetros, inclusive repetidos e feedback de autenticação. Login iniciado no OPAC
+retorna ao OPAC; login administrativo continua retornando a `/[locale]/admin`.
+Os formulários de logout e os destinos padrão usam o OPAC.
+
+O RP-Initiated Logout iniciado no OPAC envia diretamente `/pt/opac` ou
+`/en/opac` em `post_logout_redirect_uri`. O JSON de import registra ambas as URIs,
+preservando também `/pt` e `/en` para compatibilidade. Em realms já importados,
+adicionar as duas URIs exatas em `libris-web` → configurações de logout;
+o import de startup não atualiza clientes persistidos. Conservar outros atributos
+e URIs já cadastrados. Falha do provedor mantém o fallback local validado.
+PKCE, state, nonce, cookies, CSRF e autorização permanecem nos mesmos serviços.
+O layout compartilhado de idioma fornece HTML, tema e sidebar às duas áreas;
+somente o ramo OPAC recebe seu cabeçalho público.

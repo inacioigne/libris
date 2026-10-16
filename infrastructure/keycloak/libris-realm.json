@@ -53,7 +53,7 @@
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:3000/pt##http://localhost:3000/en"
+        "post.logout.redirect.uris": "http://localhost:3000/pt##http://localhost:3000/en##http://localhost:3000/pt/opac##http://localhost:3000/en/opac"
       },
       "fullScopeAllowed": true,
       "defaultClientScopes": [

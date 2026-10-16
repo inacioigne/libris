@@ -203,7 +203,7 @@ export function AppSidebar({ locale }: { locale: Locale }) {
           !isExpanded && !isHovered ? "xl:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        <Link href={`/${locale}/opac`}>
           <div className="text-3xl font-bold tracking-tight dark:text-gray-100">
             libris
             <span className="text-teal-700 dark:text-teal-300">.</span>

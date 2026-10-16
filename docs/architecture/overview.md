@@ -35,7 +35,8 @@ serviços de infraestrutura. Um único backend controla transações e módulos.
 - `apps/api/src/libris/modules`: núcleo bibliográfico experimental e módulo inicial de identidade OIDC; demais domínios futuros.
 - `apps/api/migrations`: ambiente Alembic assíncrono e migrações experimentais 0001–0004 para semântica, ator, auditoria e estados editoriais.
 - `apps/web/src/server/auth`: BFF OIDC/sessões PostgreSQL isoladas; [fluxo e limites](identity-web.md).
-- `apps/web/src/app`: App Router e páginas `/pt`, `/en`; `/` redireciona para `/pt`.
+- `apps/web/src/app`: App Router e páginas `/pt/opac`, `/en/opac`; `/` redireciona para `/pt/opac`.
+  As entradas `/pt` e `/en` encaminham ao OPAC preservando parâmetros de consulta.
 - `apps/web/src/i18n`: dicionários tipados; internacionalização explícita por URL.
 - `packages/shared`: reservado para contratos OpenAPI e vocabulários compartilhados.
 - `tests/api`: testes da API, executados pela configuração de `apps/api`.

@@ -22,7 +22,7 @@ export type IdentityResult =
       csrf?: string;
     };
 export class CallbackRejected extends Error {
-  constructor(readonly returnTo = "/pt", readonly auditReason: Reason = "callback_rejected", readonly auditOutcome: Outcome = "denied") {
+  constructor(readonly returnTo = "/pt/opac", readonly auditReason: Reason = "callback_rejected", readonly auditOutcome: Outcome = "denied") {
     super("Callback rejected");
   }
 }

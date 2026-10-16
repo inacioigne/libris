@@ -1,9 +1,10 @@
 "use client";
 import { ThemeToggleButton } from "@/components/shared/ThemeToggleButton";
 import { useSidebar } from "@/context/SidebarContext";
-import Link from "next/dist/client/link";
+import Link from "next/link";
+import type { Locale } from "@/i18n/messages";
 
-export function AppHeader() {
+export function AppHeader({ locale }: { locale: Locale }) {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
@@ -60,7 +61,7 @@ export function AppHeader() {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/" className="xl:hidden"
+          <Link href={`/${locale}/opac`} className="xl:hidden"
           >
             <div className="text-3xl font-bold tracking-tight">
               libris
@@ -102,14 +103,8 @@ export function AppHeader() {
             </form>
           </div>
 
-          {/* <ThemeSelector locale={locale} /> */}
         </div>
-        <div
-        // className={cn(
-        //   "flex w-full items-center justify-between gap-4 px-5 py-4 shadow-theme-md xl:flex xl:justify-end xl:px-0 xl:shadow-none",
-        //   isApplicationMenuOpen ? "flex" : "hidden",
-        // )}
-        >
+        <div>
           <div className="flex items-center gap-2 2xsm:gap-3">
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />

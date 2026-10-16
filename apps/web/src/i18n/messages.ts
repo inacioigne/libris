@@ -109,6 +109,7 @@ export const messages = {
     adminApiDenied:
       "This session could not be authorized to access the administrative area.",
     backHome: "Return to the home page",
+    authority: "Authority",
     retry: "Try again",
 
     authTitle: "Libris access",

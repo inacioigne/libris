@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Dasboard } from "@/layout/Dasboard";
 import { notFound } from "next/navigation";
 import { isLocale, messages } from "@/i18n/messages";
 import { requestIdentity } from "@/server/auth/request";
@@ -27,7 +28,7 @@ export default async function AdminPage({
 
   const content = await guardAdminContent<ReactNode>(
     requestIdentity,
-    (access) => <AdminShell locale={locale} access={access} />,
+    (access) => <Dasboard locale={locale}><AdminShell locale={locale} access={access} /></Dasboard>,
     (access) => (
       <AdminAccessState locale={locale} access={access} feedback={feedback} />
     ),

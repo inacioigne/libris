@@ -78,12 +78,12 @@ async function loginHandlerCorrelated(
   request: NextRequest,
   service: AuthService,
 ): Promise<NextResponse> {
-  let destination = "/pt";
+  let destination = "/pt/opac";
   try {
     assertSameOrigin(request, service.config);
     const params = await form(request);
     if ([...params.keys()].some((key) => key !== "returnTo")) throw new Error("Invalid form");
-    destination = returnPath(params.get("returnTo") ?? "/pt");
+    destination = returnPath(params.get("returnTo") ?? "/pt/opac");
   } catch (error) {
     service.audit.record("authentication.failed", "login", "denied", "invalid_request");
     return rejected(error instanceof PayloadTooLarge ? 413 : 403);
@@ -146,7 +146,7 @@ async function callbackHandlerCorrelated(
     const target = new URL(
       error instanceof LoginCancelled || error instanceof CallbackRejected
         ? error.returnTo
-        : "/pt",
+        : "/pt/opac",
       service.config.origin,
     );
     // Recover locale/destination only from trusted, consumed transaction on cancellation.
@@ -180,7 +180,7 @@ async function logoutHandlerCorrelated(
     const target = await service.logout(
       id,
       params.get("csrf") ?? "",
-      params.get("returnTo") ?? "/pt",
+      params.get("returnTo") ?? "/pt/opac",
     );
     const response = privateResponse(NextResponse.redirect(target, 303));
     response.cookies.set(

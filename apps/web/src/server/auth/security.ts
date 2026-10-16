@@ -18,7 +18,7 @@ export function returnPath(value: string): string {
   if (url.origin !== "https://libris.invalid" || url.pathname !== value.split("?")[0]) {
     throw new Error("Invalid return destination");
   }
-  if (!/^\/(pt|en)(?:\/admin)?$/.test(url.pathname)) throw new Error("Invalid return destination");
+  if (!/^\/(pt|en)(?:\/(?:admin|opac))?$/.test(url.pathname)) throw new Error("Invalid return destination");
   return value;
 }
 export function assertSameOrigin(request: Request, config: AuthConfig): void {

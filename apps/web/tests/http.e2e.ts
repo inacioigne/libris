@@ -108,12 +108,19 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     await migrateDatabase(process.env.TEST_WEB_HTTP_DATABASE_URL!);
     let ready = false;
     for (let attempt = 0; attempt < 150; attempt++) {
-      try { if ((await fetchWeb("/en")).ok) { ready = true; break; } } catch { /* startup */ }
+      try { if ((await fetchWeb("/en/opac")).ok) { ready = true; break; } } catch { /* startup */ }
       if (web.exitCode !== null) break;
       await delay(100);
     }
     assert.ok(ready, "Next server failed to start");
-    const anonymousResponse = await fetchWeb("/en");
+    for (const [path, target] of [["/", "/pt/opac"], ["/pt", "/pt/opac"], ["/en?auth=cancelled&tag=one&tag=two", "/en/opac?auth=cancelled&tag=one&tag=two"]]) {
+      const response = await fetchWeb(path);
+      assert.equal(response.status, 307);
+      assert.equal(new URL(response.headers.get("location")!, origin).href, origin + target);
+    }
+    assert.equal((await fetchWeb("/fr")).status, 404);
+    assert.equal((await fetchWeb("/fr/opac")).status, 404);
+    const anonymousResponse = await fetchWeb("/en/opac");
     const csp = anonymousResponse.headers.get("Content-Security-Policy")!;
     assert.doesNotMatch(csp, /unsafe-inline|unsafe-eval|upgrade-insecure-requests/);
     attackPolicy = csp;
@@ -126,7 +133,7 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     const scripts = [...anonymous.matchAll(/<script\b([^>]*)>/g)];
     assert.ok(scripts.length > 0);
     for (const script of scripts) assert.ok(script[1].includes(`nonce="${nonce}"`), "Every SSR/hydration script must carry the response nonce");
-    const nextPage = await fetchWeb("/pt");
+    const nextPage = await fetchWeb("/pt/opac");
     assert.notEqual(nextPage.headers.get("Content-Security-Policy"), csp);
     const asset = anonymous.match(/<script[^>]+src="([^"]+)"/)?.[1];
     assert.ok(asset);
@@ -176,12 +183,12 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     assert.ok(session);
     assert.ok(sessionResponse.headers.get("set-cookie")?.includes("HttpOnly"));
     assert.equal(sessionResponse.headers.get("Cache-Control"), "no-store, private");
-    const authenticated = await fetchWeb("/en", { headers: { Cookie: session } });
+    const authenticated = await fetchWeb("/en/opac", { headers: { Cookie: session } });
     assert.match(authenticated.headers.get("Cache-Control")!, /no-store/);
     const html = await authenticated.text();
     assert.match(html, /Authenticated session/); assert.match(html, /oidc:sha256:http/);
     assert.doesNotMatch(html, /http-access-secret|http-refresh-secret/);
-    assert.equal((await fetchWeb(callback.pathname + callback.search, { headers: { Cookie: binding } })).headers.get("location"), origin + "/pt?auth=error");
+    assert.equal((await fetchWeb(callback.pathname + callback.search, { headers: { Cookie: binding } })).headers.get("location"), origin + "/pt/opac?auth=error");
     const readOnly = await fetchWeb("/en/admin?permissions=system:admin", { headers: { Cookie: session, "X-Permissions": "system:admin" } });
     checkPrivate(readOnly); const deniedHtml = await readOnly.text();
     assert.match(deniedHtml, /Access denied/); assert.match(deniedHtml, /oidc:sha256:http/); blocked(deniedHtml);
@@ -224,7 +231,7 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     apiStatus = 200;
     const csrf = html.match(/name="csrf" value="([^"]+)"/)?.[1];
     assert.ok(csrf);
-    const logoutForm = new URLSearchParams({ csrf, returnTo: "/en" }).toString();
+    const logoutForm = new URLSearchParams({ csrf, returnTo: "/en/opac" }).toString();
     const csrfRejected = await fetchWeb("/oidc/logout", { method: "POST", headers: { Origin: "https://evil.invalid",
       Cookie: session, "Content-Type": "application/x-www-form-urlencoded" }, body: logoutForm });
     assert.equal(csrfRejected.status, 403);
@@ -233,14 +240,15 @@ test("built Next.js HTTP BFF + signed mock OIDC + isolated PostgreSQL; HTML and 
     // Force access expiry by provider TTL in a new flow is covered by deterministic
     // service tests; this HTTP test exercises the production routes/SSR.
     apiStatus = 403;
-    assert.match(await (await fetchWeb("/en", { headers: { Cookie: session } })).text(), /insufficient permissions/);
+    assert.match(await (await fetchWeb("/en/opac", { headers: { Cookie: session } })).text(), /insufficient permissions/);
     apiStatus = 200;
     const logout = await fetchWeb("/oidc/logout", { method: "POST", headers: { Origin: origin, Cookie: session,
       "Content-Type": "application/x-www-form-urlencoded" }, body: logoutForm });
     assert.equal(logout.status, 303);
+    assert.equal(new URL(logout.headers.get("location")!).searchParams.get("post_logout_redirect_uri"), origin + "/en/opac");
     assert.ok(!logout.headers.get("location")!.includes("secret"));
     assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
-    assert.match(await (await fetchWeb("/en", { headers: { Cookie: session } })).text(), /session expired/);
+    assert.match(await (await fetchWeb("/en/opac", { headers: { Cookie: session } })).text(), /session expired/);
     const expiredAdmin = await fetchWeb("/en/admin", { headers: { Cookie: session } }); checkPrivate(expiredAdmin);
     const expiredHtml = await expiredAdmin.text(); assert.match(expiredHtml, /Session expired/); blocked(expiredHtml);
     // Complete both admin login return flows through built production routes.

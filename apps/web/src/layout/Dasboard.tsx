@@ -1,7 +1,7 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
-import { AppSidebar } from "./AppSidebar";
-import { AppHeader } from "./AppHeader";
+import { AppSidebar } from "./admin/AppSidebar";
+import { AppHeader } from "./admin/AppHeader";
 import { Locale } from "@/i18n/messages";
 
 export function Dasboard({ locale, children }: { locale: Locale; children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export function Dasboard({ locale, children }: { locale: Locale; children: React
       <div
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >
-        <AppHeader />
+        <AppHeader locale={locale} />
         {children}
       </div>
     </div>

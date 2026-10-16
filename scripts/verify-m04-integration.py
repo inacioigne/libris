@@ -157,7 +157,7 @@ def main() -> int:
                     client["redirectUris"].append(origin + "/oidc/callback")
                     client["webOrigins"].append(origin)
                     client["attributes"]["post.logout.redirect.uris"] += (
-                        f"##{origin}/pt##{origin}/en"
+                        f"##{origin}/pt##{origin}/en##{origin}/pt/opac##{origin}/en/opac"
                     )
             # Public realm configuration contains no accounts or credentials.
             with tempfile.TemporaryDirectory(prefix=name + "-realm-") as directory:

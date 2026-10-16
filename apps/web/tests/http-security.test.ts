@@ -103,7 +103,7 @@ test("ambiguous binding/session cookies fail closed and cannot consume another t
   const response = await callbackHandler(new NextRequest(url, { headers: {
     Cookie: `${name}=${login.browser}; ${name}=${randomId()}`,
   } }), f.service);
-  assert.equal(response.headers.get("location"), f.cfg.origin + "/pt?auth=error");
+  assert.equal(response.headers.get("location"), f.cfg.origin + "/pt/opac?auth=error");
   assert.equal(f.store.transactions.size, 1); assert.equal(f.store.sessions.size, 0);
   assert.throws(() => uniqueCookie(new Headers({ Cookie: "libris-session=a; libris-session=b" }), "libris-session"));
 });

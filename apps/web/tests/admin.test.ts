@@ -119,7 +119,7 @@ for (const locale of ["pt", "en"] as const) {
     callback.searchParams.set("state", state); callback.searchParams.set("code", "test");
     const headers = { Cookie: `${binding.name}=${binding.value}` };
     assert.equal((await callbackHandler(new NextRequest(callback, { headers }), service)).headers.get("location"), cfg.origin + destination);
-    assert.equal((await callbackHandler(new NextRequest(callback, { headers }), service)).headers.get("location"), cfg.origin + "/pt?auth=error");
+    assert.equal((await callbackHandler(new NextRequest(callback, { headers }), service)).headers.get("location"), cfg.origin + "/pt/opac?auth=error");
     const second = await service.start(destination);
     callback.searchParams.set("state", second.state);
     callback.searchParams.set("returnTo", "https://evil.invalid");

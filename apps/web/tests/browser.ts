@@ -104,7 +104,7 @@ export async function probeBrowser(origin: string, attackUrl: string, real?: {
     if (real) {
       // All credentials stay in this disposable browser/profile and CDP memory.
       await browser.send("Page.navigate", { url: origin + "/oidc/callback?state=invalid&code=synthetic" });
-      await until(browser, "location.pathname === '/pt' && document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
+      await until(browser, "location.pathname === '/pt/opac' && document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
       await browser.send("Page.navigate", { url: origin + "/en/admin" });
       await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
       assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
@@ -146,17 +146,17 @@ export async function probeBrowser(origin: string, attackUrl: string, real?: {
       assert.equal(await browser.evaluate("!!document.querySelector('#capabilities-title')"), false);
       return;
     }
-    await browser.send("Page.navigate", { url: origin + "/en" });
+    await browser.send("Page.navigate", { url: origin + "/en/opac" });
     await until(browser, "document.readyState === 'complete' && !!document.querySelector('form[action=\"/oidc/login\"]')");
     // Wait for React hydration, then a Link must navigate without reloading the document.
-    await until(browser, "!!Object.keys(document.querySelector('a[href=\"/pt\"]')).find(k => k.startsWith('__reactProps'))");
+    await until(browser, "!!Object.keys(document.querySelector('a[href=\"/pt/opac\"]')).find(k => k.startsWith('__reactProps'))");
     assert.deepEqual(await browser.evaluate("window.cspViolations"), []);
-    await browser.evaluate("document.querySelector('a[href=\"/pt\"]').click()");
-    await until(browser, "location.pathname === '/pt' && document.documentElement.lang === 'pt-BR' && document.querySelector('input[name=returnTo]')?.value === '/pt'");
-    assert.equal(await browser.evaluate("performance.getEntriesByType('navigation')[0].name"), origin + "/en");
+    await browser.evaluate("document.querySelector('a[href=\"/pt/opac\"]').click()");
+    await until(browser, "location.pathname === '/pt/opac' && document.documentElement.lang === 'pt-BR' && document.querySelector('input[name=returnTo]')?.value === '/pt/opac'");
+    assert.equal(await browser.evaluate("performance.getEntriesByType('navigation')[0].name"), origin + "/en/opac");
     // Native form -> provider redirect -> callback -> authenticated SSR, with CSP enforced.
     await browser.evaluate("document.querySelector('form[action=\"/oidc/login\"]').requestSubmit()");
-    await until(browser, "location.pathname === '/pt' && document.body.textContent.includes('oidc:sha256:http')");
+    await until(browser, "location.pathname === '/pt/opac' && document.body.textContent.includes('oidc:sha256:http')");
     assert.deepEqual(await browser.evaluate("window.cspViolations"), []);
     assert.equal(await browser.evaluate("document.documentElement.outerHTML.includes('http-access-secret') || document.documentElement.outerHTML.includes('http-refresh-secret')"), false);
     // Session-bound CSRF form and RP redirect remain functional in a real browser.

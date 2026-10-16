@@ -342,3 +342,83 @@ test("bounded HTTP rejects redirects, oversized streaming bodies and aborted req
     await assert.rejects(boundedFetch(origin, { signal: abort.signal }));
   } finally { await new Promise<void>((resolve) => server.close(() => resolve())); }
 });
+
+for (const locale of ["pt", "en"] as const) {
+  test(`OPAC ${locale}: login, callback feedback and logout preserve trusted destinations`, async () => {
+    const f = await fixture();
+    const destination = `/${locale}/opac?view=original&tag=one&tag=two`;
+    assert.equal(returnPath(destination), destination);
+    const login = await loginHandler(post("/oidc/login", new URLSearchParams({ returnTo: destination })), f.service);
+    assert.equal(login.status, 303);
+    const authorization = new URL(login.headers.get("location")!);
+    f.mock.setNonce(authorization.searchParams.get("nonce")!);
+    const state = authorization.searchParams.get("state")!;
+    const binding = login.cookies.get(transactionCookie(state))!;
+    const callback = new URL(f.cfg.redirectUri);
+    callback.searchParams.set("state", state); callback.searchParams.set("code", "test");
+    const accepted = await callbackHandler(new NextRequest(callback, {
+      headers: { Cookie: `${binding.name}=${binding.value}` },
+    }), f.service);
+    assert.equal(accepted.headers.get("location"), f.cfg.origin + destination);
+    const session = accepted.cookies.get(sessionCookie(f.cfg))!;
+    const csrf = f.store.sessions.get(session.value)!.csrf;
+    const cookie = `${session.name}=${session.value}`;
+    const invalid = await logoutHandler(post("/oidc/logout", new URLSearchParams({
+      csrf: randomId(), returnTo: `/${locale}/opac`,
+    }), cookie), f.service);
+    assert.equal(invalid.status, 403);
+    assert.equal(f.store.sessions.size, 1);
+    const logout = await logoutHandler(post("/oidc/logout", new URLSearchParams({
+      csrf, returnTo: `/${locale}/opac`,
+    }), cookie), f.service);
+    assert.equal(logout.status, 303);
+    assert.equal(new URL(logout.headers.get("location")!).searchParams.get("post_logout_redirect_uri"), f.cfg.origin + `/${locale}/opac`);
+    assert.equal(logout.cookies.get(session.name)?.maxAge, 0);
+    assert.equal(f.store.sessions.size, 0);
+
+    for (const cancelled of [true, false]) {
+      const attempt = await f.service.start(destination);
+      const feedback = new URL(f.cfg.redirectUri);
+      feedback.searchParams.set("state", attempt.state);
+      if (cancelled) feedback.searchParams.set("error", "access_denied");
+      // A response without a code fails while preserving the trusted destination.
+      const response = await callbackHandler(new NextRequest(feedback, {
+        headers: { Cookie: `${transactionCookie(attempt.state)}=${attempt.browser}` },
+      }), f.service);
+      const expected = new URL(destination, f.cfg.origin);
+      expected.searchParams.set("auth", cancelled ? "cancelled" : "error");
+      assert.equal(response.headers.get("location"), expected.href);
+    }
+  });
+}
+test("auth defaults and provider failures return to OPAC", async () => {
+  const f = await fixture();
+  const login = await loginHandler(post("/oidc/login", new URLSearchParams()), f.service);
+  const state = new URL(login.headers.get("location")!).searchParams.get("state")!;
+  const binding = login.cookies.get(transactionCookie(state))!;
+  const cancelled = new URL(f.cfg.redirectUri);
+  cancelled.searchParams.set("state", state); cancelled.searchParams.set("error", "access_denied");
+  const response = await callbackHandler(new NextRequest(cancelled, {
+    headers: { Cookie: `${binding.name}=${binding.value}` },
+  }), f.service);
+  assert.equal(response.headers.get("location"), f.cfg.origin + "/pt/opac?auth=cancelled");
+  const invalid = await callbackHandler(new NextRequest(f.cfg.redirectUri), f.service);
+  assert.equal(invalid.headers.get("location"), f.cfg.origin + "/pt/opac?auth=error");
+
+  const { id } = await f.service.callback(f.callback, f.login.browser);
+  const csrf = f.store.sessions.get(id)!.csrf;
+  const offline = new AuthService(f.cfg, f.store, {
+    authorize: async () => { throw new Error("offline"); },
+    exchange: async () => { throw new Error("offline"); },
+    refresh: async () => { throw new Error("offline"); },
+    logout: async () => { throw new Error("offline"); },
+  });
+  const unavailable = await loginHandler(post("/oidc/login", new URLSearchParams({ returnTo: "/en/opac?view=original" })), offline);
+  assert.equal(unavailable.headers.get("location"), f.cfg.origin + "/en/opac?view=original&auth=error");
+  const logout = await logoutHandler(post("/oidc/logout", new URLSearchParams({ csrf }), `${sessionCookie(f.cfg)}=${id}`), offline);
+  assert.equal(logout.headers.get("location"), f.cfg.origin + "/pt/opac");
+  assert.equal(f.store.sessions.size, 0);
+});
+for (const path of ["/en/opac/other", "/en/opac/..", "/en/%6fpac", "/pt/opac%2f", "/pt/opac%252f", "/pt/opac#fragment", "//evil.invalid/en/opac"]) {
+  test(`OPAC rejects unsafe return path: ${path}`, () => assert.throws(() => returnPath(path)));
+}

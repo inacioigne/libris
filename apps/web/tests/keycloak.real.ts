@@ -103,7 +103,7 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     }, stdio: ["ignore", "pipe", "pipe"] });
     web.stdout?.on("data", (data: Buffer) => { logs += data.toString(); });
     web.stderr?.on("data", (data: Buffer) => { logs += data.toString(); });
-    await ready(origin + "/en");
+    await ready(origin + "/en/opac");
     const login = await fetchWeb("/oidc/login", { method: "POST", headers: { Origin: origin },
       body: new URLSearchParams({ returnTo: "/en?view=original" }) });
     assert.equal(login.status, 303);
@@ -129,7 +129,7 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     assert.equal(response.headers.get("location"), origin + "/en?view=original");
     const session = cookies(response).split("; ").find((item) => item.startsWith("libris-session="))!;
     assert.ok(session, "Opaque application session created");
-    const authenticated = await (await fetchWeb("/en", { headers: { Cookie: session } })).text();
+    const authenticated = await (await fetchWeb("/en/opac", { headers: { Cookie: session } })).text();
     assert.match(authenticated, /Authenticated session/);
     assert.match(authenticated, /libris-reader/);
     assert.match(authenticated, /bibliographic:read/);
@@ -138,14 +138,14 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     const csrf = authenticated.match(/name="csrf" value="([^"]+)"/)?.[1];
     assert.ok(csrf);
     assert.equal((await fetchWeb(callback.pathname + callback.search, { headers: { Cookie: cookies(login) } })).headers.get("location"),
-      origin + "/pt?auth=error");
+      origin + "/pt/opac?auth=error");
     // Private test realm has short access lifespan. Wait until the BFF's 30-second
     // refresh margin is reached. No tokens are decoded/exposed by this harness.
     const beforeRow = (await pool.query("SELECT id_hash,payload FROM libris_web.sessions")).rows[0] as { id_hash: string; payload: string };
     const beforeRefresh = beforeRow.payload;
     const beforeTokens = parseSession(cipher.open(beforeRefresh, `session:${beforeRow.id_hash}`));
     await delay(12000);
-    const refreshResponse = await fetchWeb("/en", { headers: { Cookie: session, "X-Request-ID": "untrusted-sentinel" } });
+    const refreshResponse = await fetchWeb("/en/opac", { headers: { Cookie: session, "X-Request-ID": "untrusted-sentinel" } });
     const correlation = refreshResponse.headers.get("x-request-id");
     assert.match(correlation ?? "", /^[0-9a-f-]{36}$/);
     const refreshed = await refreshResponse.text();
@@ -165,15 +165,16 @@ test("real isolated Keycloak -> built Next BFF -> PostgreSQL -> FastAPI; refresh
     assert.ok(afterTokens.accessToken !== beforeTokens.accessToken, "Real provider issued fresh access token");
     assert.ok(!logs.includes(afterTokens.accessToken) && !logs.includes(afterTokens.refreshToken!));
     assert.equal((await fetchWeb("/oidc/logout", { method: "POST", headers: { Origin: "https://evil.invalid", Cookie: session },
-      body: new URLSearchParams({ csrf, returnTo: "/en" }) })).status, 403);
+      body: new URLSearchParams({ csrf, returnTo: "/en/opac" }) })).status, 403);
     const logout = await fetchWeb("/oidc/logout", { method: "POST", headers: { Origin: origin, Cookie: session },
-      body: new URLSearchParams({ csrf, returnTo: "/en" }) });
+      body: new URLSearchParams({ csrf, returnTo: "/en/opac" }) });
     assert.equal(logout.status, 303);
     const logoutUrl = new URL(logout.headers.get("location")!);
     assert.equal(logoutUrl.pathname, "/realms/libris/protocol/openid-connect/logout");
     assert.equal(logoutUrl.searchParams.get("id_token_hint"), null);
+    assert.equal(logoutUrl.searchParams.get("post_logout_redirect_uri"), origin + "/en/opac");
     assert.equal((await pool.query("SELECT count(*) FROM libris_web.sessions")).rows[0].count, "0");
-    assert.match(await (await fetchWeb("/en", { headers: { Cookie: session } })).text(), /session expired/);
+    assert.match(await (await fetchWeb("/en/opac", { headers: { Cookie: session } })).text(), /session expired/);
     const confirmation = await fetch(logoutUrl, { redirect: "manual", headers: { Cookie: cookies(providerResponse) } });
     assert.ok([200, 302, 303].includes(confirmation.status), "RP logout reached provider");
     assert.ok(!logs.includes(accountPassword) && !logs.includes(adminToken));

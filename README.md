@@ -6,7 +6,7 @@ PostgreSQL transacional e Elasticsearch para descoberta futura. A base visual us
 Tailwind e uma primitiva acessível Radix UI; a adoção de shadcn/ui para controles
 complexos está registrada no ADR 0005.
 
-**Implementado:** `/health`, página inicial `/pt` e `/en`, configuração validada,
+**Implementado:** `/health`, página inicial `/pt/opac` e `/en/opac`, configuração validada,
 engine/sessões SQLAlchemy assíncronas, Docker Compose e núcleo semântico experimental
 BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/URI,
 snapshots JSONB, revisões e concorrência otimista. Há migrações Alembic
@@ -168,7 +168,7 @@ docker compose logs -f api web
 
 Acesse:
 
-- Frontend: http://localhost:3000 (redireciona para `/pt`; inglês em `/en`).
+- Frontend: http://localhost:3000 (redireciona para `/pt/opac`; inglês em `/en/opac`).
 - API: http://localhost:8000/health
 - OpenAPI: http://localhost:8000/docs
 - Elasticsearch: http://localhost:9200
