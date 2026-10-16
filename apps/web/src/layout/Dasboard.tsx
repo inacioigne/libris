@@ -3,8 +3,21 @@ import { useSidebar } from "@/context/SidebarContext";
 import { AppSidebar } from "./admin/AppSidebar";
 import { AppHeader } from "./admin/AppHeader";
 import { Locale } from "@/i18n/messages";
+import { ReactNode } from "react";
 
-export function Dasboard({ locale, children }: { locale: Locale; children: React.ReactNode }) {
+type DashboardProps = {
+  locale: Locale;
+  children: ReactNode;
+  userArea: ReactNode;
+};
+
+export function Dasboard(
+  {
+  locale,
+  children,
+  userArea,
+}: DashboardProps
+) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
   const mainContentMargin = isMobileOpen
     ? "ml-0"
@@ -18,7 +31,7 @@ export function Dasboard({ locale, children }: { locale: Locale; children: React
       <div
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >
-        <AppHeader locale={locale} />
+        <AppHeader locale={locale} userArea={userArea} />
         {children}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { IoChevronDown, IoSettingsOutline } from "react-icons/io5";
 import { messages, type Locale } from "@/i18n/messages";
 import type { IdentityResult } from "@/server/auth/service";
 import { Dropdown } from "../shared/Dropdown";
+import Image from "next/image";
 
 export default function UserDropdown({
   locale,
@@ -29,14 +30,20 @@ export default function UserDropdown({
   };
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <button
         onClick={toggleDropdown}
-        className="dropdown-toggle flex items-center text-gray-700 dark:text-gray-400"
+        className="dropdown-toggle flex items-center text-gray-700 dark:text-gray-400 cursor-pointer"
       >
-        <span className="me-3 h-11 w-11 overflow-hidden rounded-full">
-          <img width={44} height={44} src="/example/user.png" alt="User" />
-        </span>
+        {/* <span className="me-3 h-11 w-11 overflow-hidden rounded-full"> */}
+          <Image 
+          src="/example/user.png"  
+          alt={"User"} 
+          width={44}
+          height={44}
+          className="me-3 h-11 shrink-0 overflow-hidden rounded-full object-cover"
+          />
+        {/* </span> */}
         <span className="me-1 block text-theme-sm font-medium">Inácio</span>
         <IoChevronDown
           className={`size-5 text-gray-500 transition-transform duration-200 dark:text-gray-400 ${
@@ -49,9 +56,6 @@ export default function UserDropdown({
           <span className="block text-theme-sm font-medium text-gray-700 dark:text-gray-400">
             Inácio Oliveira
           </span>
-          {/* <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
-          </span> */}
         </div>
         <ul className="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
           <li>

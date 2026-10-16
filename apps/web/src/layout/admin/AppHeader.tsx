@@ -3,8 +3,15 @@ import { ThemeToggleButton } from "@/components/shared/ThemeToggleButton";
 import { useSidebar } from "@/context/SidebarContext";
 import Link from "next/link";
 import type { Locale } from "@/i18n/messages";
+import { ReactNode } from "react";
+// import UserArea from "@/components/header/UserArea";
 
-export function AppHeader({ locale }: { locale: Locale }) {
+type AppHeaderProps = {
+  locale: Locale;
+  userArea: ReactNode;
+};
+
+export function AppHeader({ locale, userArea }: AppHeaderProps) {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
@@ -24,7 +31,6 @@ export function AppHeader({ locale }: { locale: Locale }) {
               isMobileOpen ? "bg-gray-100 dark:bg-white/3" : ""
             }`}
             onClick={handleToggle}
-            // aria-label={t("toggleSidebar")}
           >
             {isMobileOpen ? (
               <svg
@@ -61,8 +67,7 @@ export function AppHeader({ locale }: { locale: Locale }) {
             {/* Cross Icon */}
           </button>
 
-          <Link href={`/${locale}/opac`} className="xl:hidden"
-          >
+          <Link href={`/${locale}/opac`} className="xl:hidden">
             <div className="text-3xl font-bold tracking-tight">
               libris
               <span className="text-teal-700 dark:text-teal-300">.</span>
@@ -90,9 +95,7 @@ export function AppHeader({ locale }: { locale: Locale }) {
                   </svg>
                 </span>
                 <input
-                  // ref={inputRef}
                   type="text"
-                  // placeholder={t("searchPlaceholder")}
                   className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 ps-12 pe-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden xl:w-107.5 dark:border-gray-800 dark:bg-white/3 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />
                 <button className="inset-e-2.5 absolute top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-1.75 py-[4.5px] text-xs tracking-[-0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/3 dark:text-gray-400">
@@ -102,39 +105,36 @@ export function AppHeader({ locale }: { locale: Locale }) {
               </div>
             </form>
           </div>
-
         </div>
-        <div>
-          <div className="flex items-center gap-2 2xsm:gap-3">
-            {/* <!-- Dark Mode Toggler --> */}
+        {/* <div>
+          <div className="flex gap-3.5">
             <ThemeToggleButton />
-            {/* <!-- Dark Mode Toggler --> */}
-
-            {/* <NotificationDropdown /> */}
-
-            {/* <!-- Notification Menu Area --> */}
+            {userArea}
           </div>
-          {/* <!-- User Area --> */}
-          {/* <UserDropdown /> */}
+        </div> */}
+         <div className="flex items-center gap-4 2xsm:gap-3">
+          {/* <nav aria-label={t.languages} className="flex gap-5 text-sm">
+            <Link
+              href="/pt/opac"
+              hrefLang="pt-BR"
+              aria-current={locale === "pt" ? "page" : undefined}
+            >
+              Português
+            </Link>
+            <Link
+              href="/en/opac"
+              hrefLang="en"
+              aria-current={locale === "en" ? "page" : undefined}
+            >
+              English
+            </Link>
+          </nav> */}
+          <div className="cursor-pointer">
+            <ThemeToggleButton />
+          </div>
+           {userArea}
         </div>
       </div>
-
-      {/* <nav aria-label={t.languages} className="flex gap-5 text-sm">
-          <a
-            href="/pt/admin"
-            hrefLang="pt-BR"
-            aria-current={locale === "pt" ? "page" : undefined}
-          >
-            Português
-          </a>
-          <a
-            href="/en/admin"
-            hrefLang="en"
-            aria-current={locale === "en" ? "page" : undefined}
-          >
-            English
-          </a>
-        </nav> */}
     </header>
   );
 }

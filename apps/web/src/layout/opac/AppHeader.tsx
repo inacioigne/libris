@@ -1,10 +1,9 @@
-// "use client";
 import { ThemeToggleButton } from "@/components/shared/ThemeToggleButton";
 import { messages, type Locale } from "@/i18n/messages";
-// import { messages, type Locale } from "../../i18n/messages";
 import Link from "next/link";
 import { requestIdentity } from "@/server/auth/request";
 import UserDropdown from "@/components/header/UserDropdown";
+import UserArea from "@/components/header/UserArea";
 
 export default async function AppHeader({ locale }: { locale: Locale }) {
   const t = messages[locale];
@@ -63,29 +62,25 @@ export default async function AppHeader({ locale }: { locale: Locale }) {
 
         <div className="flex items-center gap-4 2xsm:gap-3">
           <nav aria-label={t.languages} className="flex gap-5 text-sm">
-            <Link href="/pt/opac" hrefLang="pt-BR" aria-current={locale === "pt" ? "page" : undefined}>Português</Link>
-            <Link href="/en/opac" hrefLang="en" aria-current={locale === "en" ? "page" : undefined}>English</Link>
+            <Link
+              href="/pt/opac"
+              hrefLang="pt-BR"
+              aria-current={locale === "pt" ? "page" : undefined}
+            >
+              Português
+            </Link>
+            <Link
+              href="/en/opac"
+              hrefLang="en"
+              aria-current={locale === "en" ? "page" : undefined}
+            >
+              English
+            </Link>
           </nav>
           <div className="cursor-pointer">
             <ThemeToggleButton />
           </div>
-          {result.csrf ? (
-            // <form action="/oidc/logout" method="post">
-            //   <input type="hidden" name="csrf" value={result.csrf} />
-            //   <input type="hidden" name="returnTo" value={`/${locale}`} />
-            //   <button type="submit" className={buttonClass}>
-            //     {t.logout}
-            //   </button>
-            // </form>
-            <UserDropdown locale={locale} result={result} />
-          ) : (
-            <form action="/oidc/login" method="post">
-              <input type="hidden" name="returnTo" value={returnTo} />
-              <button type="submit" className={buttonClass}>
-                {t.login}
-              </button>
-            </form>
-          )}
+          <UserArea locale={locale} />
         </div>
       </div>
     </header>
