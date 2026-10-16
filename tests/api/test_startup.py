@@ -27,7 +27,11 @@ def test_openapi_exposes_health_contract() -> None:
         schema = client.get("/openapi.json").json()
     assert schema["info"]["title"] == "Libris API"
     assert schema["paths"]["/health"]["get"]["responses"]["200"]
-    assert set(schema["paths"]) == {"/health", "/api/v1/identity/me"}
+    assert set(schema["paths"]) == {"/health", "/api/v1/identity/me"} | {
+        f"/api/v1/catalog/{collection}{suffix}"
+        for collection in ("works", "instances", "items", "agents", "subjects")
+        for suffix in ("", "/{id}")
+    }
 
 
 def test_cors_allows_only_configured_origin() -> None:

@@ -3,7 +3,9 @@
 Identificador: **`urn:libris:contract:catalogographic:v1`**. Versão da
 especificação documental: **1.0.0** (M03.05.02 / [issue #31](https://github.com/inacioigne/libris/issues/31)).
 Baseline técnica do checkout; homologação institucional dos perfis pendente.
-Não é uma API de catalogação publicada, um header ou um campo novo dos DTOs.
+A superfície HTTP editorial implementada na #47 é descrita em
+[catalogographic-http.md](catalogographic-http.md); este identificador não é um
+header nem um campo novo dos DTOs.
 `FastAPI.info.version=0.1.0`, `/api/v1`, `bibliographic_contract=1.0` dos perfis e
 `contract_version=1.0` dos diagnósticos/valores são identificadores independentes;
 nenhum deles foi reescrito para 1.0.0.
@@ -27,7 +29,7 @@ fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` são experimen
 | [Serialização](semantic-serialization.md) | Cada campo Read → predicado/classe RDF, contexto, datatypes, idiomas e limites |
 | [Perfis](catalog-profiles.md) / [SHACL](shacl-validation.md) / [shapes](shacl-inventory.md) | Configuração declarativa independente, releases e regras executáveis |
 | [Erros](catalogographic-errors.md) | Diagnósticos, códigos, segurança, serialização e handlers HTTP |
-| [Superfície HTTP M05.01](catalogographic-http.md) | Composição `/api/v1/catalog`, dependências reutilizadas e matriz HTTP futura; sem operações catalográficas registradas na #45 |
+| [Superfície HTTP M05.01](catalogographic-http.md) | POST/GET/PATCH persistentes #47, dependências, precondições e operações futuras |
 | [Valores controlados](controlled-vocabularies.md) / [extensões](semantic-extensions.md) | Contratos aditivos; não acrescentam campos aos DTOs históricos |
 | [Editorial](editorial-lifecycle.md) / [persistência editorial](editorial-persistence.md) / [auditoria](provenance-audit-versioning.md) | Serviços internos, permissões e estado persistente independente |
 | [Política de evolução](../decisions/0029-catalogographic-contract-versioning.md) | Política proposta de governança; SemVer documental e compatibilidade direcional |
@@ -58,14 +60,14 @@ CAS e especificação catalográfica v1 permanecem compatíveis.
 | Serviço interno `read_public` | UUID → (Revision, Graph) ou None | Lê revisão publicada exata; None para ausência de publicação/metadados legados, não presume publicação da corrente |
 | Serviço interno `restore_content` | UUID + source_revision + expected_revision + Provenance + actor autenticado; versão editorial opcional → Revision rN+1 | Permissões metadata_revision:read/create; revalida histórico; conserva origem histórica intacta; registra restored/content; não publica automaticamente |
 | Serviços internos `HistoryService` / `EditorialService` | Histórico/paginação/comparação e transition com expectativas de versão/conteúdo → visões/estado editorial | Autorização explícita; `PostgresEditorialTransactions` controla transação, validação e integridade local na publicação; ver contratos complementares |
-| Endpoints reais | GET `/health`, GET `/api/v1/identity/me` | Somente estes caminhos no OpenAPI de produção; handlers Problem Details/correlação já instalados; sem CRUD/prevalidate/perfis/resolver HTTP |
+| Endpoints reais | GET `/health`, GET `/api/v1/identity/me`; POST/GET/PATCH dos cinco tipos em `/api/v1/catalog` | OpenAPI dos handlers reais; GET editorial autenticado, PATCH If-Match; sem prevalidate/perfis/resolver HTTP |
 | Composição HTTP M05.01 / #45 | APIRouter `/api/v1/catalog` integrado em create_app; acesso à fábrica de sessões do lifespan | Sem endpoints artificiais; identidade/guard/correlação existentes reutilizados; [matriz HTTP e permissões](catalogographic-http.md), implementação de operações nas #46–#51 |
 
 A M05.02 acrescenta os [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md):
 `create_to_graph`, `graph_to_read` e `apply_update`, reutilizando o writer Read existente.
 O PATCH transforma uma cópia do snapshot completo e valida antes de retornar, sem
 apagar propriedades independentes fora do DTO. A projeção Read tem limites explícitos;
-exportação integral continua usando Graph. Não há endpoint/serviço PATCH público.
+exportação integral continua usando Graph. A #47 conecta esses adaptadores ao PATCH editorial autenticado.
 `expected_revision` permanece argumento de `revise`, fora dos DTOs; CAS, transações,
 auditoria e revisão imutável continuam nos serviços atuais. Erros de domínio não têm
 status HTTP intrínseco: os handlers os traduzem somente quando chegam a uma requisição.
@@ -97,8 +99,7 @@ Exemplo inválido verificável: `WorkCreate` com `{"title":[]}` é rejeitado por
 Pydantic (cardinalidade); `WorkUpdate` com `{"title":null}` é rejeitado pelo
 validador de propriedade obrigatória, enquanto `{"subject":null}` indica remoção.
 Não inferir um código HTTP a partir do texto da exceção. A adaptação estrutural
-gera diagnósticos schema e o handler HTTP 422; não existe rota catalográfica para
-enviar esses exemplos neste checkout.
+gera diagnósticos schema e o handler HTTP 422; esses exemplos podem ser enviados às rotas tipadas da #47.
 
 ## Quatro dimensões de versão e compatibilidade
 
@@ -133,7 +134,8 @@ Conformidade técnica é execução correta do software; conformidade semântica
 satisfazer as regras efetivamente modeladas; homologação institucional é decisão
 dos responsáveis biblioteconômicos. Os testes não substituem essa decisão.
 
-- Não há editor, CRUD/PATCH/prevalidate, resolução HTTP, tombstones persistidos,
+- POST/GET/PATCH editoriais estão implementados na #47; não há editor, prevalidate,
+  resolução HTTP, tombstones persistidos,
   fusão operacional, SPARQL, MARC, conectores remotos ou projeção Elasticsearch.
 - O serviço de escrita ainda aceita somente perfis históricos; perfis 2.0 são
   resolvidos/validados internamente sem migração automática de registros.
@@ -307,7 +309,7 @@ confundir mudança de idioma com simples revisão administrativa de uma Instance
 | Proveniência técnica e release | `source`, `process`, `profile` por revisão |
 | Proveniência semântica | RDF da entidade, quando fornecida |
 | Estado ativo/descontinuado/fundido/substituído | Política especificada abaixo; armazenamento/operações futuros, ainda não implementados |
-| Ator humano e autorização | OIDC, actor_id opcional e auditoria interna autorizada implementados; sem usuário fictício, backfill ou API CRUD |
+| Ator humano e autorização | OIDC, actor_id opcional, auditoria interna e CRUD editorial #47; sem usuário fictício ou backfill |
 | Inventário, reservas, empréstimos, multas | Módulos administrativos futuros, referenciando identidade persistente de Item |
 
 O mesmo PostgreSQL contém identidade, controle transacional e RDF. RDFLib não é
@@ -336,9 +338,10 @@ políticas operacionais não foram implementados neste incremento.
 obsoleto ou curinga. É um token de domínio; não é um ETag HTTP de todos os formatos.
 O serviço continua exigindo `expected_revision` e usando CAS PostgreSQL.
 
-Contrato para a API futura: ausência de If-Match em escrita responde 428;
-precondição obsoleta responde 412. A representação estável de edição terá ETag
-forte próprio; sua comparação usará identidade/revisão e versão do serializador.
+Na API editorial #47, ausência de If-Match em PATCH responde 428;
+precondição obsoleta responde 412. A representação de edição usa ETag forte próprio,
+com identidade/revisão, perfil, versão editorial e projeção JSON versionada;
+ver [protocolo operacional](catalogographic-http.md).
 Não aceitar validador fraco ou `*` como substituto da revisão esperada. Se o ETag
 encapsular formato/hash, o adaptador HTTP deverá verificá-los antes de traduzir
 a precondição para a revisão, sem comparar cegamente com o token de domínio.
@@ -430,8 +433,8 @@ uv run python -m libris.modules.bibliographic \
 ```
 
 A fixture contém relações diretas canônicas. Para `--composed`, fornecer um grafo
-composto com inversas; o CLI valida, não corrige divergências. Serviços continuam
-internos, sem endpoints de catálogo ou novos formulários Next.js.
+composto com inversas; o CLI valida, não corrige divergências. A #47 conecta os
+serviços às rotas POST/GET/PATCH editoriais, sem formulários Next.js.
 
 ## Referências e decisões
 

@@ -17,12 +17,17 @@ production. Produção aceita somente HTTPS. Rejeitados wildcard (inclusive sem
 credenciais), null, userinfo, path/barra final, query/fragment, portas inválidas,
 whitespace/controles, backslash, hostname inválido e duplicatas.
 
-GET somente; headers Authorization/X-Request-ID mais os safelisted do padrão CORS
+Na baseline M04.07, GET somente; headers Authorization/X-Request-ID mais os safelisted do padrão CORS
 (Accept, Accept-Language, Content-Language, Content-Type). Expostos X-Request-ID e
 WWW-Authenticate. Sem allow_credentials/cookies. Preflight somente em /health e
 /api/v1/identity/me; métodos/headers/origens indevidos são recusados. Erros 401/403/500
 seguem a mesma política externa à cadeia ASGI de erros. CORS não autoriza operações
 nem impede clientes fora de um browser. Nenhum método futuro é antecipado.
+
+A M05.03 / #47 amplia a política apenas para os caminhos catalográficos reais:
+POST nas cinco coleções, GET/PATCH nos UUIDs individuais, If-Match permitido e
+ETag/Location expostos. Health/me conservam somente GET; rotas futuras e DELETE
+continuam recusados. Ver [contrato HTTP atual](catalogographic-http.md).
 
 ## CSRF, cookies e callback
 

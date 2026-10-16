@@ -10,8 +10,10 @@ complexos está registrada no ADR 0005.
 engine/sessões SQLAlchemy assíncronas, Docker Compose e núcleo semântico experimental
 BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/URI,
 snapshots JSONB, revisões e concorrência otimista. Há migrações Alembic
-experimentais; elas não executam no startup. Editor, APIs de catalogação, circulação,
-autoridades e pesquisa ainda não estão implementados. A Entrega A do Incremento 2
+experimentais; elas não executam no startup. A M05.03 implementa
+[POST/GET/PATCH editoriais persistentes](docs/architecture/catalogographic-http.md)
+para Work, Instance, Item, Agent e Subject, com ETag/If-Match. Editor, circulação,
+reconciliação de autoridades e pesquisa continuam futuros. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
 `/api/v1/identity/me` e ator opcional nas revisões, com [BFF de login web M04.03](docs/architecture/identity-web.md) implementado;
 ensaio real isolado documentado em [M04.03](docs/architecture/identity-web-verification.md);
@@ -321,3 +323,10 @@ WEB_HTTPS_TERMINATED=1 exige proxy TLS/rede confiáveis; Compose continua local.
 Resultados, falhas corrigidas e limites no [relatório próprio](docs/architecture/http-security-m04-07-verification.md).
 As evidências/tabelas históricas acima não foram reclassificadas como homologação
 atual; carga, TLS público, operação institucional e pentest continuam pendentes.
+
+A M05.03 / #47 conecta os quinze DTOs aos serviços PostgreSQL existentes, com
+precondição editorial e de conteúdo, rollback e preservação da revisão publicada.
+Não expõe histórico, transições, relações, endpoints públicos ou listagens HTTP.
+Ver [contrato operacional](docs/architecture/catalogographic-http.md),
+[ADR 0036](docs/decisions/0036-catalog-http-concurrency.md) e
+[evidência datada](docs/architecture/catalogographic-m0503-verification-2026-10-16.md).

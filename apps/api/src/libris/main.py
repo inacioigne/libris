@@ -23,9 +23,9 @@ class LibrisAPI(FastAPI):
             super().build_middleware_stack(),
             allow_origins=config.cors_origins,
             allow_credentials=False,
-            allow_methods=["GET"],
-            allow_headers=["Authorization", "X-Request-ID"],
-            expose_headers=["X-Request-ID", "WWW-Authenticate"],
+            allow_methods=["GET", "POST", "PATCH"],
+            allow_headers=["Authorization", "X-Request-ID", "If-Match"],
+            expose_headers=["X-Request-ID", "WWW-Authenticate", "ETag", "Location"],
         )
         return RequestCorrelationMiddleware(
             SecurityHeadersMiddleware(cors, production=config.app_env == "production")
@@ -53,7 +53,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             await database.close()
 
     app = LibrisAPI(
-        title="Libris API", version="0.1.0", lifespan=lifespan,
+        title="Libris API",
+        version="0.1.0",
+        lifespan=lifespan,
         docs_url=None if config.app_env == "production" else "/docs",
         redoc_url=None if config.app_env == "production" else "/redoc",
     )

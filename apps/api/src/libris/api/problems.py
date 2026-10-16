@@ -57,6 +57,9 @@ CODE_STATUS = {
     CatalogCode.PROFILE_UNKNOWN: 404,
     CatalogCode.RESOURCE_UNKNOWN: 404,
     CatalogCode.CONFLICT: 409,
+    CatalogCode.EDITORIAL_VERSION_STALE: 412,
+    CatalogCode.TRANSITION_FORBIDDEN: 409,
+    CatalogCode.EDITORIAL_STATE_INVALID: 409,
     CatalogCode.REVISION_STALE: 412,
     CatalogCode.PRECONDITION_REQUIRED: 428,
     CatalogCode.VALIDATOR_FAILURE: 500,
@@ -138,16 +141,22 @@ class RequestCorrelationMiddleware:
             request_id_context.reset(token)
 
 
-def require_if_match(value: str | None, *, current_etag: str) -> None:
-    """Future writes pass a representation-specific strong ETag, never a revision token."""
-    pattern = r'"[\x21\x23-\x7e\x80-\xff]*"'
-    if re.fullmatch(pattern, current_etag) is None:
-        raise RuntimeError("A representação deve fornecer um ETag forte válido.")
+def validate_if_match(value: str | None) -> str:
+    """Accept exactly one strong validator; lists, weak tags and wildcard are invalid."""
     if value is None:
         raise CatalogError(CatalogCode.PRECONDITION_REQUIRED, "If-Match obrigatório.")
-    if re.fullmatch(pattern, value) is None:
+    if re.fullmatch(r'"[\x21\x23-\x7e\x80-\xff]*"', value) is None:
         raise CatalogError(CatalogCode.MALFORMED_REQUEST, "If-Match incompatível.")
-    if value != current_etag:
+    return value
+
+
+def require_if_match(value: str | None, *, current_etag: str) -> None:
+    """Compare the editing representation validator; persistent CAS decides the write."""
+    try:
+        validate_if_match(current_etag)
+    except CatalogError as error:
+        raise RuntimeError("A representação deve fornecer um ETag forte válido.") from error
+    if validate_if_match(value) != current_etag:
         raise StaleRevisionError("Precondição obsoleta.")
 
 
@@ -200,6 +209,8 @@ def adapt_pydantic_error(error: ValidationError) -> tuple[Diagnostic, ...]:
 
 
 def classify(error: Exception) -> tuple[int, str]:
+    if isinstance(error, ValidationError):
+        return 422, CatalogCode.SCHEMA_INVALID.value
     if isinstance(error, PermissionDenied):
         return 403, "authorization.denied"
     if isinstance(error, CatalogError):
@@ -220,6 +231,8 @@ def classify(error: Exception) -> tuple[int, str]:
         return CODE_STATUS[code], code.value
     if isinstance(error, RdfDocumentError):
         return 400, CatalogCode.MALFORMED_REQUEST.value
+    if isinstance(error, (ConnectionError, TimeoutError)):
+        return 503, CatalogCode.INFRASTRUCTURE_UNAVAILABLE.value
     if isinstance(error, DBAPIError):
         sqlstate = getattr(error.orig, "sqlstate", None)
         if isinstance(error, IntegrityError) and sqlstate in {"23503", "23505"}:
@@ -294,6 +307,10 @@ async def handle_exception(request: Request, error: Exception) -> JSONResponse:
     status, code = classify(error)
     if status >= 500:
         log_failure(error, request.state.request_id)
+    if isinstance(error, ValidationError):
+        return problem_response(
+            request, 422, CatalogCode.SCHEMA_INVALID, issues=adapt_pydantic_error(error)
+        )
     result = error.result if isinstance(error, CatalogValidationRejected) else None
     if result is not None:
         result = result.model_copy(update={"request_id": request.state.request_id})
@@ -324,6 +341,7 @@ def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
         app.add_middleware(RequestCorrelationMiddleware)
     for exception in (
         CatalogError,
+        ValidationError,
         PermissionDenied,
         StaleRevisionError,
         ResourceNotFoundError,
@@ -331,6 +349,8 @@ def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
         ShaclValidationError,
         RdfDocumentError,
         DBAPIError,
+        ConnectionError,
+        TimeoutError,
         HTTPException,
         Exception,
     ):

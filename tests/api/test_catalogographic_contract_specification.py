@@ -87,9 +87,13 @@ def test_generator_refuses_to_overwrite_divergent_release(tmp_path: Path) -> Non
 
 def test_production_openapi_has_no_documentary_catalog_endpoints() -> None:
     document = create_app(Settings(_env_file=None)).openapi()
-    assert set(document["paths"]) == {"/health", "/api/v1/identity/me"}
+    assert set(document["paths"]) == {"/health", "/api/v1/identity/me"} | {
+        f"/api/v1/catalog/{collection}{suffix}"
+        for collection in ("works", "instances", "items", "agents", "subjects")
+        for suffix in ("", "/{id}")
+    }
     assert document["info"]["version"] == "0.1.0"
-    assert "WorkCreate" not in document["components"]["schemas"]
+    assert "WorkCreate" in document["components"]["schemas"]
     assert "ProblemDetails" in document["components"]["schemas"]
 
 
@@ -124,4 +128,9 @@ def test_old_strict_readers_do_not_accept_additive_fields_or_unknown_codes() -> 
     ],
 )
 def test_extended_domain_errors_keep_current_http_fallback(code: CatalogCode) -> None:
-    assert classify(CatalogError(code, "Exemplo interno")) == (422, code.value)
+    expected = {
+        CatalogCode.EDITORIAL_STATE_INVALID: 409,
+        CatalogCode.TRANSITION_FORBIDDEN: 409,
+        CatalogCode.EDITORIAL_VERSION_STALE: 412,
+    }.get(code, 422)
+    assert classify(CatalogError(code, "Exemplo interno")) == (expected, code.value)

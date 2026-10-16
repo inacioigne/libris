@@ -29,3 +29,8 @@ A Entrega A adiciona Resource Server OIDC e `/api/v1/identity/me`. Consulte
 [configuração, Keycloak, permissões e testes](../../docs/architecture/identity.md).
 A migração `0002_revision_actor` deve ser aplicada explicitamente; preserva o
 histórico sem atribuir atores fictícios.
+
+A M05.03 implementa POST/GET/PATCH em `/api/v1/catalog` para Work, Instance, Item,
+Agent e Subject. GET é editorial autenticado; PATCH exige um único If-Match forte.
+Consulte [rotas, permissões, ETag e testes PostgreSQL isolados](../../docs/architecture/catalogographic-http.md).
+Nenhuma migração nova é necessária nesta entrega; aplicar head continua explícito.

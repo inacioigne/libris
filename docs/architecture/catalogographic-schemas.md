@@ -5,7 +5,9 @@ Consolidação atual da #31: [referência v1](catalogographic-contract.md),
 [baseline JSON Schema 1.0.0](catalogographic-contract-v1.schema.json).
 Os trechos de diagnóstico e verificação desta entrega são históricos. As #16–#43
 já implementaram referências tipadas, serialização, perfis/SHACL, auditoria e
-persistência editorial interna; não existem APIs CRUD públicas.
+persistência editorial interna. A #47 acrescenta
+[POST/GET/PATCH editoriais autenticados](catalogographic-http.md) usando estes mesmos
+quinze DTOs; os relatos da entrega original abaixo permanecem históricos.
 
 Implementação técnica sobre `monograph-v1.1` e `authority-v1`, candidatos locais
 já existentes da M03.01.01. A homologação institucional permanece pendente.
@@ -291,7 +293,9 @@ persistência alterada ou validação referencial implementada para afirmar.
 | Referências UUID-only/alternativas e integridade dos alvos | Parcial: URI conforme ADRs; demais regras dependem das M03.01.03/.04 |
 | Extensões semânticas públicas genéricas e transformação RDF/JSON-LD | Pendente: M03.01.05; núcleo Graph existente preservado |
 
-Situação atual: referências e exportação semântica já implementadas pelas entregas
-posteriores. Integração dos DTOs na API real, com validação do estado resultante,
-autorização e concorrência HTTP, continua futura. Resultados desta baseline estão
-na [verificação da #31](catalogographic-contract-v1-verification.md).
+Situação atual: referências e exportação semântica foram implementadas pelas
+entregas posteriores. A #47 integra os DTOs à API editorial real, com validação
+do estado resultante, autorização e concorrência HTTP; ver
+[contrato operacional](catalogographic-http.md). A tabela e os comandos acima
+registram a entrega original; a evidência nova está na
+[verificação #47](catalogographic-m0503-verification-2026-10-16.md).

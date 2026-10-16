@@ -178,15 +178,25 @@ class BibliographicService:
             actor_id,
         )
         async with self.sessions() as session, session.begin():
-            await write_gate(session)
-            await self.store.create(session, identity)
-            await self.store.save(session, revision, document)
-            resource = await self.editorial.lock_resource(session, identity.internal_id)
-            await self.editorial.initialize(session, resource)
-            await self.audit.append(
-                session, content_event(revision, AuditEventType.CREATED, actor_type)
-            )
+            await self._create(session, revision, document, actor_type)
         return revision
+
+    async def _create(
+        self,
+        session: AsyncSession,
+        revision: Revision,
+        document: list[dict[str, object]],
+        actor_type: ActorType | None,
+    ) -> None:
+        """Shared persistence steps; the calling operation owns the transaction."""
+        await write_gate(session)
+        await self.store.create(session, revision.identity)
+        await self.store.save(session, revision, document)
+        resource = await self.editorial.lock_resource(session, revision.identity.internal_id)
+        await self.editorial.initialize(session, resource)
+        await self.audit.append(
+            session, content_event(revision, AuditEventType.CREATED, actor_type)
+        )
 
     async def revise(
         self,

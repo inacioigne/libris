@@ -1,21 +1,18 @@
-# Superfície HTTP catalográfica v1 — M05.01 / #45
+# Superfície HTTP catalográfica v1 — M05.03 / #47
 
 Complemento do [contrato canônico v1](catalogographic-contract.md), especificação
-**1.0.0**, que não significa homologação institucional dos perfis. Esta entrega
-integra o ponto de composição `/api/v1/catalog`, com tag `catalog`, em `create_app`.
-**Não registra operações catalográficas.** Os únicos endpoints de negócio/liveness
-reais continuam sendo GET `/health` e GET `/api/v1/identity/me`. Não há reserva de
-caminhos por handlers 200/201/204/501. O OpenAPI real conserva somente esses dois
-caminhos, seus modelos `HealthResponse` e `IdentityResponse`, Bearer em `/me` e os
-schemas de erros/diagnósticos instalados pelo mecanismo existente.
+**1.0.0**. Implementa POST/GET/PATCH persistentes dos cinco tipos em
+`/api/v1/catalog`. Não significa homologação institucional dos perfis nem do OIDC
+em produção. `/health` e `/api/v1/identity/me` permanecem disponíveis.
 
-A [verificação datada](catalogographic-http-m05-01-verification-2026-10-16.md)
-distingue testes HTTP reais de testes isolados de dependências e políticas.
+[Evidências datadas da #47](catalogographic-m0503-verification-2026-10-16.md).
+A [verificação da #45](catalogographic-http-m05-01-verification-2026-10-16.md)
+permanece como registro histórico da composição sem operações naquele momento.
 
 ## Recursos e representações
 
-Todas as rotas abaixo são **contrato para entregas futuras**, ausentes do OpenAPI
-operacional desta #45. `{collection}` é uma das cinco coleções fechadas da tabela;
+POST/GET/PATCH individuais abaixo estão implementados e presentes no OpenAPI.
+As demais operações da matriz continuam futuras. `{collection}` é uma das cinco coleções fechadas da tabela;
 `{id}` é UUID, nunca título, ISBN, barcode, URI arbitrária ou ID de usuário.
 
 | Entidade | Coleção sob `/api/v1/catalog` | Create → Read; PATCH | ResourceKind confiável |
@@ -27,8 +24,7 @@ operacional desta #45. `{collection}` é uma das cinco coleções fechadas da ta
 | Subject | `/subjects` | SubjectCreate → SubjectRead; SubjectUpdate | authority |
 
 Os quinze modelos existentes em `bibliographic/api/schemas` permanecem a fonte de
-Request/Response tipados, sem duplicação e sem modelos ORM no transporte. Não são
-adicionados ao OpenAPI só para anunciar operações futuras. JSON de aplicação usa
+Request/Response tipados, sem duplicação e sem modelos ORM no transporte. Integram o OpenAPI dos handlers reais. JSON de aplicação usa
 `application/json`, snake_case, UUID serializado como string e URI persistida sem
 normalização. Não é JSON-LD nem snapshot interno. Create não recebe identidade;
 o servidor gera UUIDv4 e materializa a URI usando o mecanismo existente. Read
@@ -40,21 +36,21 @@ seguem as invariantes dos [schemas](catalogographic-schemas.md). PATCH usa Updat
 com `exclude_unset=True`: omissão preserva; null remove propriedade opcional;
 lista substitui integralmente; auxiliares são substituídos completos. Nunca usar
 `exclude_none=True` para o patch. Validar o estado completo e preservar predicados
-RDF fora do DTO é responsabilidade dos adaptadores #46, antes de persistir na #47.
+RDF fora do DTO é executado pelos adaptadores #46 dentro do caso de uso da #47.
 Não aceitar `actor_id`, roles, permissions, issuer, subject de identidade ou
 technical_context como autoridade em body/query/headers. O campo bibliográfico
 `subject` de Work continua sendo uma referência de assunto, sem função de identidade.
 
-## Matriz HTTP planejada
+## Matriz HTTP e entregas
 
 Prefixo de todas as linhas: `/api/v1/catalog`. `T` representa o tipo da coleção
-acima. Sucesso só será anunciado no OpenAPI quando houver handler implementado.
+acima. Somente as três primeiras linhas possuem handlers nesta entrega.
 
-| Método e caminho futuro | Entrada → saída / sucesso previsto | Operação/política | Entrega |
+| Método e caminho | Entrada → saída / sucesso previsto | Operação/política | Entrega |
 | --- | --- | --- | --- |
-| POST `/{collection}` | TCreate → TRead; 201, Location individual | bibliographic.create ou authority.manage | #47 |
-| GET `/{collection}/{id}` | sem corpo → TRead editorial; 200 | bibliographic.read_editorial ou authority.read_editorial | #47 |
-| PATCH `/{collection}/{id}` | TUpdate + If-Match → TRead editorial; 200 | bibliographic.update ou authority.manage | #47 |
+| POST `/{collection}` | TCreate → TRead; 201, Location individual | bibliographic.create ou authority.manage | #47 implementada |
+| GET `/{collection}/{id}` | sem corpo → TRead editorial; 200 | bibliographic.read_editorial ou authority.read_editorial | #47 implementada |
+| PATCH `/{collection}/{id}` | TUpdate + If-Match → TRead editorial; 200 | bibliographic.update ou authority.manage | #47 implementada |
 | GET `/{collection}/{id}/relationships` | RelationshipRead; 200 | leitura editorial do tipo real | #48 |
 | PATCH `/{collection}/{id}/relationships` | RelationshipUpdate add/remove/replace → RelationshipRead; 200, If-Match | escrita do tipo real | #48 |
 | POST `/{collection}/validation` | entrada DTO/perfil a detalhar na #48 → CatalogValidationResult; 200 para execução concluída, inclusive não conformidade | contexto humano e capacidade de escrita do tipo; sem persistência | #48 |
@@ -137,12 +133,33 @@ o [contrato por operação](operation-authorization.md) e o código vigente prev
 `request.app.state.database.sessions`, criada no lifespan de `main.py`. Pode ser
 injetada com `Depends(get_session_factory)` nos próximos handlers/composition roots.
 Não cria engine, sessão compartilhada, transação externa, commit ou migração.
-`BibliographicService`, `HistoryService` e `PostgresEditorialTransactions` recebem
-a fábrica existente; cada operação mantém suas sessões e seu encerramento, com
-rollback em falha pelos context managers atuais. Não abrir `session.begin()` HTTP
-em torno de serviços que já delimitam transações. Se algum handler futuro precisar
-de sessão direta, reutilizar `Database.session()` e garantir fechamento sem commit
-implícito; nenhuma dependência geradora nova foi necessária nesta #45.
+`CatalogService` especializa `BibliographicService`, reutilizando `_create` e
+`_revise`, RevisionStore, EditorialStore e AuditStore. Cada operação abre uma única
+transação própria; não envolve `create`/`revise` em outra transação. Projeção Read e
+validação do estado completo acontecem antes do commit. GET lê snapshot corrente e
+versão editorial sob o mesmo lock de recurso, sem inicializar legado. Não consulta
+histórico/auditoria nem exige metadata_audit:read. `HistoryService` e
+`PostgresEditorialTransactions` continuam atendendo histórico e decisões internas;
+são utilizados pelos testes de invariantes e publicação, sem novas rotas.
+
+Escritas DTO usam o gate PostgreSQL **exclusivo**, adquirido antes do recurso e das
+dependências; leituras correntes usam shared. É a mesma chave/protocolo da M03,
+com serialização conservadora das escritas DTO para impedir locks cruzados durante
+resolução de referências. Não há mutex Python. Ver [ADR 0036](../decisions/0036-catalog-http-concurrency.md).
+O CAS SQL de conteúdo e o CAS editorial continuam sendo executados por `_revise`.
+Snapshot, identidade, estado e auditoria são confirmados/revertidos juntos; a
+resposta de sucesso só é liberada depois do commit.
+
+Referências explicitamente locais são resolvidas no PostgreSQL na transação de
+escrita: UUID/URI/tipo devem concordar; UUID-only usa a URI armazenada. URI-only que
+corresponde a identidade local também tem tipo conferido. URI ausente localmente
+não prova existência externa: mantém a pendência compatível do contrato v1, sem
+consultar rede. Não se afirma validação universal de fechos/ciclos no rascunho;
+a publicação interna continua aplicando a integridade mais restrita da #43.
+Referências não reconciliadas e substituições de auxiliares que perderiam anotações
+são recusadas conforme o adaptador #46. Perfil da criação: institucional 1.1 para
+Work/Instance/Item e authority-v1 para Agent/Subject; PATCH reutiliza o ID persistido.
+Perfis declarativos 2.0 não são adotados automaticamente.
 
 Reutilizar diretamente `identity.api.dependencies.get_execution_context`,
 `get_current_actor`, `get_authorization_guard` e, quando necessário para requisito
@@ -159,13 +176,67 @@ O middleware aceita UUID canônico em X-Request-ID ou gera outro, propaga e rese
 ContextVar, devolvendo o mesmo ID inclusive em erros. Nenhuma dependência paralela
 é necessária. Auditoria bibliográfica e eventos de segurança permanecem separados.
 
-PATCH futuro exigirá If-Match forte específico da representação de edição: ausente
-428, formato inválido 400, obsoleto 412. Reutilizar `require_if_match`, sem tratar
-`Revision.concurrency_token` como ETag. A #47 definirá geração e vínculo confiável
-com expected_revision; CAS persistente continua árbitro final. Transições #49
-incluem versão editorial e revisão selecionada independentes. Read/Update não ganham
-campos técnicos para transportar expectativas. Exportações/composições terão seus
-próprios validadores; não reutilizar ETag de um formato em outro.
+## ETag e If-Match
+
+POST, GET e PATCH devolvem ETag forte `"catalog-v1-<sha256>"`. O digest inclui
+namespace da representação JSON de edição v1, UUID/URI, perfil persistido, revisão,
+versão editorial independente (ou ausência legada) e projeção Read serializada
+canonicamente. Não é `Revision.concurrency_token`, um token de autorização ou um
+validador de futura exportação/composição. Alteração editorial sem revisão também
+invalida o ETag. As respostas editoriais conservam `Cache-Control: no-store, private`.
+
+PATCH exige um único `If-Match` forte. Ausente → 428; fraco, curinga, lista, header
+duplicado ou sintaxe inválida → 400; forte diferente do corrente → 412. Um ETag
+forte de outro recurso/formato também é obsoleto (412). Não há expected_revision
+nos DTOs. `require_if_match` compara a representação carregada; o caso de uso relê
+sob lock e passa a revisão e versão editorial observadas a `_revise`. CAS SQL
+continua obrigatório, mesmo após a comparação. Uma corrida depois da leitura
+inicial é rejeitada, sem revisão, snapshot, estado ou evento parcial. Não há retry
+que atualize silenciosamente a expectativa do cliente. PATCH vazio é aceito e
+produz revisão nova segundo o serviço existente.
+
+POST retorna 201, Location relativo individual e Read com UUID/URI do servidor.
+GET corrente e PATCH retornam 200 com Read. Um UUID de outra coleção retorna 404
+após as verificações de acesso. Estado não editável retorna 409. Edição de publicado
+cria candidata e preserva a revisão pública anterior; nenhuma rota pública foi criada.
+
+Exemplo (Bearer obtido pelo fluxo OIDC existente; não persistir tokens no código):
+
+```http
+POST /api/v1/catalog/works
+Authorization: Bearer <access-token>
+Content-Type: application/json
+
+{"title":[{"main_title":[{"value":"Obra de teste","language":"pt"}]}]}
+```
+
+```http
+HTTP/1.1 201 Created
+Location: /api/v1/catalog/works/<uuid-gerado>
+ETag: "catalog-v1-<digest>"
+Content-Type: application/json
+```
+
+O corpo é WorkRead, incluindo `internal_id`, `uri`, `title` e as listas opcionais.
+Para consultar e substituir o título, usar o ETag devolvido pela consulta:
+
+```http
+GET /api/v1/catalog/works/<uuid-gerado>
+Authorization: Bearer <access-token>
+```
+
+```http
+PATCH /api/v1/catalog/works/<uuid-gerado>
+Authorization: Bearer <access-token>
+If-Match: "catalog-v1-<digest-da-consulta>"
+Content-Type: application/json
+
+{"title":[{"main_title":[{"value":"Título revisto","language":"pt"}]}],"note":null}
+```
+
+PATCH 200 devolve novo ETag e WorkRead atualizado. Um segundo PATCH com o ETag
+anterior recebe Problem Details 412 `revision.stale`. As cinco entidades seguem
+os mesmos status/headers, com os respectivos DTOs da tabela.
 
 ## Erros, CORS e compatibilidade
 
@@ -175,35 +246,34 @@ conexão SQL, stack trace, PII ou grafos privados. Falhas inesperadas continuam 
 
 | Status | Uso efetivo ou futuro |
 | --- | --- |
-| 400 | JSON/entrada malformada; futuro If-Match inválido; preflight negado mantém resposta CORS existente |
-| 401 | ausência/erro de autenticação em /me e dependência; WWW-Authenticate: Bearer |
-| 403 | PermissionDenied/EditorialPermissionDenied pelos handlers existentes; catálogo testado isoladamente nesta entrega |
-| 404 | rota ausente hoje; recurso/revisão ausente nos handlers futuros |
+| 400 | JSON/entrada malformada; If-Match inválido; preflight negado mantém resposta CORS existente |
+| 401 | ausência/erro de autenticação em /me e catálogo; WWW-Authenticate: Bearer |
+| 403 | permissões insuficientes para a operação editorial |
+| 404 | recurso inexistente ou de outra coleção; rotas futuras ausentes |
 | 405 | método não suportado em rota real, preservando Allow |
 | 409 | conflitos/integridade conforme mapeamento existente |
-| 412 / 428 | precondição obsoleta / ausente nas futuras escritas |
-| 422 | estrutura/invariantes/validação rejeitada; sem corpo catalográfico HTTP na #45 |
+| 412 / 428 | precondição obsoleta / ausente no PATCH |
+| 422 | estrutura/invariantes/validação do estado completo rejeitada |
 | 500 / 503 | falha interna / dependência indisponível conforme classificador existente |
 | 406 | negociação não suportada, a integrar e testar na #50 |
 
-Os códigos editoriais genéricos sem mapeamento específico conservam fallback 422;
-não prometer automaticamente 409/412/428 pelo nome do código. Fechar o mapeamento
-HTTP das transições na #49 sem modificar contratos silenciosamente. O OpenAPI global
-atual documenta erros do mecanismo, não prova que cada rota os produz; a documentação
-explícita de 401 em /me é lacuna preexistente, sem alteração global nesta entrega.
+A #47 mapeia explicitamente editorial.version_stale para 412 e
+editorial.transition_forbidden/editorial.state_invalid para 409. Os demais códigos
+não mapeados preservam fallback 422. ValidationError do estado completo usa os
+mesmos diagnósticos estruturais de RequestValidationError. ConnectionError/TimeoutError
+de dependências são 503 sem detalhes sensíveis; outros erros inesperados são 500.
 
-EndpointCORSMiddleware conserva allowlist de origens, caminhos health/me, somente
-GET, headers Authorization/X-Request-ID, exposição de X-Request-ID/WWW-Authenticate
-e credenciais desabilitadas. Preflight de catálogo ainda é negado. Quando operações
-reais forem registradas, atualizar caminhos/métodos exatos e testar preflight nessa
-mesma entrega. SecurityHeadersMiddleware e o BFF Next.js não são alterados.
+EndpointCORSMiddleware mantém origens explícitas e sem credenciais, permite POST
+somente nas cinco coleções e GET/PATCH nos UUIDs individuais. Health/me continuam
+GET. Headers permitidos incluem Authorization, Content-Type, X-Request-ID e If-Match;
+expõe ETag, Location, X-Request-ID e WWW-Authenticate. Rotas futuras/DELETE continuam
+negados no preflight. CORS não concede autenticação nem autorização.
 
 FastAPI.info.version=0.1.0, `/api/v1`, bibliographic_contract=1.0 dos perfis,
 contract_version=1.0 e especificação documental 1.0.0 preservam responsabilidades
-independentes. Nenhuma mudança dos quinze DTOs, perfis, SHACL, snapshots, migrações,
-locks ou contratos internos. Mudanças incompatíveis requerem versão/ADR/testes e
+independentes. Nenhuma mudança dos quinze DTOs, perfis, SHACL, snapshots ou migrações. Mudanças incompatíveis requerem versão/ADR/testes e
 avaliação direcional do [ADR 0029](../decisions/0029-catalogographic-contract-versioning.md).
-A composição mínima aplica ADRs 0011/0017/0023/0031, sem mudança arquitetural nova.
+A integração aplica ADRs 0011/0017/0023/0028/0031 e 0036.
 
 ## Estado e sequenciamento
 
@@ -211,7 +281,7 @@ A composição mínima aplica ADRs 0011/0017/0023/0031, sem mudança arquitetura
 | --- | --- |
 | #45 | roteador integrado sem endpoints artificiais, fábrica reutilizada, convenção HTTP e testes aplicáveis |
 | #46 | [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md) e PATCH sobre snapshot completo implementados; sem endpoints |
-| #47 | POST/GET/PATCH, ETag e persistência HTTP dos cinco tipos pendentes |
+| #47 implementada | POST/GET/PATCH, ETag e persistência PostgreSQL dos cinco tipos |
 | #48 | relações, pré-validação HTTP e catálogo de perfis pendentes |
 | #49 | transições, projeção pública, histórico/auditoria/restauração HTTP pendentes |
 | #50 | listagens/filtros/paginação e Accept JSON-LD/Turtle pendentes |
@@ -220,4 +290,29 @@ A composição mínima aplica ADRs 0011/0017/0023/0031, sem mudança arquitetura
 Serviços internos de criação/revisão, read/read_public, relações, validação,
 editorial/histórico/auditoria já existem; isso não os torna endpoints. Os testes
 M05.01 não homologam novamente Keycloak, PostgreSQL, navegador ou produção. As
-issues #45–#51 foram consultadas somente em leitura; nenhuma foi alterada.
+issues #45/#46/#47 e as dependências M03/M04 foram consultadas somente em
+leitura; nenhuma foi alterada.
+
+## Instalação e testes PostgreSQL
+
+Executar migrações explicitamente: `cd apps/api && uv run alembic upgrade head`.
+O schema experimental existente é suficiente; a #47 não cria migração. Startup
+não executa DDL nem `create_all`. Não executar downgrade em bases de trabalho.
+
+A suíte padrão `uv run pytest` não depende de serviços. Para persistência, criar um
+PostgreSQL **descartável e exclusivo**, aplicar head nele usando DATABASE_URL e
+fornecer TEST_DATABASE_URL para a suíte. Nunca apontar ao banco de desenvolvimento.
+
+```bash
+cd apps/api
+# URLs de bancos descartáveis configuradas no ambiente, sem versionar credenciais.
+uv run alembic upgrade head
+uv run pytest -c pyproject.toml ../../tests/integration -m integration
+```
+
+TEST_MIGRATION_DATABASE_URL, TEST_EDITORIAL_MIGRATION_DATABASE_URL e
+TEST_WEB_MIGRATION_DATABASE_URL precisam ser **outros** bancos inicialmente vazios
+para testes de upgrade/downgrade; o último exige TEST_WEB_ISOLATED=1. Ausência gera
+skips, que não comprovam integração. A evidência da #47 descreve os bancos exclusivos
+utilizados, resultados e limites. OIDC nos novos testes é substituído por ator
+sintético via dependência; não comprova nova homologação Keycloak/produção.

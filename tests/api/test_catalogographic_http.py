@@ -1,7 +1,8 @@
-"""M05.01 composition and dependencies; no operational catalog endpoints exist yet."""
+"""Catalog composition, dependencies and operational M05.03 HTTP contract."""
 
 import asyncio
 import json
+from collections.abc import Callable
 from unittest.mock import patch
 from uuid import UUID, uuid4
 
@@ -41,8 +42,16 @@ from libris.modules.identity.domain.permissions import Permission as P
 def actor(*permissions: P) -> AuthenticatedActor:
     issuer, subject = "https://issuer.example.invalid", "synthetic-test-actor"
     return AuthenticatedActor(
-        actor_identifier(issuer, subject), issuer, subject, frozenset(), frozenset(permissions)
+        actor_identifier(issuer, subject),
+        issuer,
+        subject,
+        frozenset(),
+        frozenset(permissions),
     )
+
+
+def actor_override(value: AuthenticatedActor) -> Callable[[], AuthenticatedActor]:
+    return lambda: value
 
 
 def test_catalog_composition_point_is_included(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -60,7 +69,7 @@ def test_catalog_composition_point_is_included(monkeypatch: pytest.MonkeyPatch) 
         assert client.get("/api/v1/catalog/composition-probe").json() == {"composed": True}
     assert router.prefix == "/api/v1/catalog"
     assert router.tags == ["catalog"]
-    assert router.routes == []
+    assert len(router.routes) == 15
 
 
 def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
@@ -70,7 +79,8 @@ def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
         patch("sqlalchemy.ext.asyncio.AsyncEngine.connect", side_effect=AssertionError),
         patch(
             "libris.infrastructure.database.Database.close",
-            autospec=True, side_effect=Database.close,
+            autospec=True,
+            side_effect=Database.close,
         ) as close,
     ):
         with TestClient(app) as client:
@@ -82,7 +92,10 @@ def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
             assert not first.in_transaction() and not second.in_transaction()
             asyncio.run(first.close())
             asyncio.run(second.close())
-            assert client.get("/health").json() == {"status": "ok", "service": "libris-api"}
+            assert client.get("/health").json() == {
+                "status": "ok",
+                "service": "libris-api",
+            }
             assert client.get("/api/v1/identity/me").status_code == 401
         close.assert_awaited_once_with(app.state.database)
 
@@ -92,10 +105,14 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
         response = client.get("/openapi.json")
         assert response.status_code == 200
         schema = response.json()
-        assert set(schema["paths"]) == {"/health", "/api/v1/identity/me"}
+        assert set(schema["paths"]) == {"/health", "/api/v1/identity/me"} | {
+            f"/api/v1/catalog/{collection}{suffix}"
+            for collection in ("works", "instances", "items", "agents", "subjects")
+            for suffix in ("", "/{id}")
+        }
         assert schema["info"]["version"] == "0.1.0"
-        operations = [path["get"] for path in schema["paths"].values()]
-        assert len({op["operationId"] for op in operations}) == 2
+        operations = [op for path in schema["paths"].values() for op in path.values()]
+        assert len({op["operationId"] for op in operations}) == 17
         for path, model in (
             ("/health", "HealthResponse"),
             ("/api/v1/identity/me", "IdentityResponse"),
@@ -107,13 +124,31 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
             assert model in schema["components"]["schemas"]
         assert schema["paths"]["/api/v1/identity/me"]["get"]["security"] == [{"HTTPBearer": []}]
         assert schema["components"]["securitySchemes"]["HTTPBearer"]["scheme"] == "bearer"
-        assert not any(name.endswith("Create") for name in schema["components"]["schemas"])
+        for collection, name in (
+            ("works", "Work"),
+            ("instances", "Instance"),
+            ("items", "Item"),
+            ("agents", "Agent"),
+            ("subjects", "Subject"),
+        ):
+            path = f"/api/v1/catalog/{collection}"
+            assert set(schema["paths"][path]) == {"post"}
+            assert set(schema["paths"][path + "/{id}"]) == {"get", "patch"}
+            assert schema["paths"][path]["post"]["security"] == [{"HTTPBearer": []}]
+            for suffix in ("Create", "Read", "Update"):
+                assert name + suffix in schema["components"]["schemas"]
 
 
 @pytest.mark.parametrize("authorization", [None, "Bearer invalid-token", "Basic forged"])
-def test_identity_401_cannot_be_bypassed_by_client_context(authorization: str | None) -> None:
+def test_identity_401_cannot_be_bypassed_by_client_context(
+    authorization: str | None,
+) -> None:
     app = main.create_app(Settings(_env_file=None, app_env="test", oidc_enabled=True))
-    headers = {"actor_id": "forged", "roles": "libris-admin", "permissions": "system:admin"}
+    headers = {
+        "actor_id": "forged",
+        "roles": "libris-admin",
+        "permissions": "system:admin",
+    }
     if authorization is not None:
         headers["Authorization"] = authorization
     with TestClient(app) as client:
@@ -172,19 +207,25 @@ def test_context_and_operation_policy_in_isolation(resource_name: str) -> None:
     context = asyncio.run(get_execution_context(actor(read, P.METADATA_REVISION_READ)))
     guard.require(context=context, operation=operation, resource=ResourceContext(kind))
     public = O.AUTHORITY_READ_PUBLIC if authority else O.BIBLIOGRAPHIC_READ_PUBLIC
-    guard.require(context=None, operation=public, resource=ResourceContext(kind, "published", 1, 1))
+    guard.require(
+        context=None,
+        operation=public,
+        resource=ResourceContext(kind, "published", 1, 1),
+    )
     with pytest.raises(PermissionDenied):
         guard.require(
-            context=None, operation=public, resource=ResourceContext(kind, "published", 1, 2)
+            context=None,
+            operation=public,
+            resource=ResourceContext(kind, "published", 1, 2),
         )
 
 
 @pytest.mark.parametrize(
     "method,path,status",
     [
-        ("GET", "/api/v1/catalog/works", 404),
-        ("POST", "/api/v1/catalog/works", 404),
-        ("GET", "/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", 404),
+        ("GET", "/api/v1/catalog/works", 405),
+        ("POST", "/api/v1/catalog/works", 401),
+        ("GET", "/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", 401),
         ("POST", "/health", 405),
     ],
 )
@@ -199,9 +240,9 @@ def test_http_errors_and_correlation(method: str, path: str, status: int) -> Non
     assert problem["request_id"] == identifier
     assert problem["instance"] == f"urn:uuid:{identifier}"
     assert problem["status"] == status
-    assert problem["code"] == ("resource.unknown" if status == 404 else "http.405")
+    assert problem["code"] == {401: "authentication.required", 405: "http.405"}[status]
     if status == 405:
-        assert response.headers["allow"] == "GET"
+        assert response.headers["allow"] == ("POST" if path.endswith("/works") else "GET")
     assert response.headers["x-content-type-options"] == "nosniff"
     assert request_id_context.get() is None
 
@@ -258,3 +299,146 @@ def test_cors_is_not_expanded_for_future_endpoints(
         assert response.headers["access-control-allow-origin"] == origin
         assert response.headers["access-control-allow-methods"] == "GET"
         assert "access-control-allow-credentials" not in response.headers
+
+
+@pytest.mark.parametrize("collection", ["works", "instances", "items", "agents", "subjects"])
+@pytest.mark.parametrize("method", ["POST", "GET", "PATCH"])
+def test_catalog_authentication_and_denial_before_storage(collection: str, method: str) -> None:
+    """Dependency overrides prove isolated authorization, not real OIDC integration."""
+    app = main.create_app(Settings(_env_file=None, app_env="test", oidc_enabled=False))
+    path = f"/api/v1/catalog/{collection}"
+    if method != "POST":
+        path += f"/{uuid4()}"
+    from pathlib import Path
+
+    names = dict(
+        zip(
+            ["works", "instances", "items", "agents", "subjects"],
+            ["work", "instance", "item", "agent", "subject"],
+            strict=True,
+        )
+    )
+    payload = (
+        json.loads(
+            (
+                Path(__file__).parents[1]
+                / "fixtures/bibliographic/contracts"
+                / f"{names[collection]}-create.json"
+            ).read_text()
+        )
+        if method == "POST"
+        else {}
+    )
+    with TestClient(app) as client:
+        for authorization in (None, "Bearer invalid", "Basic forged"):
+            headers = {
+                "If-Match": '"opaque"',
+                "actor_id": "forged",
+                "permissions": "system:admin",
+            }
+            if authorization is not None:
+                headers["Authorization"] = authorization
+            response = client.request(method, path, json=payload, headers=headers)
+            assert response.status_code == 401
+        app.dependency_overrides[get_current_actor] = lambda: actor(P.SYSTEM_ADMIN)
+        with patch("sqlalchemy.ext.asyncio.AsyncSession.execute", side_effect=AssertionError):
+            response = client.request(method, path, json=payload, headers={"If-Match": '"opaque"'})
+        assert response.status_code == 403
+        assert response.headers["content-type"] == "application/problem+json"
+
+
+@pytest.mark.parametrize("collection", ["works", "instances", "items", "agents", "subjects"])
+def test_editorial_read_requires_both_permissions(collection: str) -> None:
+    app = main.create_app(Settings(_env_file=None, app_env="test"))
+    read = P.AUTHORITY_READ if collection in {"agents", "subjects"} else P.BIBLIOGRAPHIC_READ
+    with TestClient(app) as client:
+        for permissions in ((read,), (P.METADATA_REVISION_READ,), ()):
+            app.dependency_overrides[get_current_actor] = actor_override(actor(*permissions))
+            with patch(
+                "sqlalchemy.ext.asyncio.AsyncSession.execute",
+                side_effect=AssertionError,
+            ):
+                response = client.get(f"/api/v1/catalog/{collection}/{uuid4()}")
+            assert response.status_code == 403
+
+
+@pytest.mark.parametrize(
+    "path,method,status",
+    [
+        ("/api/v1/catalog/works", "POST", 200),
+        ("/api/v1/catalog/works", "GET", 400),
+        ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "PATCH", 200),
+        ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "DELETE", 400),
+        ("/api/v1/catalog/works/validation", "POST", 400),
+        ("/api/v1/catalog/profiles", "GET", 400),
+    ],
+)
+def test_catalog_cors_exact_paths(path: str, method: str, status: int) -> None:
+    app = main.create_app(Settings(_env_file=None, cors_origins=["http://localhost:3000"]))
+    with TestClient(app) as client:
+        response = client.options(
+            path,
+            headers={
+                "Origin": "http://localhost:3000",
+                "Access-Control-Request-Method": method,
+                "Access-Control-Request-Headers": (
+                    "Authorization, Content-Type, If-Match, X-Request-ID"
+                ),
+            },
+        )
+    assert response.status_code == status
+    assert "access-control-allow-credentials" not in response.headers
+
+
+def test_editing_etag_is_bound_to_representation_and_editorial_generation() -> None:
+    from dataclasses import replace
+    from datetime import UTC, datetime
+
+    from libris.modules.bibliographic.api.representations import editing_etag
+    from libris.modules.bibliographic.api.schemas import WorkRead
+    from libris.modules.bibliographic.application.catalog import CatalogView
+    from libris.modules.bibliographic.domain.models import Provenance, ResourceIdentity, Revision
+    from libris.modules.bibliographic.infrastructure.validation import INSTITUTIONAL_PROFILE_ID
+
+    identity = ResourceIdentity.create("https://synthetic.invalid/records")
+    resource = WorkRead(
+        internal_id=identity.internal_id,
+        uri=identity.uri,
+        title=[{"main_title": [{"value": "Synthetic"}]}],
+    )
+    revision = Revision(
+        identity, 1, datetime.now(UTC), Provenance("test", "etag"), INSTITUTIONAL_PROFILE_ID
+    )
+    view = CatalogView(revision, resource, 1)
+    etag = editing_etag(view)
+    assert etag.startswith('"catalog-v1-') and etag.endswith('"')
+    assert etag != revision.concurrency_token
+    assert etag == editing_etag(view)
+    assert etag != editing_etag(replace(view, editorial_version=2))
+    assert etag != editing_etag(replace(view, revision=replace(revision, number=2)))
+    assert etag != editing_etag(replace(view, editorial_version=None))
+    assert etag != editing_etag(
+        replace(
+            view,
+            resource=resource.model_copy(update={"note": []}),
+            revision=replace(revision, profile="different"),
+        )
+    )
+
+
+def test_storage_unavailable_problem_is_safe() -> None:
+    app = main.create_app(Settings(_env_file=None, app_env="test"))
+    app.dependency_overrides[get_current_actor] = lambda: actor(
+        P.BIBLIOGRAPHIC_READ, P.METADATA_REVISION_READ
+    )
+    with (
+        TestClient(app) as client,
+        patch(
+            "sqlalchemy.ext.asyncio.AsyncSession.execute", side_effect=ConnectionError("secret SQL")
+        ),
+    ):
+        response = client.get(f"/api/v1/catalog/works/{uuid4()}")
+    assert response.status_code == 503
+    assert response.json()["code"] == "infrastructure.unavailable"
+    assert "secret SQL" not in response.text
+    assert response.json()["request_id"] == response.headers["x-request-id"]

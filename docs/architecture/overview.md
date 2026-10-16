@@ -9,8 +9,9 @@ catalográficos M03, auditoria e persistência editorial internas, além do Reso
 Server OIDC inicial M04. A [fundação semântica](semantic-foundation.md) documenta
 a Etapa 2; o [contrato catalográfico](catalogographic-contract.md), a
 [persistência editorial](editorial-persistence.md) e a [identidade](identity.md)
-documentam as evoluções subsequentes. Não há endpoints CRUD catalográficos, editor,
-pesquisa bibliográfica ou operações de circulação. A licença de distribuição do
+documentam as evoluções subsequentes. A M05.03 implementa
+[POST/GET/PATCH catalográficos editoriais](catalogographic-http.md); editor,
+pesquisa bibliográfica e operações de circulação continuam futuros. A licença de distribuição do
 projeto ainda precisa ser escolhida pelos mantenedores antes de publicação.
 
 ## Visão de execução
@@ -24,8 +25,8 @@ flowchart LR
     API -. projeções futuras .-> ES[(Elasticsearch: descoberta)]
 ```
 
-As conexões do diagrama, exceto navegador/página e chamada de saúde, indicam a
-arquitetura pretendida: não existe ainda consulta de domínio ou indexação. Backend
+A API já consulta e grava o catálogo editorial no PostgreSQL pela M05.03.
+Descoberta/indexação e os demais domínios do diagrama continuam futuros. Backend
 e frontend são processos separados, não microsserviços de negócio. Os bancos são
 serviços de infraestrutura. Um único backend controla transações e módulos.
 

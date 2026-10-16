@@ -9,6 +9,17 @@ A implementação reutiliza o mesmo Graph RDFLib, pySHACL e registros locais das
 A [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) define o envelope HTTP e
 `application/problem+json`; os códigos abaixo pertencem ao domínio Libris.
 
+## Integração HTTP M05.03 / #47
+
+POST/GET/PATCH dos cinco tipos estão implementados; ver [contrato operacional](catalogographic-http.md).
+Nesta integração, editorial.version_stale passa a 412 e
+editorial.transition_forbidden/editorial.state_invalid a 409. Os demais códigos
+sem mapeamento conservam 422. ValidationError do estado completo usa os diagnósticos
+estruturais existentes e 422. ConnectionError/TimeoutError de dependências recebem
+503 com detalhe seguro. `require_if_match` é usado nas escritas reais; `validate_if_match`
+compartilha o parsing de um único ETag forte, inclusive rejeição de headers duplicados.
+As descrições da entrega original #22/#31 abaixo contextualizam seu estado histórico.
+
 ## Inventário e integração efetiva
 
 ValidationIssue/ValidationReport já conservavam termos, mensagens, severidades,
@@ -297,9 +308,10 @@ sem vincular API a React, rótulos ou estado de formulário. Sem editor Next.js 
 
 ## Limitações e trabalhos futuros
 
-Não existem CRUD/prevalidate HTTP, criação/verificação de ETags de representações,
-cliente gerado, editor ou tradução negociada por Accept-Language. Formatos e
-mapeamentos necessários estão implementados/testados para essas integrações.
+A #47 implementa CRUD editorial POST/GET/PATCH e ETags da representação JSON de
+edição. Prevalidate HTTP, cliente gerado, editor e tradução negociada por
+Accept-Language continuam futuros. As descrições históricas de ausência de rotas
+na entrega #22 acima são sucedidas pelo [contrato operacional](catalogographic-http.md).
 Mensagem pública de fallback é em português; títulos HTTP são padronizados em inglês.
 Não há reconciliação externa/inferência/novo motor/novas tabelas. Perfis continuam
 candidatos à homologação; categorias/códigos genéricos conservam informação quando

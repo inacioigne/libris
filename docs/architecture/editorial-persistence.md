@@ -180,3 +180,19 @@ uv run pytest -c pyproject.toml ../../tests/integration -m integration
 Não usar URLs de dados de trabalho para migrações destrutivas. Sem URLs, os testes
 respectivos são pulados. Relatório: [evidências da #43](editorial-persistence-verification.md).
 Sem homologação institucional, prontidão de produção, frontend ou APIs CRUD públicas.
+
+## Integração HTTP M05.03 / #47
+
+[POST/GET/PATCH catalográficos](catalogographic-http.md) reutilizam estes stores,
+guard, política e passos transacionais por `CatalogService`, especialização de
+BibliographicService. Não abrem transações em torno de serviços já transacionais.
+A leitura corrente recupera snapshot e versão editorial coerentes, sem exigir
+permissão de auditoria nem inicializar legado. O ETag vincula essa visão às duas
+expectativas do PATCH. Histórico continua em HistoryService, sem endpoint novo.
+
+Escritas DTO resolvem referências locais na mesma transação. Para evitar locks
+cruzados de origens/dependências, adquirem o gate **exclusivo** já existente antes
+do recurso; leituras correntes usam shared. Escritas internas Graph mantêm o
+protocolo descrito acima. Decisão e custo de serialização no
+[ADR 0036](../decisions/0036-catalog-http-concurrency.md). Nenhuma migração nova.
+[Evidências próprias da #47](catalogographic-m0503-verification-2026-10-16.md).
