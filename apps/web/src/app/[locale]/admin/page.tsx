@@ -24,7 +24,7 @@ export default async function AdminPage({
       : query.auth === "error"
         ? messages[locale].authError
         : undefined;
-        
+
   const content = await guardAdminContent<ReactNode>(
     requestIdentity,
     (access) => <AdminShell locale={locale} access={access} />,
@@ -32,5 +32,6 @@ export default async function AdminPage({
       <AdminAccessState locale={locale} access={access} feedback={feedback} />
     ),
   );
+  
   return <AdminFrame locale={locale}>{content}</AdminFrame>;
 }

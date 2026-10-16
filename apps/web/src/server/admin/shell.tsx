@@ -4,9 +4,13 @@ import { messages, type Locale } from "../../i18n/messages";
 import type { AdminAccess } from "./access";
 import { adminNavigation, type AdminNavigationItem } from "./navigation";
 import { ThemeSelector } from "../../components/ThemeSelector";
-// import { useSidebar } from "@/context/SidebarContext";
-// import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { ThemeToggleButton } from "@/components/shared/ThemeToggleButton";
+import { AppHeader } from "@/layout/AppHeader";
+import { AppSidebar } from "@/layout/AppSidebar";
+import { useSidebar } from "@/context/SidebarContext";
+import { Dasboard } from "@/layout/Dasboard";
 
 const actionClass =
   "inline-block rounded-lg border border-teal-800 dark:border-teal-400 bg-white dark:bg-gray-900 px-5 py-3 font-semibold text-teal-900 dark:text-teal-200";
@@ -19,67 +23,26 @@ export function AdminFrame({
   children: ReactNode;
 }) {
   const t = messages[locale];
-  // const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+
+
   return (
     <>
       <a href="#content" className="skip-link">
         {t.skip}
       </a>
-      <header
-        className="sticky top-0 z-99999 flex w-full border-gray-200 bg-white xl:border-b dark:border-gray-800 dark:bg-gray-900"
-        //className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-8"
-      >
-        <div className="flex grow flex-col items-center justify-between xl:flex-row xl:px-6">
-          <div className="flex w-full items-center justify-between gap-2 border-b border-gray-200 px-3 py-3 sm:gap-4 xl:justify-normal xl:border-b-0 xl:px-0 xl:py-4 dark:border-gray-800">
-            <a href="/" className="xl:hidden">
-              {/* <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="/images/logo/logo.svg"
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="/images/logo/logo-dark.svg"
-              alt="Logo"
-            /> */}
-              <div className="text-3xl font-bold tracking-tight">
-                libris
-                <span className="text-teal-700 dark:text-teal-300">.</span>
-              </div>
-            </a>
+      {/* <AppSidebar />
+      <div className="flex min-h-screen flex-col xl:pl-72.5">
+        <AppHeader />
+        <main
+          id="content"
+          tabIndex={-1}
+          className="mx-auto max-w-6xl px-6 pb-20"
+        >
+          {children}
+        </main>
+      </div> */}
+      <Dasboard locale={locale}>{children}</Dasboard>
 
-            <ThemeSelector locale={locale} />
-          </div>
-        </div>
-
-        {/* <a href={`/${locale}`} className="text-3xl font-bold tracking-tight">
-          libris<span className="text-teal-700 dark:text-teal-300">.</span>
-        </a>
-        <p className="font-semibold text-teal-900 dark:text-teal-200">{t.adminTitle}</p>
-        <nav aria-label={t.languages} className="flex gap-5 text-sm">
-          <a
-            href="/pt/admin"
-            hrefLang="pt-BR"
-            aria-current={locale === "pt" ? "page" : undefined}
-          >
-            Português
-          </a>
-          <a
-            href="/en/admin"
-            hrefLang="en"
-            aria-current={locale === "en" ? "page" : undefined}
-          >
-            English
-          </a>
-        </nav> */}
-      </header>
-      <main id="content" tabIndex={-1} className="mx-auto max-w-6xl px-6 pb-20">
-        {children}
-      </main>
       <footer className="border-t border-slate-200 dark:border-gray-700 px-6 py-8 text-center text-sm text-slate-600 dark:text-gray-400">
         {t.footer}
       </footer>
