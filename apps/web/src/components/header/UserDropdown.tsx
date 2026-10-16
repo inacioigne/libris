@@ -12,7 +12,7 @@ export default function UserDropdown({
   result,
 }: {
   locale: Locale;
-  result: IdentityResult;
+  result: Extract<IdentityResult, { status: "authenticated" }>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
@@ -29,20 +29,21 @@ export default function UserDropdown({
     setIsSubDropdownOpen(false);
   };
 
+  console.log("USER: ", result.identity.roles);
+
   return (
     <div className="relative ">
       <button
         onClick={toggleDropdown}
         className="dropdown-toggle flex items-center text-gray-700 dark:text-gray-400 cursor-pointer"
       >
-        {/* <span className="me-3 h-11 w-11 overflow-hidden rounded-full"> */}
-          <Image 
-          src="/example/user.png"  
-          alt={"User"} 
+        <Image
+          src="/example/user.png"
+          alt={"User"}
           width={44}
           height={44}
           className="me-3 h-11 shrink-0 overflow-hidden rounded-full object-cover"
-          />
+        />
         {/* </span> */}
         <span className="me-1 block text-theme-sm font-medium">Inácio</span>
         <IoChevronDown
@@ -58,6 +59,7 @@ export default function UserDropdown({
           </span>
         </div>
         <ul className="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
+          {result.identity.roles.includes('libris-admin') && 
           <li>
             <Link
               href={`/${locale}/admin`}
@@ -70,14 +72,14 @@ export default function UserDropdown({
               />
               <span>{messages[locale].adminTitle}</span>
             </Link>
-          </li>
+          </li>}
         </ul>
         <form action="/oidc/logout" method="post">
           <input type="hidden" name="csrf" value={result.csrf} />
           <input type="hidden" name="returnTo" value={`/${locale}/opac`} />
           <button
             type="submit"
-            className="mt-2 flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:no-underline! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="mt-2 flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:no-underline! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 dark:text-gray-400 dark:hover:bg-gray-800 cursor-pointer"
           >
             {messages[locale].logout}
           </button>

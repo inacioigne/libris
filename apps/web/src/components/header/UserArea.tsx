@@ -7,7 +7,9 @@ export default async function UserArea({ locale }: { locale: Locale }) {
   const result = await requestIdentity();
   const returnTo = `/${locale}/opac`;
 
-  if (result.csrf) {
+  
+
+  if (result.status === "authenticated")  {
     return <UserDropdown locale={locale} result={result} />;
   } else {
     return (
