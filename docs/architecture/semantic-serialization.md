@@ -24,6 +24,12 @@ contexto de saída, caminho de publicação integral distinguido dos DTOs e Acce
 Decisão necessária: reconciliar saída compacta com rejeição de @graph sem mudar
 persistência; usar compactação limitada de arrays e contexto em cada nó.
 
+## Evolução M05.02
+
+Os [adaptadores DTO ↔ RDF](catalogographic-dto-rdf-adapters.md) acrescentam Create,
+projeção Graph → Read e Update parcial sobre cópia do snapshot completo. O writer
+abaixo é reutilizado; limites de projeção e preservação integral estão nesse contrato.
+
 ## API pública
 
 Importar `libris.modules.bibliographic.infrastructure.serialization`:

@@ -82,7 +82,7 @@ export function AdminAccessState({
         </p>
       )}
       {access.status === "access_denied" && access.identity && (
-        <p className="mb-6 break-words text-sm">
+        <p className="mb-6 wrap-break-word text-sm">
           {t.actor}: {access.identity.actor_id}
         </p>
       )}
@@ -156,7 +156,7 @@ export function AdminShell({
         <p className="my-6 max-w-2xl leading-relaxed text-slate-700 dark:text-gray-300">
           {t.adminDescription}
         </p>
-        <p className="mb-6 break-words text-sm">
+        <p className="mb-6 wrap-break-word text-sm">
           {t.actor}: {access.identity.actor_id}
         </p>
         <Logout locale={locale} csrf={access.csrf} />

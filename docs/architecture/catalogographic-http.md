@@ -210,7 +210,7 @@ A composição mínima aplica ADRs 0011/0017/0023/0031, sem mudança arquitetura
 | Entrega | Estado nesta execução |
 | --- | --- |
 | #45 | roteador integrado sem endpoints artificiais, fábrica reutilizada, convenção HTTP e testes aplicáveis |
-| #46 | adaptadores DTO ↔ RDF persistentes e preservação de extensões pendentes |
+| #46 | [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md) e PATCH sobre snapshot completo implementados; sem endpoints |
 | #47 | POST/GET/PATCH, ETag e persistência HTTP dos cinco tipos pendentes |
 | #48 | relações, pré-validação HTTP e catálogo de perfis pendentes |
 | #49 | transições, projeção pública, histórico/auditoria/restauração HTTP pendentes |

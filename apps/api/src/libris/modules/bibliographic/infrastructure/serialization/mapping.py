@@ -1,4 +1,4 @@
-"""Explicit Read DTO → owned RDF description, contract 1.0."""
+"""Explicit DTO → owned RDF description, shared by Create, Read and Update."""
 
 from collections.abc import Iterable, Mapping
 from uuid import UUID
@@ -20,7 +20,11 @@ from libris.modules.bibliographic.api.schemas.common import (
     UnreconciledReference,
 )
 from libris.modules.bibliographic.application.relationships import ResolvedEntity
-from libris.modules.bibliographic.domain.relationships import DEFAULT_REGISTRY, EntityType
+from libris.modules.bibliographic.domain.relationships import (
+    DEFAULT_REGISTRY,
+    EntityType,
+    RelationDefinition,
+)
 from libris.modules.bibliographic.infrastructure.ownership import check_snapshot
 from libris.modules.bibliographic.infrastructure.rdf import BF, RdfDocumentError, new_graph
 
@@ -123,10 +127,35 @@ def resource_to_graph(
             raise RdfDocumentError("Campo sem relação autorizada no registro.")
         return URIRef(definitions[0].predicate)
 
+    def relation_target(value: CompatibleReference, definition: RelationDefinition) -> URIRef:
+        target = reference(value)
+        keys: tuple[UUID | str | None, ...] = (
+            value.internal_id if isinstance(value, LocalReference) else None,
+            str(target),
+        )
+        resolved = [
+            references[key]
+            for key in keys
+            if references is not None and key is not None and key in references
+        ]
+        if resolved:
+            entity = resolved[0]
+            if any(candidate != entity for candidate in resolved) or entity.identity.uri != str(
+                target
+            ):
+                raise RdfDocumentError("Resolução da referência é inconsistente.")
+            if entity.entity_type not in definition.targets:
+                raise RdfDocumentError("Tipo resolvido incompatível com a relação.")
+            if definition.field == "held_by" and entity.agent_kind != "Organization":
+                raise RdfDocumentError("O detentor resolvido deve ser Organization.")
+            if not definition.self_allowed and entity.identity.internal_id == resource.internal_id:
+                raise RdfDocumentError("Autorreferência por identidade resolvida.")
+        return target
+
     def relations(field: str, values: Iterable[CompatibleReference]) -> None:
         predicate = relation_predicate(field)
         definition = DEFAULT_REGISTRY.get(kind, str(predicate))
-        targets = [reference(value) for value in values]
+        targets = [relation_target(value, definition) for value in values]
         if not definition.self_allowed and root in targets:
             raise RdfDocumentError("Autorreferência incompatível com o contrato de relações.")
         for target in targets:
@@ -157,7 +186,7 @@ def resource_to_graph(
         for contribution in resource.contribution:
             assert definition.auxiliary_class is not None
             node = auxiliary(URIRef(definition.path[0]), URIRef(definition.auxiliary_class))
-            target = reference(contribution.agent)
+            target = relation_target(contribution.agent, definition)
             if target == root:
                 raise RdfDocumentError("Contribuição não admite autorreferência.")
             graph.add((node, URIRef(definition.path[1]), target))
@@ -174,7 +203,7 @@ def resource_to_graph(
         for publication in resource.provision_activity:
             assert definition.auxiliary_class is not None
             node = auxiliary(URIRef(definition.path[0]), URIRef(definition.auxiliary_class))
-            if any(reference(agent) == root for agent in publication.agent):
+            if any(relation_target(agent, definition) == root for agent in publication.agent):
                 raise RdfDocumentError("Publicação não admite autorreferência.")
             refs(node, URIRef(definition.path[1]), publication.agent)
             refs(node, BF.place, publication.place)

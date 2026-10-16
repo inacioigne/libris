@@ -1,7 +1,9 @@
 """Public semantic representation API, version 1.0; no persistence or HTTP calls."""
 
+from .adapters import ResourceCreate, ResourceUpdate, apply_update, create_to_graph
 from .mapping import ReferenceMapping, ResourceRead, resource_to_graph
 from .negotiation import MEDIA_TYPES, NotAcceptable, RepresentationFormat, negotiate_format
+from .projection import graph_to_read
 from .representation import (
     CONTEXT_VERSION,
     CONTRACT_VERSION,
@@ -22,6 +24,11 @@ __all__ = [
     "ReferenceMapping",
     "RepresentationFormat",
     "ResourceRead",
+    "ResourceCreate",
+    "ResourceUpdate",
+    "apply_update",
+    "create_to_graph",
+    "graph_to_read",
     "SemanticFormat",
     "context_digest",
     "local_context",

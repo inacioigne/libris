@@ -61,14 +61,14 @@ CAS e especificação catalográfica v1 permanecem compatíveis.
 | Endpoints reais | GET `/health`, GET `/api/v1/identity/me` | Somente estes caminhos no OpenAPI de produção; handlers Problem Details/correlação já instalados; sem CRUD/prevalidate/perfis/resolver HTTP |
 | Composição HTTP M05.01 / #45 | APIRouter `/api/v1/catalog` integrado em create_app; acesso à fábrica de sessões do lifespan | Sem endpoints artificiais; identidade/guard/correlação existentes reutilizados; [matriz HTTP e permissões](catalogographic-http.md), implementação de operações nas #46–#51 |
 
-Não existe adaptador persistente genérico Create/Update DTO → Graph vigente nem
-Graph → DTO completo. O pipeline Create + identidade → Read → Graph e a aplicação
-de patches nos testes demonstram contratos, não endpoints ou serviço PATCH público.
-`expected_revision` é argumento interno, não campo de Update ou Read.
-`revise` recebe um grafo completo, enquanto Update substitui propriedades fornecidas
-e exige validação do estado completo pela futura integração. Nunca descartar extensões
-ao substituir um snapshot por um DTO limitado. Erros de domínio não têm status HTTP
-intrínseco: os handlers os traduzem somente quando chegam a uma requisição.
+A M05.02 acrescenta os [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md):
+`create_to_graph`, `graph_to_read` e `apply_update`, reutilizando o writer Read existente.
+O PATCH transforma uma cópia do snapshot completo e valida antes de retornar, sem
+apagar propriedades independentes fora do DTO. A projeção Read tem limites explícitos;
+exportação integral continua usando Graph. Não há endpoint/serviço PATCH público.
+`expected_revision` permanece argumento de `revise`, fora dos DTOs; CAS, transações,
+auditoria e revisão imutável continuam nos serviços atuais. Erros de domínio não têm
+status HTTP intrínseco: os handlers os traduzem somente quando chegam a uma requisição.
 
 ## Formatos e exemplos verificáveis
 
