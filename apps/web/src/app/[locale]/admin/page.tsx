@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-// import { Dasboard } from "@/layout/Dasboard";
 import { notFound } from "next/navigation";
 import { isLocale, messages } from "@/i18n/messages";
 import { requestIdentity } from "@/server/auth/request";
@@ -33,6 +32,6 @@ export default async function AdminPage({
       <AdminAccessState locale={locale} access={access} feedback={feedback} />
     ),
   );
-  
+
   return <AdminFrame locale={locale}>{content}</AdminFrame>;
 }

@@ -57,30 +57,41 @@ export function evaluateAdminAccess(
 // Invoke protected work only after checking the server-resolved identity. Future
 // pages must use their own requirement, even when a layout also checks access.
 export async function guardAdminContent<T>(
+
   resolveIdentity: () => Promise<IdentityResult>,
+
   renderAuthorized: (
     access: Extract<AdminAccess, { status: "authorized" }>,
   ) => T | Promise<T>,
+
   renderBlocked: (
     access: Exclude<AdminAccess, { status: "authorized" }>,
   ) => T | Promise<T>,
+
   requirement: PermissionRequirement = shellRequirement,
+
   audit: SecurityAudit = new SecurityAudit(),
+
 ): Promise<T> {
+
   let correlation: string | null = currentCorrelation();
   try {
     correlation = (await headers()).get("x-request-id");
   } catch {
     /* Internal callers have no HTTP context. */
   }
+
   return withCorrelation(correlation, async () => {
+
     let result: IdentityResult;
     try {
       result = await resolveIdentity();
     } catch {
       result = { status: "unavailable" };
     }
+
     const access = evaluateAdminAccess(result, requirement);
+    
     if (access.status !== "authorized") {
       const actor =
         result.status === "authenticated" &&
