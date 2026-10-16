@@ -10,6 +10,7 @@ from libris.api.problems import RequestCorrelationMiddleware, install_problem_ha
 from libris.api.security import EndpointCORSMiddleware, SecurityHeadersMiddleware
 from libris.core.config import Settings
 from libris.infrastructure.database import Database
+from libris.modules.bibliographic.api.router import router as catalog_router
 from libris.modules.identity.api.router import router as identity_router
 from libris.modules.identity.application.service import IdentityService
 from libris.modules.identity.infrastructure.oidc import OIDCValidator
@@ -60,6 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     install_problem_handlers(app, correlation=False)
     app.include_router(health_router)
     app.include_router(identity_router)
+    app.include_router(catalog_router)
     return app
 
 

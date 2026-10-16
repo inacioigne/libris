@@ -27,6 +27,7 @@ fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` são experimen
 | [Serialização](semantic-serialization.md) | Cada campo Read → predicado/classe RDF, contexto, datatypes, idiomas e limites |
 | [Perfis](catalog-profiles.md) / [SHACL](shacl-validation.md) / [shapes](shacl-inventory.md) | Configuração declarativa independente, releases e regras executáveis |
 | [Erros](catalogographic-errors.md) | Diagnósticos, códigos, segurança, serialização e handlers HTTP |
+| [Superfície HTTP M05.01](catalogographic-http.md) | Composição `/api/v1/catalog`, dependências reutilizadas e matriz HTTP futura; sem operações catalográficas registradas na #45 |
 | [Valores controlados](controlled-vocabularies.md) / [extensões](semantic-extensions.md) | Contratos aditivos; não acrescentam campos aos DTOs históricos |
 | [Editorial](editorial-lifecycle.md) / [persistência editorial](editorial-persistence.md) / [auditoria](provenance-audit-versioning.md) | Serviços internos, permissões e estado persistente independente |
 | [Política de evolução](../decisions/0029-catalogographic-contract-versioning.md) | Política proposta de governança; SemVer documental e compatibilidade direcional |
@@ -58,6 +59,7 @@ CAS e especificação catalográfica v1 permanecem compatíveis.
 | Serviço interno `restore_content` | UUID + source_revision + expected_revision + Provenance + actor autenticado; versão editorial opcional → Revision rN+1 | Permissões metadata_revision:read/create; revalida histórico; conserva origem histórica intacta; registra restored/content; não publica automaticamente |
 | Serviços internos `HistoryService` / `EditorialService` | Histórico/paginação/comparação e transition com expectativas de versão/conteúdo → visões/estado editorial | Autorização explícita; `PostgresEditorialTransactions` controla transação, validação e integridade local na publicação; ver contratos complementares |
 | Endpoints reais | GET `/health`, GET `/api/v1/identity/me` | Somente estes caminhos no OpenAPI de produção; handlers Problem Details/correlação já instalados; sem CRUD/prevalidate/perfis/resolver HTTP |
+| Composição HTTP M05.01 / #45 | APIRouter `/api/v1/catalog` integrado em create_app; acesso à fábrica de sessões do lifespan | Sem endpoints artificiais; identidade/guard/correlação existentes reutilizados; [matriz HTTP e permissões](catalogographic-http.md), implementação de operações nas #46–#51 |
 
 Não existe adaptador persistente genérico Create/Update DTO → Graph vigente nem
 Graph → DTO completo. O pipeline Create + identidade → Read → Graph e a aplicação
