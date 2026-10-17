@@ -37,7 +37,10 @@ const navItems: NavItem[] = [
   {
     icon: <MdOutlineDashboardCustomize />,
     key: "cataloging",
-    subItems: [{ key: "newCatalogRecord", path: "/admin/cataloging/new" }],
+    subItems: [
+      { key: "works", path: "/admin/catalog/works" },
+      { key: "newCatalogRecord", path: "/admin/cataloging/new" },
+    ],
   },
   {
     icon: <MdOutlinePersonSearch />,

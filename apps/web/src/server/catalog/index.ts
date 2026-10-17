@@ -10,6 +10,16 @@ import { currentCorrelation, withCorrelation } from "../security-audit";
 export type WorkRead = components["schemas"]["WorkRead"];
 export type WorkCreate = components["schemas"]["WorkCreate"];
 export type WorkUpdate = components["schemas"]["WorkUpdate"];
+export type WorkListPage = components["schemas"]["CatalogPage_WorkRead_"];
+
+export interface ListWorksQuery {
+  limit?: number;
+  cursor?: string | null;
+  internal_id?: string | null;
+  uri?: string | null;
+  profile?: string | null;
+  editorial_state?: "draft" | "in_review" | "approved" | "published" | "withdrawn" | "archived" | null;
+}
 
 export type CatalogPermission =
   | "bibliographic:read"
@@ -159,6 +169,34 @@ export async function getWork(id: string, options: CatalogRequestOptions = {}): 
       },
     });
     return { data: result.data as WorkRead, error: result.error, response: result.response };
+  }, options, "bibliographic:read");
+}
+
+export async function listWorks(query: ListWorksQuery = {}, options: CatalogRequestOptions = {}): Promise<WorkListPage> {
+  return executeWorkRequest(async (client, context) => {
+    const search = Object.fromEntries(
+      Object.entries({
+        limit: query.limit,
+        cursor: query.cursor,
+        internal_id: query.internal_id,
+        uri: query.uri,
+        profile: query.profile,
+        editorial_state: query.editorial_state,
+      }).filter(([, value]) => value !== undefined && value !== null && value !== ""),
+    );
+
+    const result = await client.GET("/api/v1/catalog/works", {
+      params: {
+        query: search,
+      },
+      headers: {
+        Authorization: `Bearer ${context.accessToken}`,
+        "X-Request-ID": context.requestId,
+        "Cache-Control": "no-store, private",
+        Accept: "application/json",
+      },
+    });
+    return { data: result.data as WorkListPage, error: result.error, response: result.response };
   }, options, "bibliographic:read");
 }
 
