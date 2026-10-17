@@ -111,10 +111,17 @@ export default async function CatalogWorksPage({
           <div className="grid gap-8 md:grid-cols-[16rem_minmax(0,1fr)]">
             <AdminNavigation locale={locale} items={adminNavigation(access.identity.permissions, locale)} />
             <div className="min-w-0">
-              <h1 className="text-3xl font-semibold sm:text-4xl">{messages[locale].workList}</h1>
-              <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
-                {messages[locale].adminDescription}
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h1 className="text-3xl font-semibold sm:text-4xl">{messages[locale].workList}</h1>
+                  <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
+                    {messages[locale].adminDescription}
+                  </p>
+                </div>
+                <Link href={`/${locale}/admin/catalog/works/new`} className="rounded-lg bg-teal-700 px-4 py-2 font-medium text-white hover:bg-teal-800">
+                  {messages[locale].workCreateTitle}
+                </Link>
+              </div>
 
               <form method="get" action={`/${locale}/admin/catalog/works`} className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900 md:grid-cols-2 xl:grid-cols-5">
                 <label className="flex flex-col gap-2 text-sm font-medium">

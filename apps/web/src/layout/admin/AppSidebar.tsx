@@ -39,7 +39,7 @@ const navItems: NavItem[] = [
     key: "cataloging",
     subItems: [
       { key: "works", path: "/admin/catalog/works" },
-      { key: "newCatalogRecord", path: "/admin/cataloging/new" },
+      { key: "newCatalogRecord", path: "/admin/catalog/works/new" },
     ],
   },
   {

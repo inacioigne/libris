@@ -57,9 +57,14 @@ export default async function WorkDetailPage({
                     <p className="text-sm font-semibold uppercase tracking-[0.1em] text-teal-800 dark:text-teal-300">{t.workDetail}</p>
                     <h1 className="mt-2 text-3xl font-semibold">{titleForWork(work)}</h1>
                   </div>
-                  <Link href={`/${locale}/admin/catalog/works`} className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 dark:border-gray-700 dark:text-slate-200">
-                    {t.backToWorks}
-                  </Link>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href={`/${locale}/admin/catalog/works/${id}/edit`} className="rounded-lg bg-teal-700 px-4 py-2 font-medium text-white hover:bg-teal-800">
+                      {t.workEditTitle}
+                    </Link>
+                    <Link href={`/${locale}/admin/catalog/works`} className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 dark:border-gray-700 dark:text-slate-200">
+                      {t.backToWorks}
+                    </Link>
+                  </div>
                 </div>
 
                 <dl className="grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900 md:grid-cols-2">

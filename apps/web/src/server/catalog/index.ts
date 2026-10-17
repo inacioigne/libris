@@ -12,6 +12,11 @@ export type WorkCreate = components["schemas"]["WorkCreate"];
 export type WorkUpdate = components["schemas"]["WorkUpdate"];
 export type WorkListPage = components["schemas"]["CatalogPage_WorkRead_"];
 
+export interface WorkEnvelope {
+  work: WorkRead;
+  etag: string | null;
+}
+
 export interface ListWorksQuery {
   limit?: number;
   cursor?: string | null;
@@ -157,19 +162,40 @@ async function executeWorkRequest<T>(
   return response.data as T;
 }
 
+export async function getWorkWithMetadata(id: string, options: CatalogRequestOptions = {}): Promise<WorkEnvelope> {
+  const context = await resolveSessionContext(options);
+  if (!hasPermission(context.identity, catalogPermissions.read)) {
+    throw new CatalogAccessError(403, "permission_denied", context.identity);
+  }
+
+  const client = createCatalogographicClient(options.service ? options.service.config.apiUrl : authService().config.apiUrl);
+  const result = await client.GET("/api/v1/catalog/works/{id}", {
+    params: { path: { id } },
+    headers: {
+      Authorization: `Bearer ${context.accessToken}`,
+      "X-Request-ID": context.requestId,
+      "Cache-Control": "no-store, private",
+      Accept: "application/json",
+    },
+  });
+
+  if (result.error) {
+    const problem = result.response ? await result.response.clone().json().catch(() => undefined) : undefined;
+    throw mapCatalogFailure(result.response?.status ?? 500, problem ?? result.error);
+  }
+  if (!result.data) {
+    throw new CatalogAccessError(500, "api_unavailable");
+  }
+
+  return {
+    work: result.data as WorkRead,
+    etag: result.response?.headers.get("ETag") ?? null,
+  };
+}
+
 export async function getWork(id: string, options: CatalogRequestOptions = {}): Promise<WorkRead> {
-  return executeWorkRequest(async (client, context) => {
-    const result = await client.GET("/api/v1/catalog/works/{id}", {
-      params: { path: { id } },
-      headers: {
-        Authorization: `Bearer ${context.accessToken}`,
-        "X-Request-ID": context.requestId,
-        "Cache-Control": "no-store, private",
-        Accept: "application/json",
-      },
-    });
-    return { data: result.data as WorkRead, error: result.error, response: result.response };
-  }, options, "bibliographic:read");
+  const { work } = await getWorkWithMetadata(id, options);
+  return work;
 }
 
 export async function listWorks(query: ListWorksQuery = {}, options: CatalogRequestOptions = {}): Promise<WorkListPage> {
@@ -186,9 +212,7 @@ export async function listWorks(query: ListWorksQuery = {}, options: CatalogRequ
     );
 
     const result = await client.GET("/api/v1/catalog/works", {
-      params: {
-        query: search,
-      },
+      params: { query: search },
       headers: {
         Authorization: `Bearer ${context.accessToken}`,
         "X-Request-ID": context.requestId,
