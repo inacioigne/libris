@@ -42,6 +42,24 @@ function buildNoteValue(note: string): { label: { value: string }[] } | null {
   return value ? { label: [{ value }] } : null;
 }
 
+function buildContributionEntries(
+  agentValues: string[],
+  roleValues: string[],
+): Array<{ agent: { uri: string }; role: { uri: string }[] }> {
+  return Array.from({ length: Math.max(agentValues.length, roleValues.length) }, (_, index) => {
+    const agent = addReference(agentValues[index] ?? "");
+    const role = addReference(roleValues[index] ?? "");
+    if (!agent || !role) {
+      return null;
+    }
+
+    return {
+      agent,
+      role: [role],
+    };
+  }).filter((value): value is { agent: { uri: string }; role: { uri: string }[] } => Boolean(value));
+}
+
 function buildCreatePayload(formData: FormData): WorkCreate {
   const title = readString(formData.get("title"));
   const subtitle = readString(formData.get("subtitle"));
@@ -51,15 +69,7 @@ function buildCreatePayload(formData: FormData): WorkCreate {
   const roleValues = readList(formData, "contribution_role");
   const notes = readList(formData, "note").map((value) => ({ label: [{ value }] })).filter(Boolean);
 
-  const contribution = Array.from({ length: Math.max(agentValues.length, roleValues.length) }, (_, index) => {
-    const agent = addReference(agentValues[index] ?? "");
-    const role = addReference(roleValues[index] ?? "");
-    if (!agent) return null;
-    return {
-      agent,
-      role: role ? [role] : [],
-    };
-  }).filter((value): value is { agent: { uri: string }; role: { uri: string }[] } => Boolean(value));
+  const contribution = buildContributionEntries(agentValues, roleValues);
 
   const payload: WorkCreate = {
     title: buildTitleValue(title, subtitle),
@@ -102,15 +112,7 @@ function buildUpdatePayload(formData: FormData): WorkUpdate {
     payload.subject = subject;
   }
   if (agentValues.length > 0 || roleValues.length > 0) {
-    const contribution = Array.from({ length: Math.max(agentValues.length, roleValues.length) }, (_, index) => {
-      const agent = addReference(agentValues[index] ?? "");
-      const role = addReference(roleValues[index] ?? "");
-      if (!agent) return null;
-      return {
-        agent,
-        role: role ? [role] : [],
-      };
-    }).filter((value): value is { agent: { uri: string }; role: { uri: string }[] } => Boolean(value));
+    const contribution = buildContributionEntries(agentValues, roleValues);
     if (contribution.length > 0) {
       payload.contribution = contribution;
     }

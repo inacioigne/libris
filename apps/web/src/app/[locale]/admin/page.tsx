@@ -42,7 +42,6 @@ export default async function AdminPage({
 
   return <AdminFrame locale={locale}>
     {content}
-    <h1>AdminFrame</h1>
     {/* {JSON.stringify(content)} */}
     </AdminFrame>;
 }
