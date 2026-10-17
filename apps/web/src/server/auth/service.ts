@@ -21,6 +21,12 @@ export type IdentityResult =
       status: "anonymous" | "expired" | "forbidden" | "unavailable";
       csrf?: string;
     };
+export type SessionResolution =
+  | { status: "authenticated"; identity: Identity; csrf: string; accessToken: string }
+  | {
+      status: "anonymous" | "expired" | "forbidden" | "unavailable";
+      csrf?: string;
+    };
 export class CallbackRejected extends Error {
   constructor(readonly returnTo = "/pt/opac", readonly auditReason: Reason = "callback_rejected", readonly auditOutcome: Outcome = "denied") {
     super("Callback rejected");
@@ -178,7 +184,7 @@ export class AuthService {
           ? "provider_unavailable" : "callback_rejected", outcome);
     }
   }
-  private async identityLocked(handle: SessionHandle, events: SecurityEvent[]): Promise<IdentityResult> {
+  private async identityLocked(handle: SessionHandle, events: SecurityEvent[]): Promise<SessionResolution> {
     let session = handle.value;
     const now = this.clock();
     if (!session) return { status: "expired" };
@@ -239,32 +245,40 @@ export class AuthService {
       if (response.status === 403)
         return { status: "forbidden", csrf: session.csrf };
       if (!response.ok) return { status: "unavailable", csrf: session.csrf };
+      const identity = identityResponse((await response.json()) as unknown);
       return {
         status: "authenticated",
-        identity: identityResponse((await response.json()) as unknown),
+        identity,
         csrf: session.csrf,
+        accessToken: session.accessToken,
       };
     } catch {
       return { status: "unavailable", csrf: session.csrf };
     }
   }
-  async identity(id: string | undefined): Promise<IdentityResult> {
-    return withCorrelation(currentCorrelation(), () => this.identityCorrelated(id));
-  }
-  private async identityCorrelated(id: string | undefined): Promise<IdentityResult> {
+  async resolveSession(id: string | undefined): Promise<SessionResolution> {
     if (!validId(id)) return { status: "anonymous" };
     try {
       const events: SecurityEvent[] = [];
       const result = await this.store.withSession(id, (handle) =>
         this.identityLocked(handle, events),
       );
-      // withSession returns only after COMMIT. Rollback discards confirmations.
       for (const event of events) this.audit.emit(event);
       return result;
     } catch {
       this.audit.record("authentication.failed", "identity", "unavailable", "storage_unavailable");
       return { status: "unavailable" };
     }
+  }
+  async identity(id: string | undefined): Promise<IdentityResult> {
+    return withCorrelation(currentCorrelation(), () => this.identityCorrelated(id));
+  }
+  private async identityCorrelated(id: string | undefined): Promise<IdentityResult> {
+    const result = await this.resolveSession(id);
+    if (result.status === "authenticated") return { status: "authenticated", identity: result.identity, csrf: result.csrf };
+    const normalized: IdentityResult = { status: result.status };
+    if (result.csrf) normalized.csrf = result.csrf;
+    return normalized;
   }
   async logout(id: string, csrf: string, destination: string): Promise<URL> {
     return withCorrelation(currentCorrelation(), () => this.logoutCorrelated(id, csrf, destination));

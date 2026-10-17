@@ -43,14 +43,17 @@ export function evaluateAdminAccess(
       return {
         status: "access_denied",
         reason: "api_forbidden",
-        csrf: result.csrf,
+        ...(result.csrf ? { csrf: result.csrf } : {}),
       };
     case "anonymous":
       return { status: "login_required" };
     case "expired":
       return { status: "session_expired" };
     case "unavailable":
-      return { status: "service_unavailable", csrf: result.csrf };
+      return {
+        status: "service_unavailable",
+        ...(result.csrf ? { csrf: result.csrf } : {}),
+      };
   }
 }
 
