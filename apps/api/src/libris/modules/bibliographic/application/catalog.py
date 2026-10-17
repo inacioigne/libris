@@ -54,6 +54,7 @@ class CatalogView:
     resource: ResourceRead
     # None represents uninitialized legacy data, never an invented persisted state.
     editorial_version: int | None
+    graph: Graph | None = None
 
 
 async def resolve_references(
@@ -166,7 +167,7 @@ class CatalogService(BibliographicService):
         if not isinstance(resource, model):
             raise ResourceNotFoundError("Recurso não pertence à coleção.")
         state = await self.editorial.get(session, identifier)
-        return CatalogView(revision, resource, state.version if state else None), graph
+        return CatalogView(revision, resource, state.version if state else None, graph), graph
 
     async def current(
         self,

@@ -243,7 +243,7 @@ RDF existentes e ciclos ligados à raiz têm round-trip testado; DTOs não criam
 Graph é o caminho de extensões;
 DTOs fechados não oferecem metadata genérica ou uma segunda interpretação canônica.
 
-## Integração HTTP futura
+## Integração HTTP
 
 | Representação | Content-Type | Suporte |
 | --- | --- | --- |
@@ -280,6 +280,11 @@ continuam distintos (303/200 conforme ADRs). Content-Type de futura ingestão
 é validado separadamente, com 415 para mídia incompatível. Token de revisão do
 domínio não é ETag universal; cache por representação e dependências compostas
 exige contrato próprio. Não foram registradas novas rotas.
+
+A M05.06 integra este negociador e a exportação integral nos GET individuais
+editoriais/públicos. Veja [contrato HTTP implementado](catalogographic-listing.md)
+para caminhos, visibilidade, ETags e 406. A descrição de integração futura acima
+registra o contrato original M03; ingestão/resolução de identidades permanecem futuras.
 
 ## Exemplos, testes e evolução
 

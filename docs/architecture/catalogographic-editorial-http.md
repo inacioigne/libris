@@ -192,9 +192,16 @@ Respostas de API usam no-store/private, incluindo a projeção pública. Endpoin
 internos anônimos retornam 401, sem conteúdo/snapshots/diagnóstico privado. Cabeçalhos
 actor_id/roles enviados pelo cliente não alteram auditoria nem autorização.
 
-Limites: sem negociação Accept/listagem de catálogo (#50), UI editorial (#M07),
+Limites da entrega original #49: Accept/listagem foram integrados pela [#50](catalogographic-listing.md); UI editorial (#M07),
 circulação ou administração de perfis. O mapa externo do serviço interno não é
 exposto/configurado por esta API: publicação de referência não local sem evidência
 continua bloqueada com reference.unverified. Não há busca remota. A observação para
 conferir coleção/ETag carrega snapshot corrente; a comparação conserva o custo RDF
 já documentado, sem promessa de quota de CPU ou capacidade de produção.
+
+## Integração M05.06
+
+A leitura pública individual agora negocia JSON operacional, JSON-LD e Turtle
+sobre o snapshot publicado exato, com Vary: Accept, 406 e ETag próprio. JSON editorial
+conserva o validador de edição. As [listagens públicas/editoriais](catalogographic-listing.md)
+compartilham a visibilidade existente, sem expor histórico ou candidatas publicamente.

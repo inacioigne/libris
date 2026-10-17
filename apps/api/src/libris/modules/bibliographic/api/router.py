@@ -3,15 +3,18 @@
 from typing import Annotated, cast
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 
 from libris.api.problems import require_if_match
 from libris.modules.bibliographic.api.capabilities import router as capabilities_router
 from libris.modules.bibliographic.api.dependencies import get_catalog_service, get_resource_base_uri
 from libris.modules.bibliographic.api.editorial import router as editorial_router
+from libris.modules.bibliographic.api.listing import router as listing_router
 from libris.modules.bibliographic.api.representations import (
+    SEMANTIC_RESPONSES,
     editing_etag,
     get_if_match,
+    read_representation,
     set_representation_headers,
 )
 from libris.modules.bibliographic.api.schemas import (
@@ -73,16 +76,16 @@ async def create_work(
     return cast(WorkRead, view.resource)
 
 
-@router.get("/works/{id}", response_model=WorkRead)
+@router.get("/works/{id}", response_model=WorkRead, responses=SEMANTIC_RESPONSES)
 async def read_work(
     id: UUID,
+    request: Request,
     response: Response,
     context: Context,
     service: Service,
-) -> WorkRead:
+) -> Response:
     view = await service.current(id, INSTITUTIONAL_PROFILE_ID, WorkRead, context)
-    set_representation_headers(response, view)
-    return cast(WorkRead, view.resource)
+    return read_representation(request, response, view)
 
 
 @router.patch("/works/{id}", response_model=WorkRead)
@@ -120,16 +123,16 @@ async def create_instance(
     return cast(InstanceRead, view.resource)
 
 
-@router.get("/instances/{id}", response_model=InstanceRead)
+@router.get("/instances/{id}", response_model=InstanceRead, responses=SEMANTIC_RESPONSES)
 async def read_instance(
     id: UUID,
+    request: Request,
     response: Response,
     context: Context,
     service: Service,
-) -> InstanceRead:
+) -> Response:
     view = await service.current(id, INSTITUTIONAL_PROFILE_ID, InstanceRead, context)
-    set_representation_headers(response, view)
-    return cast(InstanceRead, view.resource)
+    return read_representation(request, response, view)
 
 
 @router.patch("/instances/{id}", response_model=InstanceRead)
@@ -169,16 +172,16 @@ async def create_item(
     return cast(ItemRead, view.resource)
 
 
-@router.get("/items/{id}", response_model=ItemRead)
+@router.get("/items/{id}", response_model=ItemRead, responses=SEMANTIC_RESPONSES)
 async def read_item(
     id: UUID,
+    request: Request,
     response: Response,
     context: Context,
     service: Service,
-) -> ItemRead:
+) -> Response:
     view = await service.current(id, INSTITUTIONAL_PROFILE_ID, ItemRead, context)
-    set_representation_headers(response, view)
-    return cast(ItemRead, view.resource)
+    return read_representation(request, response, view)
 
 
 @router.patch("/items/{id}", response_model=ItemRead)
@@ -216,16 +219,16 @@ async def create_agent(
     return cast(AgentRead, view.resource)
 
 
-@router.get("/agents/{id}", response_model=AgentRead)
+@router.get("/agents/{id}", response_model=AgentRead, responses=SEMANTIC_RESPONSES)
 async def read_agent(
     id: UUID,
+    request: Request,
     response: Response,
     context: Context,
     service: Service,
-) -> AgentRead:
+) -> Response:
     view = await service.current(id, AUTHORITY_PROFILE_ID, AgentRead, context)
-    set_representation_headers(response, view)
-    return cast(AgentRead, view.resource)
+    return read_representation(request, response, view)
 
 
 @router.patch("/agents/{id}", response_model=AgentRead)
@@ -263,16 +266,16 @@ async def create_subject(
     return cast(SubjectRead, view.resource)
 
 
-@router.get("/subjects/{id}", response_model=SubjectRead)
+@router.get("/subjects/{id}", response_model=SubjectRead, responses=SEMANTIC_RESPONSES)
 async def read_subject(
     id: UUID,
+    request: Request,
     response: Response,
     context: Context,
     service: Service,
-) -> SubjectRead:
+) -> Response:
     view = await service.current(id, AUTHORITY_PROFILE_ID, SubjectRead, context)
-    set_representation_headers(response, view)
-    return cast(SubjectRead, view.resource)
+    return read_representation(request, response, view)
 
 
 @router.patch("/subjects/{id}", response_model=SubjectRead)
@@ -290,6 +293,8 @@ async def update_subject(
     set_representation_headers(response, view)
     return cast(SubjectRead, view.resource)
 
+
+router.include_router(listing_router)
 
 router.include_router(capabilities_router)
 

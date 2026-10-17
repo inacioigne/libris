@@ -132,7 +132,7 @@ class CatalogEditorialService(CatalogService):
             change.after,
         )
 
-    async def public_resource(self, identifier: UUID, model: type[ResourceRead]) -> ResourceRead:
+    async def public_view(self, identifier: UUID, model: type[ResourceRead]) -> CatalogView:
         try:
             selected = await self.read_public(identifier)
         except StaleRevisionError as error:
@@ -143,4 +143,7 @@ class CatalogEditorialService(CatalogService):
         resource = graph_to_read(graph, revision.identity)
         if not isinstance(resource, model):
             raise ResourceNotFoundError("Recurso público inexistente.")
-        return resource
+        return CatalogView(revision, resource, None, graph)
+
+    async def public_resource(self, identifier: UUID, model: type[ResourceRead]) -> ResourceRead:
+        return (await self.public_view(identifier, model)).resource

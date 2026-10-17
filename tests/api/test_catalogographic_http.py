@@ -69,7 +69,7 @@ def test_catalog_composition_point_is_included(monkeypatch: pytest.MonkeyPatch) 
         assert client.get("/api/v1/catalog/composition-probe").json() == {"composed": True}
     assert router.prefix == "/api/v1/catalog"
     assert router.tags == ["catalog"]
-    assert len(router.routes) == 17  # CRUD and M05.04/M05.05 composition points
+    assert len(router.routes) == 18  # CRUD and capabilities/editorial/listing composition points
 
 
 def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
@@ -124,10 +124,13 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
                 "revisions/{number}/snapshot", "revisions/restore", "audit", "audit/{event_id}",
                 "history",
             )
+        } | {
+            f"/api/v1/catalog/public/{collection}"
+            for collection in ("works", "instances", "items", "agents", "subjects")
         }
         assert schema["info"]["version"] == "0.1.0"
         operations = [op for path in schema["paths"].values() for op in path.values()]
-        assert len({op["operationId"] for op in operations}) == 39
+        assert len({op["operationId"] for op in operations}) == 49
         for path, model in (
             ("/health", "HealthResponse"),
             ("/api/v1/identity/me", "IdentityResponse"),
@@ -147,7 +150,7 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
             ("subjects", "Subject"),
         ):
             path = f"/api/v1/catalog/{collection}"
-            assert set(schema["paths"][path]) == {"post"}
+            assert set(schema["paths"][path]) == {"get", "post"}
             assert set(schema["paths"][path + "/{id}"]) == {"get", "patch"}
             assert schema["paths"][path]["post"]["security"] == [{"HTTPBearer": []}]
             for suffix in ("Create", "Read", "Update"):
@@ -238,7 +241,7 @@ def test_context_and_operation_policy_in_isolation(resource_name: str) -> None:
 @pytest.mark.parametrize(
     "method,path,status",
     [
-        ("GET", "/api/v1/catalog/works", 405),
+        ("GET", "/api/v1/catalog/works", 401),
         ("POST", "/api/v1/catalog/works", 401),
         ("GET", "/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", 401),
         ("POST", "/health", 405),
@@ -288,7 +291,7 @@ def test_payload_validation_handler_in_isolation(model: type[BaseModel]) -> None
         ("/api/v1/identity/me", "http://localhost:3000", "GET", 200),
         ("/api/v1/identity/me", "https://denied.example.invalid", "GET", 400),
         ("/api/v1/identity/me", "http://localhost:3000", "PATCH", 400),
-        ("/api/v1/catalog/works", "http://localhost:3000", "GET", 400),
+        ("/api/v1/catalog/works", "http://localhost:3000", "GET", 200),
     ],
 )
 def test_cors_is_not_expanded_for_future_endpoints(
@@ -312,7 +315,9 @@ def test_cors_is_not_expanded_for_future_endpoints(
     UUID(response.headers["x-request-id"])
     if status == 200:
         assert response.headers["access-control-allow-origin"] == origin
-        assert response.headers["access-control-allow-methods"] == "GET"
+        assert response.headers["access-control-allow-methods"] == (
+            "GET, POST" if path == "/api/v1/catalog/works" else "GET"
+        )
         assert "access-control-allow-credentials" not in response.headers
 
 
@@ -381,7 +386,7 @@ def test_editorial_read_requires_both_permissions(collection: str) -> None:
     "path,method,status",
     [
         ("/api/v1/catalog/works", "POST", 200),
-        ("/api/v1/catalog/works", "GET", 400),
+        ("/api/v1/catalog/works", "GET", 200),
         ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "PATCH", 200),
         ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "DELETE", 400),
         ("/api/v1/catalog/works/validation", "POST", 200),

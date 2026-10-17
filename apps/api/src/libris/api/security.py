@@ -18,7 +18,7 @@ class EndpointCORSMiddleware(CORSMiddleware):
             path = scope["path"]
             allowed = {"GET"} if path in {"/health", "/api/v1/identity/me"} else set()
             if re.fullmatch(r"/api/v1/catalog/(works|instances|items|agents|subjects)", path):
-                allowed = {"POST"}
+                allowed = {"GET", "POST"}
             elif re.fullmatch(
                 r"/api/v1/catalog/(works|instances|items|agents|subjects)/"
                 r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
@@ -52,6 +52,10 @@ class EndpointCORSMiddleware(CORSMiddleware):
                 path,
             ):
                 allowed = {"POST"}
+            if re.fullmatch(
+                r"/api/v1/catalog/public/(works|instances|items|agents|subjects)", path
+            ):
+                allowed = {"GET"}
             method = dict(scope["headers"])[b"access-control-request-method"].decode("latin-1")
             if not allowed:
                 await PlainTextResponse("CORS endpoint rejected", status_code=400)(

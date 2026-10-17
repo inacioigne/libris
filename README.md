@@ -16,6 +16,7 @@ para Work, Instance, Item, Agent e Subject, com ETag/If-Match. A M05.05 publica
 [ciclo editorial, histórico, auditoria e restauração](docs/architecture/catalogographic-editorial-http.md),
 com sete comandos explícitos e leitura pública da revisão publicada exata.
 [Evidências PostgreSQL e matriz de testes](docs/architecture/catalogographic-m0505-verification-2026-10-16.md).
+A M05.06 implementa [listagens públicas/editoriais, filtros, paginação e Accept JSON-LD/Turtle](docs/architecture/catalogographic-listing.md), sem depender de Elasticsearch.
 Editor, circulação,
 reconciliação de autoridades e pesquisa continuam futuros. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),

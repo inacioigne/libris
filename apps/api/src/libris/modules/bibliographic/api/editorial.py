@@ -3,13 +3,18 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Path, Query, Response
+from fastapi import APIRouter, Depends, Path, Query, Request, Response
 
 from libris.api.problems import require_if_match
 from libris.modules.bibliographic.api.capabilities import COLLECTIONS, Collection, profile_for
 from libris.modules.bibliographic.api.dependencies import get_catalog_service
 from libris.modules.bibliographic.api.limits import BoundedCatalogRoute
-from libris.modules.bibliographic.api.representations import editing_etag, get_if_match
+from libris.modules.bibliographic.api.representations import (
+    SEMANTIC_RESPONSES,
+    editing_etag,
+    get_if_match,
+    read_representation,
+)
 from libris.modules.bibliographic.api.schemas.editorial import (
     EditorialStateRead,
     EventCursor,
@@ -228,9 +233,12 @@ async def archive(
     )
 
 
-@router.get("/{collection}/{id}/public", response_model=ResourceRead)
-async def read_public(collection: Collection, id: UUID, service: Service) -> ResourceRead:
-    return await service.public_resource(id, COLLECTIONS[collection][2])
+@router.get("/{collection}/{id}/public", response_model=ResourceRead, responses=SEMANTIC_RESPONSES)
+async def read_public(
+    collection: Collection, id: UUID, service: Service, request: Request, response: Response
+) -> Response:
+    view = await service.public_view(id, COLLECTIONS[collection][2])
+    return read_representation(request, response, view, public=True)
 
 
 @router.get("/{collection}/{id}/revisions", response_model=RevisionPage)

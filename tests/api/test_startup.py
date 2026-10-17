@@ -32,6 +32,9 @@ def test_openapi_exposes_health_contract() -> None:
         for collection in ("works", "instances", "items", "agents", "subjects")
         for suffix in ("", "/{id}")
     } | {
+        f"/api/v1/catalog/public/{collection}"
+        for collection in ("works", "instances", "items", "agents", "subjects")
+    } | {
         "/api/v1/catalog/profiles",
         "/api/v1/catalog/profiles/release",
         "/api/v1/catalog/{collection}/validation",

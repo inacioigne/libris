@@ -1,4 +1,4 @@
-# Superfície HTTP catalográfica v1 — M05.05 / #49
+# Superfície HTTP catalográfica v1 — M05.06 / #50
 
 Complemento do [contrato canônico v1](catalogographic-contract.md), especificação
 **1.0.0**. Implementa POST/GET/PATCH persistentes dos cinco tipos em
@@ -12,7 +12,7 @@ permanece como registro histórico da composição sem operações naquele momen
 ## Recursos e representações
 
 POST/GET/PATCH individuais abaixo estão implementados e presentes no OpenAPI.
-Relações, pré-validação e perfis são implementados pela #48; ciclo editorial, histórico e projeção pública pela #49. Listagens e negociação Accept continuam na #50. `{collection}` é uma das cinco coleções fechadas da tabela;
+Relações, pré-validação e perfis são implementados pela #48; ciclo editorial, histórico e projeção pública pela #49. Listagens e negociação Accept estão implementadas pela [#50](catalogographic-listing.md). `{collection}` é uma das cinco coleções fechadas da tabela;
 `{id}` é UUID, nunca título, ISBN, barcode, URI arbitrária ou ID de usuário.
 
 | Entidade | Coleção sob `/api/v1/catalog` | Create → Read; PATCH | ResourceKind confiável |
@@ -63,8 +63,8 @@ acima. As linhas #47, #48 e #49 possuem handlers. Contratos completos da #49 em
 | GET `/{collection}/{id}/history` | EditorialHistory, 200 | metadata.editorial_history | #49 implementada |
 | POST `/{collection}/{id}/revisions/restore` | RestoreRequest + If-Match → nova Revision; 201 | metadata_revision.restore | #49 implementada |
 | GET `/{collection}/{id}/public` | TRead da revisão publicada exata; 200 ou 404 | read_public | #49 implementada |
-| GET `/{collection}` e `/public/{collection}` | coleção editorial ou pública paginada; envelope a fixar | leitura correspondente | #50 |
-| GET individual com Accept | JSON de aplicação, application/ld+json ou text/turtle; 200, 406 se não suportado | mesma visibilidade do caminho escolhido | #50 |
+| GET `/{collection}` e `/public/{collection}` | coleção editorial ou pública paginada; CatalogPage tipada | leitura correspondente | #50 implementada |
+| GET individual com Accept | JSON de aplicação, application/ld+json ou text/turtle; 200, 406 se não suportado | mesma visibilidade do caminho escolhido | #50 implementada |
 
 Os sete comandos são rotas literais; nenhum handler recebe uma ação arbitrária.
 Não há DELETE físico. Consulte [contratos, exemplos, estados e concorrência](catalogographic-editorial-http.md).
@@ -74,10 +74,8 @@ publicada e visível: candidata não substitui publicação e withdrawn/archived
 sem publicação não expõem conteúdo. A #45 apenas propunha nomenclaturas; esses
 caminhos foram concretizados na #49, sem remover rotas preexistentes.
 
-Estratégia de paginação para #50: cursor opaco e ordenação determinística com UUID
-como desempate; `limit` default 20, intervalo 1–100. Cursor deve fixar ordenação,
-filtros e escopo de visibilidade; não concede permissões. O envelope, os filtros e
-a codificação serão fechados na #50, incluindo testes de estabilidade e custo SQL.
+Paginação #50 implementada: cursor opaco e ordenação total por UUID ascendente; `limit` default 20, intervalo 1–100. Cursor deve fixar ordenação,
+filtros e escopo de visibilidade; não concede permissões. Envelope, filtros, codificação e garantias estão no [contrato de listagens](catalogographic-listing.md), com testes PostgreSQL de travessia e custo SQL.
 Históricos internos já têm paginação, sem se tornarem automaticamente esse contrato
 HTTP. Não prometer snapshot estável entre páginas sob escritas concorrentes sem
 implementar essa garantia. Elasticsearch não participa destas consultas.
@@ -250,7 +248,7 @@ conexão SQL, stack trace, PII ou grafos privados. Falhas inesperadas continuam 
 | 412 / 428 | precondição obsoleta / ausente no PATCH |
 | 422 | estrutura/invariantes/validação do estado completo rejeitada |
 | 500 / 503 | falha interna / dependência indisponível conforme classificador existente |
-| 406 | negociação não suportada, a integrar e testar na #50 |
+| 406 | negociação não suportada nos GET individuais, implementada na #50 |
 
 A #47 mapeia explicitamente editorial.version_stale para 412 e
 editorial.transition_forbidden/editorial.state_invalid para 409. Os demais códigos
@@ -258,8 +256,8 @@ não mapeados preservam fallback 422. ValidationError do estado completo usa os
 mesmos diagnósticos estruturais de RequestValidationError. ConnectionError/TimeoutError
 de dependências são 503 sem detalhes sensíveis; outros erros inesperados são 500.
 
-EndpointCORSMiddleware mantém origens explícitas e sem credenciais, permite POST
-somente nas cinco coleções e GET/PATCH nos UUIDs individuais. Health/me continuam
+EndpointCORSMiddleware mantém origens explícitas e sem credenciais, permite GET/POST
+nas cinco coleções, GET nas cinco coleções públicas e GET/PATCH nos UUIDs individuais. Health/me continuam
 GET. Headers permitidos incluem Authorization, Content-Type, X-Request-ID e If-Match;
 expõe ETag, Location, X-Request-ID e WWW-Authenticate. Rotas futuras/DELETE continuam
 negados no preflight. CORS não concede autenticação nem autorização.
@@ -279,7 +277,7 @@ A integração aplica ADRs 0011/0017/0023/0028/0031 e 0036.
 | #47 implementada | POST/GET/PATCH, ETag e persistência PostgreSQL dos cinco tipos |
 | #48 implementada | relações, pré-validação HTTP e catálogo somente-leitura; limites no complemento abaixo |
 | #49 implementada | sete transições explícitas, estado, leitura pública, revisões, snapshots, comparação, histórico, auditoria e restauração |
-| #50 | listagens/filtros/paginação e Accept JSON-LD/Turtle pendentes |
+| #50 implementada | listagens públicas/editoriais, filtros, keyset UUID e Accept JSON-LD/Turtle |
 | #51 | homologação integrada M05 com PostgreSQL/OIDC reais isolados pendente |
 
 Serviços internos de criação/revisão, read/read_public, relações, validação,
@@ -460,3 +458,11 @@ Ver [contrato HTTP e exemplos completos](catalogographic-editorial-http.md),
 [evidências datadas](catalogographic-m0505-verification-2026-10-16.md).
 As propostas de caminhos pendentes das entregas anteriores não eram endpoints.
 O OpenAPI agora descreve 17 operações adicionais reais com coleção enumerada.
+
+## Representações e consulta M05.06
+
+A [#50](catalogographic-listing.md) concretiza as listagens e o Accept dos GET
+individuais. JSON editorial conserva seu ETag; RDF e JSON público usam validadores
+próprios de formato/bytes, com Vary: Accept e 406. O snapshot autorizado completo
+conserva extensões, sem reconstrução pelo Read. Detalhes de filtros, limites, SQL,
+exemplos e concorrência estão no complemento; [ADR 0039](../decisions/0039-catalog-listing-representations.md).

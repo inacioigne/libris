@@ -1,0 +1,69 @@
+PostgreSQL: 17.11 (Debian 17.11-1.pgdg12+2)
+
+PUBLIC: False 
+SQL: SELECT experimental_semantic_resources.id, experimental_semantic_resources.uri, experimental_semantic_revisions.number, experimental_semantic_revisions.document 
+FROM experimental_semantic_resources LEFT OUTER JOIN experimental_semantic_editorial_states ON experimental_semantic_editorial_states.resource_id = experimental_semantic_resources.id JOIN experimental_semantic_revisions ON experimental_semantic_revisions.resource_id = experimental_semantic_resources.id AND experimental_semantic_revisions.number = experimental_semantic_resources.current_revision 
+WHERE experimental_semantic_revisions.document @> jsonb_build_array(jsonb_build_object('@id', experimental_semantic_resources.uri, '@type', jsonb_build_array('http://id.loc.gov/ontologies/bibframe/Work'))) ORDER BY experimental_semantic_resources.id 
+ LIMIT 21
+Limit  (cost=43.72..43.75 rows=10 width=84) (actual time=0.659..0.669 rows=15 loops=1)
+  Buffers: shared hit=9
+  ->  Sort  (cost=43.72..43.75 rows=10 width=84) (actual time=0.656..0.661 rows=15 loops=1)
+        Sort Key: experimental_semantic_resources.id
+        Sort Method: quicksort  Memory: 43kB
+        Buffers: shared hit=9
+        ->  Hash Join  (cost=18.00..43.56 rows=10 width=84) (actual time=0.288..0.482 rows=15 loops=1)
+              Hash Cond: ((experimental_semantic_resources.id = experimental_semantic_revisions.resource_id) AND (experimental_semantic_resources.current_revision = experimental_semantic_revisions.number))
+              Join Filter: (experimental_semantic_revisions.document @> jsonb_build_array(jsonb_build_object('@id', experimental_semantic_resources.uri, '@type', jsonb_build_array('http://id.loc.gov/ontologies/bibframe/Work'))))
+              Rows Removed by Join Filter: 9
+              Buffers: shared hit=6
+              ->  Seq Scan on experimental_semantic_resources  (cost=0.00..20.20 rows=1020 width=52) (actual time=0.051..0.059 rows=24 loops=1)
+                    Buffers: shared hit=1
+              ->  Hash  (cost=13.20..13.20 rows=320 width=52) (actual time=0.153..0.154 rows=42 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 40kB
+                    Buffers: shared hit=5
+                    ->  Seq Scan on experimental_semantic_revisions  (cost=0.00..13.20 rows=320 width=52) (actual time=0.015..0.060 rows=42 loops=1)
+                          Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=334
+Planning Time: 2.327 ms
+Execution Time: 0.822 ms
+
+PUBLIC: True 
+SQL: SELECT experimental_semantic_resources.id, experimental_semantic_resources.uri, experimental_semantic_revisions.number, experimental_semantic_revisions.document 
+FROM experimental_semantic_resources LEFT OUTER JOIN experimental_semantic_editorial_states ON experimental_semantic_editorial_states.resource_id = experimental_semantic_resources.id JOIN experimental_semantic_revisions ON experimental_semantic_revisions.resource_id = experimental_semantic_resources.id AND experimental_semantic_revisions.number = experimental_semantic_editorial_states.published_revision 
+WHERE experimental_semantic_editorial_states.editorial_state = 'published' AND experimental_semantic_revisions.document @> jsonb_build_array(jsonb_build_object('@id', experimental_semantic_resources.uri, '@type', jsonb_build_array('http://id.loc.gov/ontologies/bibframe/Work'))) ORDER BY experimental_semantic_resources.id 
+ LIMIT 21
+Limit  (cost=34.08..34.08 rows=1 width=84) (actual time=0.420..0.428 rows=3 loops=1)
+  Buffers: shared hit=22
+  ->  Sort  (cost=34.08..34.08 rows=1 width=84) (actual time=0.418..0.424 rows=3 loops=1)
+        Sort Key: experimental_semantic_resources.id
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=22
+        ->  Nested Loop  (cost=18.32..34.07 rows=1 width=84) (actual time=0.238..0.394 rows=3 loops=1)
+              Join Filter: (experimental_semantic_resources.id = experimental_semantic_editorial_states.resource_id)
+              Buffers: shared hit=22
+              ->  Hash Join  (cost=18.17..33.05 rows=3 width=68) (actual time=0.169..0.217 rows=8 loops=1)
+                    Hash Cond: ((experimental_semantic_revisions.resource_id = experimental_semantic_editorial_states.resource_id) AND (experimental_semantic_revisions.number = experimental_semantic_editorial_states.published_revision))
+                    Buffers: shared hit=6
+                    ->  Seq Scan on experimental_semantic_revisions  (cost=0.00..13.20 rows=320 width=52) (actual time=0.025..0.048 rows=42 loops=1)
+                          Buffers: shared hit=5
+                    ->  Hash  (cost=18.12..18.12 rows=3 width=20) (actual time=0.084..0.086 rows=8 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on experimental_semantic_editorial_states  (cost=0.00..18.12 rows=3 width=20) (actual time=0.047..0.056 rows=8 loops=1)
+                                Filter: ((editorial_state)::text = 'published'::text)
+                                Rows Removed by Filter: 16
+                                Buffers: shared hit=1
+              ->  Index Scan using experimental_semantic_resources_pkey on experimental_semantic_resources  (cost=0.15..0.33 rows=1 width=48) (actual time=0.020..0.020 rows=0 loops=8)
+                    Index Cond: (id = experimental_semantic_revisions.resource_id)
+                    Filter: (experimental_semantic_revisions.document @> jsonb_build_array(jsonb_build_object('@id', uri, '@type', jsonb_build_array('http://id.loc.gov/ontologies/bibframe/Work'))))
+                    Rows Removed by Filter: 1
+                    Buffers: shared hit=16
+Planning Time: 0.985 ms
+Execution Time: 0.581 ms
+
+INDEXES:
+CREATE UNIQUE INDEX experimental_semantic_editorial_states_pkey ON public.experimental_semantic_editorial_states USING btree (resource_id)
+CREATE UNIQUE INDEX experimental_semantic_resources_pkey ON public.experimental_semantic_resources USING btree (id)
+CREATE UNIQUE INDEX experimental_semantic_resources_uri_key ON public.experimental_semantic_resources USING btree (uri)
+CREATE UNIQUE INDEX experimental_semantic_revisions_pkey ON public.experimental_semantic_revisions USING btree (resource_id, number)
