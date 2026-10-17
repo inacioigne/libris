@@ -4,6 +4,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Protocol
 
+from pydantic import ValidationError
+
 from libris.modules.bibliographic.api.schemas.common import (
     EntityReference,
     ExternalReference,
@@ -199,9 +201,16 @@ async def apply_resolved_relationship_update(
 
     async def normalize(link: Link) -> Link:
         source = await canonical(link.source)
-        target = (
-            await canonical(link.target) if isinstance(link.target, LocalReference) else link.target
-        )
+        reference = link.target
+        if isinstance(reference, ExternalReference):
+            try:
+                local = LocalReference(entity_type=reference.entity_type, uri=reference.uri)
+            except ValidationError:
+                pass  # IRIs externas podem não ser URIs válidas de identidades locais.
+            else:
+                if await resolver.resolve(local) is not None:
+                    reference = local
+        target = await canonical(reference) if isinstance(reference, LocalReference) else reference
         return type(link).model_validate(
             link.model_dump() | {"source": source.model_dump(), "target": target.model_dump()},
             context={"registry": registry},

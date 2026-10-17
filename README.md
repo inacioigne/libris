@@ -330,3 +330,5 @@ Não expõe histórico, transições, relações, endpoints públicos ou listage
 Ver [contrato operacional](docs/architecture/catalogographic-http.md),
 [ADR 0036](docs/decisions/0036-catalog-http-concurrency.md) e
 [evidência datada](docs/architecture/catalogographic-m0503-verification-2026-10-16.md).
+
+A M05.04 / #48 acrescenta [relações e pré-validação HTTP](docs/architecture/catalogographic-http.md#m0504--48--capacidades-implementadas), com consulta somente-leitura de perfis/releases, diagnósticos 1.0, CAS e rollback relacional. [Evidências e limites](docs/architecture/catalogographic-m0504-verification-2026-10-16.md); não inclui editor nem homologação institucional.

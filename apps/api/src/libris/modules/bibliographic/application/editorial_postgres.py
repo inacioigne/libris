@@ -37,12 +37,15 @@ def entity_kind(kind: URIRef) -> EntityType:
 
 
 class PostgresReferenceResolver:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, *, lock: bool = True) -> None:
         self.session = session
+        self.lock = lock
         self.revisions = RevisionStore()
 
     async def resolve(self, reference: LocalReference) -> ResolvedEntity | None:
-        statement = select(SemanticResource).with_for_update(read=True, key_share=True)
+        statement = select(SemanticResource)
+        if self.lock:
+            statement = statement.with_for_update(read=True, key_share=True)
         statement = statement.where(
             SemanticResource.id == reference.internal_id
             if reference.internal_id is not None

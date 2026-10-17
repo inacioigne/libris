@@ -57,7 +57,7 @@ class CatalogView:
 
 
 async def resolve_references(
-    session: AsyncSession, resource: BaseModel
+    session: AsyncSession, resource: BaseModel, *, lock: bool = True
 ) -> dict[UUID | str, ResolvedEntity]:
     """Resolve only submitted references, under the caller's gate/transaction.
 
@@ -78,7 +78,7 @@ async def resolve_references(
                 collect(element)
 
     collect(resource)
-    resolver = PostgresReferenceResolver(session)
+    resolver = PostgresReferenceResolver(session, lock=lock)
     result: dict[UUID | str, ResolvedEntity] = {}
     # Deterministic acquisition of local dependency locks.
     for reference in sorted(references, key=lambda ref: str(ref.model_dump())):

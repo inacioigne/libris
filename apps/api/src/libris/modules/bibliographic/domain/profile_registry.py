@@ -368,6 +368,10 @@ class ProfileRegistry:
             return self.semantic_registry_for(definition.base_release)
         return SemanticRegistry.model_validate_json((registry or self._semantics).model_dump_json())
 
+    def release_ids(self) -> tuple[str, ...]:
+        """Identificadores estáveis, sem expor armazenamento ou estado mutável."""
+        return tuple(sorted(self._definitions))
+
     def definition(self, release_id: str) -> ProfileDefinition:
         try:
             return ProfileDefinition.model_validate_json(

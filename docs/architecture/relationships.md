@@ -287,3 +287,7 @@ futuros serializadores, mas não afirma round-trip RDF desta nova superfície JS
 
 A revisão individual dos nove critérios e os resultados executados estão no
 [relatório de verificação](relationships-verification.md).
+
+## Integração HTTP M05.04 / #48
+
+GET/PATCH `/{collection}/{id}/relationships` estão implementados sob `/api/v1/catalog`, reutilizando RelationshipRead/Update e operações add/remove/replace. O serviço altera somente vínculos na cópia do snapshot integral; usa `_revise`, gate exclusivo, CAS de conteúdo/estado e auditoria atômica. Inversas são opcionais na consulta e não graváveis. Fechos locais acíclicos são conferidos; não há consulta remota. Remoção de contribuição anotada é recusada para preservar conteúdo. Referências não reconciliadas não possuem política persistente; alvos externos de tipo ambíguo recebem reference.unverified. Contrato, exemplos, erros, ETags e limites no [complemento HTTP](catalogographic-http.md#m0504--48--capacidades-implementadas); [evidência própria](catalogographic-m0504-verification-2026-10-16.md).

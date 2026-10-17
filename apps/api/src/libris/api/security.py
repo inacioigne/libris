@@ -26,6 +26,18 @@ class EndpointCORSMiddleware(CORSMiddleware):
                 path,
             ):
                 allowed = {"GET", "PATCH"}
+            if re.fullmatch(
+                r"/api/v1/catalog/(works|instances|items|agents|subjects)/validation", path
+            ):
+                allowed = {"POST"}
+            elif path in {"/api/v1/catalog/profiles", "/api/v1/catalog/profiles/release"}:
+                allowed = {"GET"}
+            elif re.fullmatch(
+                r"/api/v1/catalog/(works|instances|items|agents|subjects)/"
+                r"[0-9a-fA-F-]{36}/relationships",
+                path,
+            ):
+                allowed = {"GET", "PATCH"}
             method = dict(scope["headers"])[b"access-control-request-method"].decode("latin-1")
             if not allowed:
                 await PlainTextResponse("CORS endpoint rejected", status_code=400)(

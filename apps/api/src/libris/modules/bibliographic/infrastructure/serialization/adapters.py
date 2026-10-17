@@ -113,14 +113,14 @@ def _authorize(
             raise CatalogError(CatalogCode.PROFILE_POLICY, "Namespace não autorizado para escrita.")
 
 
-def create_to_graph(
+def prepare_create_graph(
     resource: ResourceCreate,
     identity: ResourceIdentity,
     *,
     profile: str | ResolvedProfile,
     references: ReferenceMapping | None = None,
 ) -> Graph:
-    """Use an assigned identity and the existing writer; validate before returning."""
+    """Prepara estrutura, identidade e política; SHACL é executado pelo chamador."""
     model = CREATE_READ.get(type(resource))
     if model is None:
         raise RdfDocumentError("A conversão exige um dos cinco contratos Create.")
@@ -144,6 +144,17 @@ def create_to_graph(
         },
         profile,
     )
+    return graph
+
+
+def create_to_graph(
+    resource: ResourceCreate,
+    identity: ResourceIdentity,
+    *,
+    profile: str | ResolvedProfile,
+    references: ReferenceMapping | None = None,
+) -> Graph:
+    graph = prepare_create_graph(resource, identity, profile=profile, references=references)
     _validate(graph, identity, profile)
     return graph
 

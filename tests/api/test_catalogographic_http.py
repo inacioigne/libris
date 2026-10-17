@@ -69,7 +69,7 @@ def test_catalog_composition_point_is_included(monkeypatch: pytest.MonkeyPatch) 
         assert client.get("/api/v1/catalog/composition-probe").json() == {"composed": True}
     assert router.prefix == "/api/v1/catalog"
     assert router.tags == ["catalog"]
-    assert len(router.routes) == 15
+    assert len(router.routes) == 16  # 15 CRUD routes plus the M05.04 composition point
 
 
 def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
@@ -109,10 +109,15 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
             f"/api/v1/catalog/{collection}{suffix}"
             for collection in ("works", "instances", "items", "agents", "subjects")
             for suffix in ("", "/{id}")
+        } | {
+            "/api/v1/catalog/profiles",
+            "/api/v1/catalog/profiles/release",
+            "/api/v1/catalog/{collection}/validation",
+            "/api/v1/catalog/{collection}/{id}/relationships",
         }
         assert schema["info"]["version"] == "0.1.0"
         operations = [op for path in schema["paths"].values() for op in path.values()]
-        assert len({op["operationId"] for op in operations}) == 17
+        assert len({op["operationId"] for op in operations}) == 22
         for path, model in (
             ("/health", "HealthResponse"),
             ("/api/v1/identity/me", "IdentityResponse"),
@@ -369,8 +374,8 @@ def test_editorial_read_requires_both_permissions(collection: str) -> None:
         ("/api/v1/catalog/works", "GET", 400),
         ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "PATCH", 200),
         ("/api/v1/catalog/works/00000000-0000-4000-8000-000000000001", "DELETE", 400),
-        ("/api/v1/catalog/works/validation", "POST", 400),
-        ("/api/v1/catalog/profiles", "GET", 400),
+        ("/api/v1/catalog/works/validation", "POST", 200),
+        ("/api/v1/catalog/profiles", "GET", 200),
     ],
 )
 def test_catalog_cors_exact_paths(path: str, method: str, status: int) -> None:

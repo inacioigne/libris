@@ -215,3 +215,7 @@ novas continuam humanos. Evidências e critérios: [verificação](shacl-validat
 
 Referências técnicas: [SHACL W3C](https://www.w3.org/TR/shacl/) e
 [opções/erros pySHACL](https://github.com/RDFLib/pySHACL), consultados em 2026-10-12.
+
+## Pré-validação HTTP M05.04 / #48
+
+POST `/api/v1/catalog/{collection}/validation` aceita DTO Create, documento Turtle/JSON-LD limitado ou revisão autorizada. Resolve perfil exato no registro local e reutiliza validate_catalog; a preparação DTO é compartilhada com a escrita. Resultado 200 distingue completed/conforms de failed, sem transformar falha técnica em violação. Não cria revisão, estado, publicação ou auditoria bibliográfica; DTO usa transação READ ONLY. A observação SQL e a comparação de estado PostgreSQL estão nos testes próprios. Perfis 2.0 continuam fora da escrita persistente; não há equivalência presumida entre SHACL e integridade PostgreSQL. Ver [contrato HTTP](catalogographic-http.md#m0504--48--capacidades-implementadas), [ADR 0037](../decisions/0037-catalog-relationships-prevalidation.md) e [evidências](catalogographic-m0504-verification-2026-10-16.md).

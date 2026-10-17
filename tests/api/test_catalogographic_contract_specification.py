@@ -91,6 +91,11 @@ def test_production_openapi_has_no_documentary_catalog_endpoints() -> None:
         f"/api/v1/catalog/{collection}{suffix}"
         for collection in ("works", "instances", "items", "agents", "subjects")
         for suffix in ("", "/{id}")
+    } | {
+        "/api/v1/catalog/profiles",
+        "/api/v1/catalog/profiles/release",
+        "/api/v1/catalog/{collection}/validation",
+        "/api/v1/catalog/{collection}/{id}/relationships",
     }
     assert document["info"]["version"] == "0.1.0"
     assert "WorkCreate" in document["components"]["schemas"]

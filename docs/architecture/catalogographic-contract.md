@@ -60,7 +60,7 @@ CAS e especificação catalográfica v1 permanecem compatíveis.
 | Serviço interno `read_public` | UUID → (Revision, Graph) ou None | Lê revisão publicada exata; None para ausência de publicação/metadados legados, não presume publicação da corrente |
 | Serviço interno `restore_content` | UUID + source_revision + expected_revision + Provenance + actor autenticado; versão editorial opcional → Revision rN+1 | Permissões metadata_revision:read/create; revalida histórico; conserva origem histórica intacta; registra restored/content; não publica automaticamente |
 | Serviços internos `HistoryService` / `EditorialService` | Histórico/paginação/comparação e transition com expectativas de versão/conteúdo → visões/estado editorial | Autorização explícita; `PostgresEditorialTransactions` controla transação, validação e integridade local na publicação; ver contratos complementares |
-| Endpoints reais | GET `/health`, GET `/api/v1/identity/me`; POST/GET/PATCH dos cinco tipos em `/api/v1/catalog` | OpenAPI dos handlers reais; GET editorial autenticado, PATCH If-Match; sem prevalidate/perfis/resolver HTTP |
+| Endpoints reais | GET `/health`, GET `/api/v1/identity/me`; POST/GET/PATCH dos cinco tipos em `/api/v1/catalog` | OpenAPI dos handlers reais; GET editorial autenticado, PATCH If-Match; relações, pré-validação e perfis #48; sem resolver HTTP |
 | Composição HTTP M05.01 / #45 | APIRouter `/api/v1/catalog` integrado em create_app; acesso à fábrica de sessões do lifespan | Sem endpoints artificiais; identidade/guard/correlação existentes reutilizados; [matriz HTTP e permissões](catalogographic-http.md), implementação de operações nas #46–#51 |
 
 A M05.02 acrescenta os [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md):
@@ -134,7 +134,7 @@ Conformidade técnica é execução correta do software; conformidade semântica
 satisfazer as regras efetivamente modeladas; homologação institucional é decisão
 dos responsáveis biblioteconômicos. Os testes não substituem essa decisão.
 
-- POST/GET/PATCH editoriais estão implementados na #47; não há editor, prevalidate,
+- POST/GET/PATCH editoriais estão implementados na #47 e relações/pré-validação/perfis na #48; não há editor,
   resolução HTTP, tombstones persistidos,
   fusão operacional, SPARQL, MARC, conectores remotos ou projeção Elasticsearch.
 - O serviço de escrita ainda aceita somente perfis históricos; perfis 2.0 são
@@ -796,3 +796,7 @@ Proprietário: **Conceito controlado** (`skos:Concept`).
 | Referências externas | `rdfs:seeAlso` | IRI | 0..* | — | Referência RDF explícita; sem resolução remota. |
 | Proveniência | `prov:wasDerivedFrom` | IRI | 0..* | — | Referência RDF explícita; sem resolução remota. |
 
+
+## Integração M05.04 / #48
+
+A [superfície HTTP](catalogographic-http.md#m0504--48--capacidades-implementadas) expõe relações próprias/derivadas, operações relacionais atômicas, pré-validação sem persistência e catálogo de releases somente-leitura. Conserva DTOs v1, diagnóstico 1.0, snapshots, identidades e perfis históricos. Não adota perfis 2.0 na persistência nem publica candidatas. [Matriz de compatibilidade e evidências](catalogographic-m0504-verification-2026-10-16.md) distinguem implementação, limitações e homologação.

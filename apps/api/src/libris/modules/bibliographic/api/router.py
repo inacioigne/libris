@@ -6,6 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Response
 
 from libris.api.problems import require_if_match
+from libris.modules.bibliographic.api.capabilities import router as capabilities_router
 from libris.modules.bibliographic.api.dependencies import get_catalog_service, get_resource_base_uri
 from libris.modules.bibliographic.api.representations import (
     editing_etag,
@@ -287,3 +288,6 @@ async def update_subject(
     view = await service.update_resource(id, payload, current, context)
     set_representation_headers(response, view)
     return cast(SubjectRead, view.resource)
+
+
+router.include_router(capabilities_router)

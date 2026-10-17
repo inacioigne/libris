@@ -392,3 +392,7 @@ usar o ambiente sincronizado .venv/bin; resultados/limites reais estão no
 [#31](catalogographic-contract.md): referência documental/versionamento.
 Integração PostgreSQL, APIs definitivas, migração MARC, indexação, armazenamento
 RDF adicional, reconciliação externa e administração permanecem fora do escopo.
+
+## Consulta HTTP M05.04 / #48
+
+GET `/api/v1/catalog/profiles` e `/profiles/release?release_id=IRI` estão implementados e exigem metadata_revision:read pelo guard existente. ProfileReleaseRead separa configured da disponibilidade declarada; não existe approved institucional no modelo. Preserva ResolvedProfile e oferece projeção legada sem nomes de arquivos. Publica persistent_writes_supported para distinguir os três IDs históricos dos perfis 2.0, disponíveis apenas para descoberta/pré-validação. Não há rotas administrativas. As URLs candidatas anteriores são históricas e foram sucedidas pela matriz M05.01. Ver [contrato HTTP vigente](catalogographic-http.md#m0504--48--capacidades-implementadas) e [evidência](catalogographic-m0504-verification-2026-10-16.md).

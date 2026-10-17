@@ -4,6 +4,7 @@ from typing import Annotated, ClassVar, Literal
 
 from pydantic import Field, ValidationInfo, model_validator
 
+from libris.modules.bibliographic.domain.errors import CatalogCode, CatalogError
 from libris.modules.bibliographic.domain.relationships import (
     BF,
     DEFAULT_REGISTRY,
@@ -203,13 +204,19 @@ def apply_relationship_update(
             if link.source.entity_type != current.source.entity_type or not same_reference(
                 link.source, current.source
             ):
-                raise ValueError("Origem da operação difere da coleção.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID, "Origem da operação difere da coleção."
+                )
             if registry.get(current.source.entity_type, link.predicate).derived:
-                raise ValueError("Inversa derivada não é gravável.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID, "Inversa derivada não é gravável."
+                )
         if isinstance(operation, ReplaceLinks):
             definition = registry.get(current.source.entity_type, operation.predicate)
             if definition.derived:
-                raise ValueError("Inversa derivada não é gravável.")
+                raise CatalogError(
+                    CatalogCode.REFERENCE_INVALID, "Inversa derivada não é gravável."
+                )
             links = [link for link in links if link.predicate != operation.predicate]
             links.extend(operation.links)
         elif isinstance(operation, AddLinks):
@@ -218,7 +225,9 @@ def apply_relationship_update(
             for removal in operation.links:
                 matches = [link for link in links if same_link(link, removal)]
                 if len(matches) != 1:
-                    raise ValueError("Remoção exige exatamente um vínculo existente.")
+                    raise CatalogError(
+                        CatalogCode.REFERENCE_INVALID, "Remoção exige um vínculo existente."
+                    )
                 links.remove(matches[0])
     return RelationshipCreate.model_validate(
         {"source": current.source.model_dump(), "links": [link.model_dump() for link in links]},

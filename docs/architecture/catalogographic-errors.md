@@ -318,3 +318,7 @@ candidatos à homologação; categorias/códigos genéricos conservam informaç�
 faltam constraints específicas. Nenhuma classificação é inventada por mensagem.
 Canonização de diagnósticos não foi homologada para grafos de escala institucional;
 limites do parser RDF existente continuam vigentes.
+
+## Integração M05.04 / #48
+
+A pré-validação HTTP agora retorna CatalogValidationResult 1.0, com exclude_none=True, request ID e diagnósticos existentes. Não conformidade executada retorna 200/conforms=false; falha conhecida retorna 200/state=failed sem conforms. Estrutura inválida continua Problem Details 422; RDF malformado/limites/contexto remoto 400; perfil desconhecido 404; release incompatível 422; falhas inesperadas 500. Escrita relacional mantém 412/428 de precondição, 409 de estado editorial e 422 de estrutura/integridade; remoção inexistente e inversa gravável são CatalogError reference.invalid, sem ValueError genérico virar 500. Nenhum código ou campo obrigatório foi acrescentado aos diagnósticos. [Contrato HTTP e exemplos](catalogographic-http.md#m0504--48--capacidades-implementadas); [verificação](catalogographic-m0504-verification-2026-10-16.md).

@@ -1,4 +1,4 @@
-# Superfície HTTP catalográfica v1 — M05.03 / #47
+# Superfície HTTP catalográfica v1 — M05.04 / #48
 
 Complemento do [contrato canônico v1](catalogographic-contract.md), especificação
 **1.0.0**. Implementa POST/GET/PATCH persistentes dos cinco tipos em
@@ -12,7 +12,7 @@ permanece como registro histórico da composição sem operações naquele momen
 ## Recursos e representações
 
 POST/GET/PATCH individuais abaixo estão implementados e presentes no OpenAPI.
-As demais operações da matriz continuam futuras. `{collection}` é uma das cinco coleções fechadas da tabela;
+Relações, pré-validação e consulta de perfis também estão implementadas pela #48; as demais operações da matriz continuam futuras. `{collection}` é uma das cinco coleções fechadas da tabela;
 `{id}` é UUID, nunca título, ISBN, barcode, URI arbitrária ou ID de usuário.
 
 | Entidade | Coleção sob `/api/v1/catalog` | Create → Read; PATCH | ResourceKind confiável |
@@ -44,17 +44,17 @@ technical_context como autoridade em body/query/headers. O campo bibliográfico
 ## Matriz HTTP e entregas
 
 Prefixo de todas as linhas: `/api/v1/catalog`. `T` representa o tipo da coleção
-acima. Somente as três primeiras linhas possuem handlers nesta entrega.
+acima. As linhas #47 e #48 possuem handlers; as demais continuam futuras.
 
 | Método e caminho | Entrada → saída / sucesso previsto | Operação/política | Entrega |
 | --- | --- | --- | --- |
 | POST `/{collection}` | TCreate → TRead; 201, Location individual | bibliographic.create ou authority.manage | #47 implementada |
 | GET `/{collection}/{id}` | sem corpo → TRead editorial; 200 | bibliographic.read_editorial ou authority.read_editorial | #47 implementada |
 | PATCH `/{collection}/{id}` | TUpdate + If-Match → TRead editorial; 200 | bibliographic.update ou authority.manage | #47 implementada |
-| GET `/{collection}/{id}/relationships` | RelationshipRead; 200 | leitura editorial do tipo real | #48 |
-| PATCH `/{collection}/{id}/relationships` | RelationshipUpdate add/remove/replace → RelationshipRead; 200, If-Match | escrita do tipo real | #48 |
-| POST `/{collection}/validation` | entrada DTO/perfil a detalhar na #48 → CatalogValidationResult; 200 para execução concluída, inclusive não conformidade | contexto humano e capacidade de escrita do tipo; sem persistência | #48 |
-| GET `/profiles` | releases/perfis configurados; schema a definir na #48 | política exata a definir antes do handler; deny-by-default | #48 |
+| GET `/{collection}/{id}/relationships` | RelationshipRead; 200 | leitura editorial do tipo real | #48 implementada |
+| PATCH `/{collection}/{id}/relationships` | RelationshipUpdate add/remove/replace → RelationshipRead; 200, If-Match | escrita do tipo real | #48 implementada |
+| POST `/{collection}/validation` | ValidationRequest DTO/RDF/revisão → CatalogValidationResult; 200 para execução concluída, inclusive não conformidade | contexto humano e capacidade de criação do tipo; sem persistência | #48 implementada |
+| GET `/profiles` | ProfileReleaseRead configurados | metadata_revision.read; deny-by-default | #48 implementada |
 | POST `/{collection}/{id}/editorial/{action}` | comando do domínio, expectativas de conteúdo/estado → estado; schema/sucesso a fixar na #49 | editorial.action exata | #49 |
 | GET `/{collection}/{id}/editorial` | estado/histórico; schema a fixar | metadata.editorial_history | #49 |
 | GET `/{collection}/{id}/revisions` e `/revisions/{number}` | histórico/revisão; envelope a fixar | metadata_revision.read | #49 |
@@ -282,7 +282,7 @@ A integração aplica ADRs 0011/0017/0023/0028/0031 e 0036.
 | #45 | roteador integrado sem endpoints artificiais, fábrica reutilizada, convenção HTTP e testes aplicáveis |
 | #46 | [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md) e PATCH sobre snapshot completo implementados; sem endpoints |
 | #47 implementada | POST/GET/PATCH, ETag e persistência PostgreSQL dos cinco tipos |
-| #48 | relações, pré-validação HTTP e catálogo de perfis pendentes |
+| #48 implementada | relações, pré-validação HTTP e catálogo somente-leitura; limites no complemento abaixo |
 | #49 | transições, projeção pública, histórico/auditoria/restauração HTTP pendentes |
 | #50 | listagens/filtros/paginação e Accept JSON-LD/Turtle pendentes |
 | #51 | homologação integrada M05 com PostgreSQL/OIDC reais isolados pendente |
@@ -316,3 +316,144 @@ para testes de upgrade/downgrade; o último exige TEST_WEB_ISOLATED=1. Ausência
 skips, que não comprovam integração. A evidência da #47 descreve os bancos exclusivos
 utilizados, resultados e limites. OIDC nos novos testes é substituído por ator
 sintético via dependência; não comprova nova homologação Keycloak/produção.
+
+## M05.04 / #48 — capacidades implementadas
+
+Este complemento sucede as indicações de pendência da #48 nas seções históricas
+acima. [ADR 0037](../decisions/0037-catalog-relationships-prevalidation.md) e
+[verificação própria](catalogographic-m0504-verification-2026-10-16.md).
+
+| Método | Caminho sob `/api/v1/catalog` | Entrada → saída | Permissão efetiva |
+| --- | --- | --- | --- |
+| GET | `/{collection}/{id}/relationships` | sem body → RelationshipRead, 200 | bibliographic:read + metadata_revision:read; authority:read + metadata_revision:read nas autoridades |
+| PATCH | `/{collection}/{id}/relationships` | RelationshipUpdate + If-Match → RelationshipRead, 200 | bibliographic:update ou authority:manage |
+| POST | `/{collection}/validation` | ValidationRequest → CatalogValidationResult 1.0, 200 | bibliographic:create ou authority:manage; revisão existente exige também leitura editorial |
+| GET | `/profiles` | lista de ProfileReleaseRead, 200 | metadata_revision:read |
+| GET | `/profiles/release?release_id=IRI` | ProfileReleaseRead, 200 | metadata_revision:read |
+
+Coleções são somente works/instances/items/agents/subjects. O OpenAPI usa parâmetro
+collection enumerado nos novos handlers. Não há PUT/DELETE de registros, nem
+rotas administrativas de perfis. Substituição é a operação replace do PATCH;
+RelationshipReplace continua sendo o contrato interno de substituição completa.
+
+### Relações e precondições
+
+GET retorna relações próprias. `?include_inverses=true` inclui hasInstance/hasItem
+obtidas dos snapshots filhos correntes, sem gravá-las no pai. O discriminador vem
+do registro de relações: predicado derived não pode ser editado. Para editar, obter
+ETag de GET **sem inversas**, que identifica a coleção proprietária. Inversas não
+constituem representação histórica global nem comprovam publicação dos filhos.
+
+ETag `"catalog-relationships-v1-<digest>"` inclui projeção relacional ordenada,
+conteúdo corrente e versão editorial. If-Match exige um único ETag forte: ausente
+428; sintaxe inválida/duplicada 400; divergente 412. ETag do GET de recurso completo
+ou do GET com inversas diferentes não substitui o da coleção proprietária.
+O serviço relê ambas as versões sob lock; os CAS existentes continuam obrigatórios.
+
+Exemplo de adição (substituir os UUIDs sintéticos por identidades existentes):
+
+```http
+PATCH /api/v1/catalog/works/00000000-0000-4000-8000-000000000001/relationships
+Authorization: Bearer <access-token>
+If-Match: "catalog-relationships-v1-<digest-da-consulta>"
+Content-Type: application/json
+
+{"operations":[{"op":"add","links":[{"kind":"direct","source":{"kind":"local","entity_type":"Work","internal_id":"00000000-0000-4000-8000-000000000001"},"predicate":"http://id.loc.gov/ontologies/bibframe/relatedTo","target":{"kind":"external","entity_type":"Work","uri":"https://example.invalid/work"}}]}]}
+```
+
+Remoção usa `op=remove` e o vínculo consultado; substituição usa
+`{"op":"replace","predicate":"http://id.loc.gov/ontologies/bibframe/relatedTo","links":[]}`.
+Uma única lista de operações é atômica e validada no estado final. Duplicata e
+cardinalidade inválida → 422 schema.invalid; remoção inexistente, origem/identidade
+incompatível, alvo local inexistente, autorreferência ou ciclo local → 422
+reference.invalid, ou diagnóstico estrutural quando detectado pelo DTO. A matriz
+oficial diferencia Work/Instance mesmo para relatedTo. hasInstance/hasItem graváveis
+são recusadas. UUID de origem ausente/coleção errada → 404 resource.unknown.
+
+Cada PATCH cria uma revisão e um evento revised na mesma transação de conteúdo,
+estado e referências; falhas, inclusive de commit, revertem todos os efeitos.
+Não modifica revisões históricas nem publica candidata. Graph completo é copiado;
+propriedades, extensões, idiomas/datatype e identidade fora da operação permanecem.
+Contribution exige papéis; Publication usa activity_key consultada para identificar
+atividade existente, conservando lugar/data. Chaves novas criam atividade privada;
+chaves de blank nodes não são identidade permanente. Remoção de Contribution com
+anotações ou compartilhamento não representados é recusada com 422 profile.policy.
+
+Referências locais são resolvidas e conferidas na transação. Uma referência
+alegada externa cuja URI seja local é tratada como local e seu tipo é conferido.
+Externas sem identidade local não são consultadas remotamente nem viram entidades.
+Unreconciled → 422 reference.invalid: não existe política persistente de rascunho
+para elas. Campos namespace/external_id não possuem representação RDF e não são
+recuperados do snapshot. Para dcterms:relation de Agent, tipo externo Agent/Subject
+é ambíguo no RDF: recebe 422 reference.unverified, sem inferência. Isso é uma
+limitação explícita; não afeta alvos locais nem relações de destino único.
+
+### Pré-validação para o editor M07
+
+ValidationRequest é união discriminada por kind, com extras proibidos:
+
+```json
+{"kind":"dto","profile_release":"urn:libris:profile:monograph:v1:1","resource":{"title":[{"main_title":[{"value":"Proposta","language":"pt"}]}]}}
+```
+
+```json
+{"kind":"rdf","profile_release":"urn:libris:profile:monograph:v1:1","format":"turtle","root":"https://example.invalid/work","context":"snapshot","document":"<https://example.invalid/work> a <http://id.loc.gov/ontologies/bibframe/Work> ."}
+```
+
+```json
+{"kind":"revision","resource_id":"00000000-0000-4000-8000-000000000001","revision":1}
+```
+
+DTO usa um dos cinco Create e o tipo deve corresponder à coleção. Identidade nova
+é somente efêmera em memória. Revision valida snapshot autorizado, com release
+armazenada, sem aceitar troca implícita; revision omitida seleciona a corrente.
+Não representa PATCH de revisão nem publicação. RDF aceita somente Turtle/JSON-LD,
+raiz explícita e contexto snapshot/composed; composto é fornecido integralmente,
+sem derivação automática ou leitura de outros registros. Snapshot exige ownership.
+Perfil/release são resolvidos localmente, por ID exato, sem escolha de “mais recente”.
+Releases 2.0 candidate/published são selecionáveis explicitamente; draft/deprecated
+são consultáveis, mas não selecionáveis para nova proposta. Incompatível → 422
+profile.incompatible; inexistente → 404 profile.unknown. Histórico usa seu próprio
+perfil, preservando os contratos anteriores.
+
+Execução concluída retorna 200, inclusive conforms=false com issues estáveis.
+O RDF do segundo exemplo viola título obrigatório e retorna shacl.min_count.
+`resource={"title":[]}` é estruturalmente inválido e retorna Problem Details 422,
+sem passar pelo motor. Falha conhecida do motor retorna state=failed, sem conforms,
+com validator.failure/infrastructure.unavailable; entrada/perfil inválido usa
+Problem Details. Falha inesperada permanece 500; escrita semanticamente rejeitada
+permanece 422 validation.rejected com validation, usando as mesmas regras SHACL.
+
+Não há INSERT/UPDATE/DELETE bibliográfico, revisão, auditoria bibliográfica,
+publicação ou transição. DTO resolve referências numa transação PostgreSQL READ
+ONLY; RDF é processado em memória; revisão usa somente a leitura autorizada.
+Eventos de segurança do guard continuam independentes da auditoria bibliográfica.
+Diagnostics preservam contract_version=1.0, severidade, campo/path, shape,
+constraint, fonte e mensagens seguras conforme #22. request_id correlaciona header
+e resultado. Interfaces devem apresentar também erros sem field_ids e state=failed.
+
+O body completo de comandos novos é limitado a RDF_MAX_DOCUMENT_BYTES (default
+1 MiB) durante a leitura, sem confiar em Content-Length; profundidade JSON 64.
+O parser RDF conserva seus próprios limites. Contexto remoto, formato desconhecido
+ou entrada não suportada são recusados; não buscar ontologias/shapes/vocabulários.
+Não há limite de CPU ou homologação de carga institucional neste incremento.
+
+### Catálogo de perfis
+
+ProfileReleaseRead contém configured=true, profile e persistent_writes_supported.
+Profile é ResolvedProfile 2.0 existente ou LegacyProfileRead, sem nomes de arquivos.
+Ambos incluem ID/release/status, propriedades e referências SHACL; 2.0 inclui
+família, lineage, seções, condições, políticas e variantes de valores. Legado usa
+release_id=id histórico e sua estrutura de campos original. A lista tem ordem por
+release_id e a consulta exata não troca release nem altera estado do registro.
+
+Configured significa presente no pacote, enquanto candidate/published/deprecated/
+draft são estados do perfil. O pacote atual tem 14 releases configuradas, com estados candidate e draft. Não há
+estado institucional approved no modelo; published não é convertido em approved.
+Somente os três IDs históricos são suportados pela persistência atual; o booleano
+não promete que qualquer RDF ou DTO será aceito. Perfis 2.0 estão disponíveis para
+pré-validação e descoberta, sem adoção automática pela escrita.
+
+CORS permite as cinco novas operações somente nos caminhos reais e métodos
+correspondentes. Mantém origens explícitas, Bearer, no-store/private, request ID e
+Problem Details existentes. DELETE e rotas futuras continuam negados no preflight.
