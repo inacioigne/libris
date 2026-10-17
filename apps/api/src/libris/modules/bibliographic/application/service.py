@@ -393,16 +393,17 @@ class BibliographicService:
             state = await self.editorial.get(session, identifier)
             if state is None or state.public_revision is None:
                 return None
+            revision, document = await self.store.get(session, identifier, state.public_revision)
+            authority = revision.profile == AUTHORITY_PROFILE_ID
             self.authorization.require(
                 context=None,
-                operation=O.BIBLIOGRAPHIC_READ_PUBLIC,
+                operation=O.AUTHORITY_READ_PUBLIC if authority else O.BIBLIOGRAPHIC_READ_PUBLIC,
                 resource=ResourceContext(
-                    K.BIBLIOGRAPHIC,
+                    K.AUTHORITY if authority else K.BIBLIOGRAPHIC,
                     state.editorial_state,
                     state.public_revision,
                     state.public_revision,
                     resource_id=identifier,
                 ),
             )
-            revision, document = await self.store.get(session, identifier, state.public_revision)
         return revision, parse_document(json.dumps(document), "json-ld")

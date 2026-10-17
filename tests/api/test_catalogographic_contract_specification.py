@@ -96,6 +96,15 @@ def test_production_openapi_has_no_documentary_catalog_endpoints() -> None:
         "/api/v1/catalog/profiles/release",
         "/api/v1/catalog/{collection}/validation",
         "/api/v1/catalog/{collection}/{id}/relationships",
+    } | {
+        "/api/v1/catalog/{collection}/{id}/" + suffix
+        for suffix in (
+            "editorial", "editorial/submit", "editorial/approve", "editorial/publish",
+            "editorial/return", "editorial/withdraw", "editorial/republish", "editorial/archive",
+            "public", "revisions", "revisions/compare", "revisions/{number}",
+            "revisions/{number}/snapshot", "revisions/restore", "audit", "audit/{event_id}",
+            "history",
+        )
     }
     assert document["info"]["version"] == "0.1.0"
     assert "WorkCreate" in document["components"]["schemas"]

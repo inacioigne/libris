@@ -193,3 +193,10 @@ do sandbox parou em `npm: command not found`; a execução final acrescentou ao 
 somente o Node.js 24.16.0 já instalado via NVM. Não houve instalação de ferramentas
 ou mudanças de infraestrutura. `git diff --check` passou. Alterações ficaram no
 working tree da branch corrente, sem commits, troca de branch ou pull request.
+
+## Exposição HTTP posterior — M05.05
+
+A #49 disponibiliza os sete comandos existentes, estado, projeção pública e histórico
+por [HTTP v1](catalogographic-editorial-http.md). A matriz e as evidências originais
+acima permanecem históricas. O adaptador exige a operação literal também dentro da
+transação; publish não assume republish. [ADR 0038](../decisions/0038-catalog-editorial-http.md).

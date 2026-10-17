@@ -218,6 +218,7 @@ class EditorialService:
         selected_revision: int,
         scope: EditorialScope = EditorialScope.RECORD,
         justification: str | None = None,
+        expected_operation: Op | None = None,
     ) -> PreparedTransition:
         context = execution_context(context, actor)
         # Preflight before opening a transaction. Publication target has two explicit
@@ -230,6 +231,12 @@ class EditorialService:
             "withdrawn": (Operation.EDITORIAL_WITHDRAW,),
             "archived": (Operation.EDITORIAL_ARCHIVE,),
         }.get(target, ())
+        if expected_operation is not None:
+            candidates = tuple(
+                candidate
+                for candidate in candidates
+                if candidate == Operation(f"editorial.{expected_operation.value}")
+            )
         try:
             if not candidates:
                 raise PermissionDenied()
@@ -256,6 +263,10 @@ class EditorialService:
             record = await transaction.read(identifier)
             record.require_expected(expected_version, expected_current_revision)
             operation = transition_operation(record.source(scope), target)
+            if expected_operation is not None and operation != expected_operation:
+                raise CatalogError(
+                    C.TRANSITION_FORBIDDEN, "Comando difere da transição solicitada."
+                )
             try:
                 self.authorization.require(
                     context=context,

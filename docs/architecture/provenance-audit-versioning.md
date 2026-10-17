@@ -274,3 +274,11 @@ A representação abaixo ilustra recuperação do contrato, não um novo DTO HTT
 Os exemplos representam a mesma restauração com hash sintético ilustrativo. Em execução, restore_content exige ator OIDC real do contexto;
 a revisão nova e seu evento possuem o mesmo actor_id. Não usar esses exemplos para
 fabricar autoria histórica ou enviar identidade humana por payload.
+
+## Exposição HTTP posterior — M05.05
+
+As lacunas transacionais descritas historicamente acima foram tratadas na #43/ADR
+0028. A #49 acrescenta [consultas HTTP autorizadas](catalogographic-editorial-http.md)
+para revisões, snapshots, comparação RDF, auditoria e histórico combinado, além de
+restore_content. Preserva metadados, nullable histórico, paginação por chave e
+restauração como revisão nova. Não expõe eventos/logs de segurança.

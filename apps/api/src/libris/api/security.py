@@ -38,6 +38,20 @@ class EndpointCORSMiddleware(CORSMiddleware):
                 path,
             ):
                 allowed = {"GET", "PATCH"}
+            elif re.fullmatch(
+                r"/api/v1/catalog/(works|instances|items|agents|subjects)/"
+                r"[0-9a-fA-F-]{36}/(editorial|public|history|audit|audit/[0-9a-fA-F-]{36}|"
+                r"revisions|revisions/compare|revisions/[1-9][0-9]*(/snapshot)?)",
+                path,
+            ):
+                allowed = {"GET"}
+            elif re.fullmatch(
+                r"/api/v1/catalog/(works|instances|items|agents|subjects)/"
+                r"[0-9a-fA-F-]{36}/(editorial/(submit|approve|publish|return|withdraw|"
+                r"republish|archive)|revisions/restore)",
+                path,
+            ):
+                allowed = {"POST"}
             method = dict(scope["headers"])[b"access-control-request-method"].decode("latin-1")
             if not allowed:
                 await PlainTextResponse("CORS endpoint rejected", status_code=400)(

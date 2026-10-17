@@ -25,6 +25,7 @@ from libris.modules.bibliographic.application.diagnostics import (
     PublicContract,
     ordered,
 )
+from libris.modules.bibliographic.application.editorial import CatalogPublicationRejected
 from libris.modules.bibliographic.domain.errors import (
     CatalogCode,
     CatalogError,
@@ -311,7 +312,11 @@ async def handle_exception(request: Request, error: Exception) -> JSONResponse:
         return problem_response(
             request, 422, CatalogCode.SCHEMA_INVALID, issues=adapt_pydantic_error(error)
         )
-    result = error.result if isinstance(error, CatalogValidationRejected) else None
+    result = (
+        error.result
+        if isinstance(error, (CatalogValidationRejected, CatalogPublicationRejected))
+        else None
+    )
     if result is not None:
         result = result.model_copy(update={"request_id": request.state.request_id})
     return problem_response(

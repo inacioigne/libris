@@ -1,4 +1,4 @@
-# Superfície HTTP catalográfica v1 — M05.04 / #48
+# Superfície HTTP catalográfica v1 — M05.05 / #49
 
 Complemento do [contrato canônico v1](catalogographic-contract.md), especificação
 **1.0.0**. Implementa POST/GET/PATCH persistentes dos cinco tipos em
@@ -12,7 +12,7 @@ permanece como registro histórico da composição sem operações naquele momen
 ## Recursos e representações
 
 POST/GET/PATCH individuais abaixo estão implementados e presentes no OpenAPI.
-Relações, pré-validação e consulta de perfis também estão implementadas pela #48; as demais operações da matriz continuam futuras. `{collection}` é uma das cinco coleções fechadas da tabela;
+Relações, pré-validação e perfis são implementados pela #48; ciclo editorial, histórico e projeção pública pela #49. Listagens e negociação Accept continuam na #50. `{collection}` é uma das cinco coleções fechadas da tabela;
 `{id}` é UUID, nunca título, ISBN, barcode, URI arbitrária ou ID de usuário.
 
 | Entidade | Coleção sob `/api/v1/catalog` | Create → Read; PATCH | ResourceKind confiável |
@@ -44,7 +44,8 @@ technical_context como autoridade em body/query/headers. O campo bibliográfico
 ## Matriz HTTP e entregas
 
 Prefixo de todas as linhas: `/api/v1/catalog`. `T` representa o tipo da coleção
-acima. As linhas #47 e #48 possuem handlers; as demais continuam futuras.
+acima. As linhas #47, #48 e #49 possuem handlers. Contratos completos da #49 em
+[ciclo editorial HTTP](catalogographic-editorial-http.md).
 
 | Método e caminho | Entrada → saída / sucesso previsto | Operação/política | Entrega |
 | --- | --- | --- | --- |
@@ -55,29 +56,23 @@ acima. As linhas #47 e #48 possuem handlers; as demais continuam futuras.
 | PATCH `/{collection}/{id}/relationships` | RelationshipUpdate add/remove/replace → RelationshipRead; 200, If-Match | escrita do tipo real | #48 implementada |
 | POST `/{collection}/validation` | ValidationRequest DTO/RDF/revisão → CatalogValidationResult; 200 para execução concluída, inclusive não conformidade | contexto humano e capacidade de criação do tipo; sem persistência | #48 implementada |
 | GET `/profiles` | ProfileReleaseRead configurados | metadata_revision.read; deny-by-default | #48 implementada |
-| POST `/{collection}/{id}/editorial/{action}` | comando do domínio, expectativas de conteúdo/estado → estado; schema/sucesso a fixar na #49 | editorial.action exata | #49 |
-| GET `/{collection}/{id}/editorial` | estado/histórico; schema a fixar | metadata.editorial_history | #49 |
-| GET `/{collection}/{id}/revisions` e `/revisions/{number}` | histórico/revisão; envelope a fixar | metadata_revision.read | #49 |
-| GET `/{collection}/{id}/events` e `/events/{event_id}` | auditoria catalográfica; envelope a fixar | metadata_audit.read | #49 |
-| POST `/{collection}/{id}/revisions/{number}/restore` | expectativas CAS → nova revisão; schema/sucesso a fixar | metadata_revision.restore | #49 |
-| GET `/public/{collection}/{id}` | TRead da revisão publicada exata; 200 ou 404 sem publicação | bibliographic.read_public ou authority.read_public | #49 |
+| POST `/{collection}/{id}/editorial/submit`, `/approve`, `/publish`, `/return`, `/withdraw`, `/republish`, `/archive` | TransitionRequest + If-Match → EditorialStateRead; 200 | editorial.operação literal | #49 implementada |
+| GET `/{collection}/{id}/editorial` | EditorialStateRead, ETag; 200 | leitura editorial do tipo | #49 implementada |
+| GET `/{collection}/{id}/revisions`, `/revisions/{number}`, `/revisions/{number}/snapshot`, `/revisions/compare` | metadados, Turtle ou delta RDF; 200 | metadata_revision.read | #49 implementada |
+| GET `/{collection}/{id}/audit`, `/audit/{event_id}` | EventPage ou AuditEvent; 200 | metadata_audit.read | #49 implementada |
+| GET `/{collection}/{id}/history` | EditorialHistory, 200 | metadata.editorial_history | #49 implementada |
+| POST `/{collection}/{id}/revisions/restore` | RestoreRequest + If-Match → nova Revision; 201 | metadata_revision.restore | #49 implementada |
+| GET `/{collection}/{id}/public` | TRead da revisão publicada exata; 200 ou 404 | read_public | #49 implementada |
 | GET `/{collection}` e `/public/{collection}` | coleção editorial ou pública paginada; envelope a fixar | leitura correspondente | #50 |
 | GET individual com Accept | JSON de aplicação, application/ld+json ou text/turtle; 200, 406 se não suportado | mesma visibilidade do caminho escolhido | #50 |
 
-`{action}` será conjunto fechado submit/approve/publish/return/withdraw/republish/archive,
-nunca um destino arbitrário. Essas rotas não permitem DELETE físico. A retirada é
-editorial; histórico não é mutável. Comparação de revisões também pertence à #49,
-com parâmetros e schema a especificar nessa entrega. As linhas com contrato ainda
-incompleto não autorizam publicar handlers até fechar schemas e políticas aplicáveis.
-
-A separação `/public/...` é uma projeção explícita dentro da mesma convenção v1.
-GET individual sem esse segmento é editorial e exige autenticação. Não fazer
-fallback de editorial para público em falha de credencial, nem escolher revisão
-corrente para substituir a publicada. Nas futuras operações públicas, `read_public`
-e o guard verificam estado confiável e **selected_revision == public_revision**
-positiva. Uma candidata nova não substitui a revisão pública; withdrawn, archived
-e legado sem publicação não ficam visíveis. Estado da candidata/corrente não decide
-sozinho a visibilidade. O tipo/perfil real vem do recurso persistido.
+Os sete comandos são rotas literais; nenhum handler recebe uma ação arbitrária.
+Não há DELETE físico. Consulte [contratos, exemplos, estados e concorrência](catalogographic-editorial-http.md).
+A rota `/{collection}/{id}/public` é explícita; GET corrente exige autenticação,
+sem fallback público em falha de credencial. read_public seleciona somente a revisão
+publicada e visível: candidata não substitui publicação e withdrawn/archived/legado
+sem publicação não expõem conteúdo. A #45 apenas propunha nomenclaturas; esses
+caminhos foram concretizados na #49, sem remover rotas preexistentes.
 
 Estratégia de paginação para #50: cursor opaco e ordenação determinística com UUID
 como desempate; `limit` default 20, intervalo 1–100. Cursor deve fixar ordenação,
@@ -109,7 +104,7 @@ Não adicionar concessões por inferência de papel ou pelo tipo alegado no payl
 | metadata_revision.create | metadados | metadata_revision:create; política disponível, sem endpoint artificial |
 | metadata_revision.restore | revisões dos cinco tipos | metadata_revision:read + metadata_revision:create |
 | metadata_audit.read | eventos dos cinco tipos | metadata_audit:read |
-| metadata.editorial_history | estado/histórico dos cinco tipos | metadata_revision:read + metadata_audit:read |
+| metadata.editorial_history | histórico combinado dos cinco tipos | metadata_revision:read + metadata_audit:read |
 | editorial.submit | cinco tipos | editorial:submit |
 | editorial.approve | cinco tipos | editorial:approve |
 | editorial.publish | cinco tipos | editorial:publish |
@@ -140,7 +135,7 @@ validação do estado completo acontecem antes do commit. GET lê snapshot corre
 versão editorial sob o mesmo lock de recurso, sem inicializar legado. Não consulta
 histórico/auditoria nem exige metadata_audit:read. `HistoryService` e
 `PostgresEditorialTransactions` continuam atendendo histórico e decisões internas;
-são utilizados pelos testes de invariantes e publicação, sem novas rotas.
+são reutilizados também pelos adaptadores HTTP da #49.
 
 Escritas DTO usam o gate PostgreSQL **exclusivo**, adquirido antes do recurso e das
 dependências; leituras correntes usam shared. É a mesma chave/protocolo da M03,
@@ -283,7 +278,7 @@ A integração aplica ADRs 0011/0017/0023/0028/0031 e 0036.
 | #46 | [adaptadores internos DTO ↔ RDF](catalogographic-dto-rdf-adapters.md) e PATCH sobre snapshot completo implementados; sem endpoints |
 | #47 implementada | POST/GET/PATCH, ETag e persistência PostgreSQL dos cinco tipos |
 | #48 implementada | relações, pré-validação HTTP e catálogo somente-leitura; limites no complemento abaixo |
-| #49 | transições, projeção pública, histórico/auditoria/restauração HTTP pendentes |
+| #49 implementada | sete transições explícitas, estado, leitura pública, revisões, snapshots, comparação, histórico, auditoria e restauração |
 | #50 | listagens/filtros/paginação e Accept JSON-LD/Turtle pendentes |
 | #51 | homologação integrada M05 com PostgreSQL/OIDC reais isolados pendente |
 
@@ -457,3 +452,11 @@ pré-validação e descoberta, sem adoção automática pela escrita.
 CORS permite as cinco novas operações somente nos caminhos reais e métodos
 correspondentes. Mantém origens explícitas, Bearer, no-store/private, request ID e
 Problem Details existentes. DELETE e rotas futuras continuam negados no preflight.
+
+## M05.05 / #49 — ciclo editorial implementado
+
+Ver [contrato HTTP e exemplos completos](catalogographic-editorial-http.md),
+[ADR 0038](../decisions/0038-catalog-editorial-http.md) e
+[evidências datadas](catalogographic-m0505-verification-2026-10-16.md).
+As propostas de caminhos pendentes das entregas anteriores não eram endpoints.
+O OpenAPI agora descreve 17 operações adicionais reais com coleção enumerada.

@@ -36,6 +36,15 @@ def test_openapi_exposes_health_contract() -> None:
         "/api/v1/catalog/profiles/release",
         "/api/v1/catalog/{collection}/validation",
         "/api/v1/catalog/{collection}/{id}/relationships",
+    } | {
+        "/api/v1/catalog/{collection}/{id}/" + suffix
+        for suffix in (
+            "editorial", "editorial/submit", "editorial/approve", "editorial/publish",
+            "editorial/return", "editorial/withdraw", "editorial/republish", "editorial/archive",
+            "public", "revisions", "revisions/compare", "revisions/{number}",
+            "revisions/{number}/snapshot", "revisions/restore", "audit", "audit/{event_id}",
+            "history",
+        )
     }
 
 

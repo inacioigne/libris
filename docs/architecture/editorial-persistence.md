@@ -196,3 +196,11 @@ do recurso; leituras correntes usam shared. Escritas internas Graph mantêm o
 protocolo descrito acima. Decisão e custo de serialização no
 [ADR 0036](../decisions/0036-catalog-http-concurrency.md). Nenhuma migração nova.
 [Evidências próprias da #47](catalogographic-m0503-verification-2026-10-16.md).
+
+## Adaptadores HTTP M05.05
+
+A #49 expõe os serviços existentes por [rotas editoriais e histórico v1](catalogographic-editorial-http.md).
+Comandos literais incluem republish e usam ETag de edição como ambas as expectativas
+CAS, preservando estado/evento no mesmo commit. Leitura pública usa read_public;
+restauração continua criando conteúdo candidato. Nenhum schema/migração foi alterado.
+[Evidências desta execução](catalogographic-m0505-verification-2026-10-16.md).

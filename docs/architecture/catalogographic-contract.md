@@ -800,3 +800,12 @@ Proprietário: **Conceito controlado** (`skos:Concept`).
 ## Integração M05.04 / #48
 
 A [superfície HTTP](catalogographic-http.md#m0504--48--capacidades-implementadas) expõe relações próprias/derivadas, operações relacionais atômicas, pré-validação sem persistência e catálogo de releases somente-leitura. Conserva DTOs v1, diagnóstico 1.0, snapshots, identidades e perfis históricos. Não adota perfis 2.0 na persistência nem publica candidatas. [Matriz de compatibilidade e evidências](catalogographic-m0504-verification-2026-10-16.md) distinguem implementação, limitações e homologação.
+
+## M05.05 — Ciclo editorial e histórico HTTP
+
+O [complemento HTTP editorial](catalogographic-editorial-http.md) formaliza os sete
+comandos existentes e consultas de estado/revisão/snapshot/comparação/histórico/
+auditoria, restauração e projeção pública. Mantém os quinze DTOs catalográficos v1,
+perfis, SHACL e migrações existentes. ETag de edição carrega ambas as expectativas
+CAS. [ADR 0038](../decisions/0038-catalog-editorial-http.md) e
+[evidência separada](catalogographic-m0505-verification-2026-10-16.md).

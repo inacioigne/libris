@@ -12,7 +12,11 @@ BIBFRAME/RDF. A Etapa 2 inclui JSON-LD/Turtle, perfil monográfico, SHACL, UUID/
 snapshots JSONB, revisões e concorrência otimista. Há migrações Alembic
 experimentais; elas não executam no startup. A M05.03 implementa
 [POST/GET/PATCH editoriais persistentes](docs/architecture/catalogographic-http.md)
-para Work, Instance, Item, Agent e Subject, com ETag/If-Match. Editor, circulação,
+para Work, Instance, Item, Agent e Subject, com ETag/If-Match. A M05.05 publica
+[ciclo editorial, histórico, auditoria e restauração](docs/architecture/catalogographic-editorial-http.md),
+com sete comandos explícitos e leitura pública da revisão publicada exata.
+[Evidências PostgreSQL e matriz de testes](docs/architecture/catalogographic-m0505-verification-2026-10-16.md).
+Editor, circulação,
 reconciliação de autoridades e pesquisa continuam futuros. A Entrega A do Incremento 2
 implementa [autenticação/autorização OIDC](docs/architecture/identity.md),
 `/api/v1/identity/me` e ator opcional nas revisões, com [BFF de login web M04.03](docs/architecture/identity-web.md) implementado;

@@ -69,7 +69,7 @@ def test_catalog_composition_point_is_included(monkeypatch: pytest.MonkeyPatch) 
         assert client.get("/api/v1/catalog/composition-probe").json() == {"composed": True}
     assert router.prefix == "/api/v1/catalog"
     assert router.tags == ["catalog"]
-    assert len(router.routes) == 16  # 15 CRUD routes plus the M05.04 composition point
+    assert len(router.routes) == 17  # CRUD and M05.04/M05.05 composition points
 
 
 def test_lifespan_factory_and_legacy_routes_without_connections() -> None:
@@ -114,10 +114,20 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
             "/api/v1/catalog/profiles/release",
             "/api/v1/catalog/{collection}/validation",
             "/api/v1/catalog/{collection}/{id}/relationships",
+        } | {
+            "/api/v1/catalog/{collection}/{id}/" + suffix
+            for suffix in (
+                "editorial", "editorial/submit", "editorial/approve", "editorial/publish",
+                "editorial/return", "editorial/withdraw",
+                "editorial/republish", "editorial/archive",
+                "public", "revisions", "revisions/compare", "revisions/{number}",
+                "revisions/{number}/snapshot", "revisions/restore", "audit", "audit/{event_id}",
+                "history",
+            )
         }
         assert schema["info"]["version"] == "0.1.0"
         operations = [op for path in schema["paths"].values() for op in path.values()]
-        assert len({op["operationId"] for op in operations}) == 22
+        assert len({op["operationId"] for op in operations}) == 39
         for path, model in (
             ("/health", "HealthResponse"),
             ("/api/v1/identity/me", "IdentityResponse"),

@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Response
 from libris.api.problems import require_if_match
 from libris.modules.bibliographic.api.capabilities import router as capabilities_router
 from libris.modules.bibliographic.api.dependencies import get_catalog_service, get_resource_base_uri
+from libris.modules.bibliographic.api.editorial import router as editorial_router
 from libris.modules.bibliographic.api.representations import (
     editing_etag,
     get_if_match,
@@ -291,3 +292,5 @@ async def update_subject(
 
 
 router.include_router(capabilities_router)
+
+router.include_router(editorial_router)
