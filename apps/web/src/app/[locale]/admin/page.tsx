@@ -33,10 +33,16 @@ export default async function AdminPage({
     ),
   );
 
-  
+//   if (content.status === "login_required" || content.status === "session_expired") {
+    
+//   }
+
+//  console.log("[Login..]", content)
   
 
   return <AdminFrame locale={locale}>
     {content}
+    <h1>AdminFrame</h1>
+    {/* {JSON.stringify(content)} */}
     </AdminFrame>;
 }
