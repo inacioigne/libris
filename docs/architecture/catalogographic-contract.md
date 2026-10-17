@@ -32,7 +32,7 @@ fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` são experimen
 | [Superfície HTTP M05.01](catalogographic-http.md) | POST/GET/PATCH persistentes #47, dependências, precondições e operações futuras |
 | [Valores controlados](controlled-vocabularies.md) / [extensões](semantic-extensions.md) | Contratos aditivos; não acrescentam campos aos DTOs históricos |
 | [Editorial](editorial-lifecycle.md) / [persistência editorial](editorial-persistence.md) / [auditoria](provenance-audit-versioning.md) | Serviços internos, permissões e estado persistente independente |
-| [Política de evolução](../decisions/0029-catalogographic-contract-versioning.md) | Política proposta de governança; SemVer documental e compatibilidade direcional |
+| [Política de evolução](../decisions/0029-catalogographic-contract-versioning.md) | Política técnica e governança institucional pendente; SemVer documental e compatibilidade direcional |
 | [Rastreabilidade](catalogographic-contract-traceability.md) / [verificação #31](catalogographic-contract-v1-verification.md) | Implementadores, asserções concretas, cobertura e execução desta baseline |
 
 Os ADRs registram decisões no momento de cada entrega; os relatórios `*-verification.md`
@@ -118,9 +118,9 @@ aceito pelo produtor novo não é automaticamente compatível com um leitor anti
 Não enviar tal campo a consumidores antigos sem superfície/seleção explícita.
 Enums/códigos também requerem exame do leitor: Diagnostic.code é enum fechado,
 apesar da recomendação de fallback dos consumidores de UI.
-O [ADR 0029 proposto](../decisions/0029-catalogographic-contract-versioning.md)
+O [ADR 0029](../decisions/0029-catalogographic-contract-versioning.md)
 detalha avaliação direcional, descontinuação, coexistência e migração; sua aprovação
-de governança é pendente, sem alegar decisão institucional já tomada.
+institucional de governança é pendente, sem alegar decisão institucional já tomada.
 
 O gerador só escreve esta baseline ausente ou idêntica; `--check` detecta divergência.
 Versões futuras devem preservar este artefato e introduzir novo ID/arquivo após
@@ -809,3 +809,13 @@ auditoria, restauração e projeção pública. Mantém os quinze DTOs catalogr�
 perfis, SHACL e migrações existentes. ETag de edição carrega ambas as expectativas
 CAS. [ADR 0038](../decisions/0038-catalog-editorial-http.md) e
 [evidência separada](catalogographic-m0505-verification-2026-10-16.md).
+
+## Baseline HTTP complementar M06.01 / #53
+
+O [OpenAPI operacional](catalogographic-openapi.md) estabiliza as rotas reais M05,
+com [inventário auditável](catalogographic-openapi-inventory.md), check determinístico
+e CI. Preserva este identificador e os artefatos documentais 1.0.0; nenhum campo,
+perfil ou revisão foi reversionado. O ADR 0029 adota tecnicamente os gates e a
+revisão direcional; aprovação institucional e publicação de releases continuam
+pendentes dos mantenedores. Resultados atuais na
+[verificação #53](catalogographic-openapi-m0601-verification-2026-10-16.md).

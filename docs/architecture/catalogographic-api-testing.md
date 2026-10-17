@@ -223,3 +223,13 @@ diagnósticos seguros quando aplicáveis. OpenAPI real em `/openapi.json` descre
 somente operações existentes e declara ProblemDetails também no 406.
 Não interpretar 200 de pré-validação como publicação ou aprovação institucional.
 Deploy, editor, MARC21, circulação, inventário físico e busca M09 ficam fora da #51.
+
+## Gate OpenAPI M06.01 / #53
+
+Antes das suítes, `scripts/check.sh` verifica o JSON Schema documental e a
+[baseline operacional OpenAPI](catalogographic-openapi.md), sem escrever arquivos.
+O workflow `.github/workflows/catalogographic-contract.yml` executa esses checks,
+a suíte offline API completa e análise estática com o lock. O
+[inventário de operações](catalogographic-openapi-inventory.md) e
+[relatório #53](catalogographic-openapi-m0601-verification-2026-10-16.md) distinguem
+contrato declarado, comportamento exercitado e integração PostgreSQL.

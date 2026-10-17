@@ -344,3 +344,8 @@ Ver [contrato operacional](docs/architecture/catalogographic-http.md),
 [evidência datada](docs/architecture/catalogographic-m0503-verification-2026-10-16.md).
 
 A M05.04 / #48 acrescenta [relações e pré-validação HTTP](docs/architecture/catalogographic-http.md#m0504--48--capacidades-implementadas), com consulta somente-leitura de perfis/releases, diagnósticos 1.0, CAS e rollback relacional. [Evidências e limites](docs/architecture/catalogographic-m0504-verification-2026-10-16.md); não inclui editor nem homologação institucional.
+
+A M06.01 / #53 acrescenta a [baseline OpenAPI operacional](docs/architecture/catalogographic-openapi.md),
+com geração exclusiva, check de drift, CI e [inventário das operações reais](docs/architecture/catalogographic-openapi-inventory.md).
+A especificação documental 1.0.0 permanece preservada; esta entrega não implementa
+cliente TypeScript, BFF catalográfico ou editor Work.

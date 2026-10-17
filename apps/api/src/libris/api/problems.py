@@ -372,8 +372,8 @@ def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
             components.update(definition.pop("$defs", {}))
             components[model.__name__] = definition
         # Global handlers apply to every route, including authentication and body parsing.
-        for path in schema["paths"].values():
-            for operation in path.values():
+        for path_name, path in schema["paths"].items():
+            for method, operation in path.items():
                 if not isinstance(operation, dict) or "responses" not in operation:
                     continue
                 for status in (400, 404, 409, 412, 422, 428, 500, 503):
@@ -385,7 +385,53 @@ def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
                             }
                         },
                     }
+                for parameter in operation.get("parameters", []):
+                    if parameter.get("in") == "header" and parameter["name"] == "if-match":
+                        parameter["required"] = True
+                        parameter["description"] = (
+                            "Um único ETag forte da representação editorial correspondente. "
+                            "Ausência: 428; sintaxe inválida: 400; obsoleto: 412."
+                        )
+                        parameter["schema"] = {"type": "string", "title": "If-Match"}
                 for response_status, response in operation["responses"].items():
+                    headers = response.setdefault("headers", {})
+                    headers["X-Request-ID"] = {
+                        "description": "Identificador de correlação da requisição.",
+                        "schema": {"type": "string", "format": "uuid"},
+                    }
+                    if response_status == "401":
+                        headers["WWW-Authenticate"] = {
+                            "schema": {"type": "string", "const": "Bearer"}
+                        }
+                    success = response_status.isdigit() and int(response_status) < 300
+                    negotiated = "406" in operation["responses"]
+                    catalog = path_name.startswith("/api/v1/catalog/")
+                    resource_write = catalog and (
+                        method == "patch" or (
+                            method == "post" and path_name.rsplit("/", 1)[-1]
+                            in {"works", "instances", "items", "agents", "subjects"}
+                        )
+                    )
+                    state = path_name.endswith("/editorial") or "/editorial/" in path_name
+                    relations = path_name.endswith("/relationships")
+                    if success and (negotiated or resource_write or state or relations):
+                        headers["ETag"] = {
+                            "description": (
+                                "Validador forte; somente JSON editorial autoriza edição. "
+                                "Relações usam seu próprio ETag; público/RDF são exportações."
+                            ),
+                            "schema": {"type": "string"},
+                        }
+                    if negotiated and (success or response_status == "406"):
+                        headers["Vary"] = {
+                            "description": "Inclui Accept; CORS pode acrescentar Origin.",
+                            "schema": {"type": "string"},
+                        }
+                    if success and resource_write and method == "post":
+                        headers["Location"] = {
+                            "description": "Caminho relativo do recurso criado.",
+                            "schema": {"type": "string"},
+                        }
                     if response_status.isdigit() and int(response_status) >= 400:
                         response["content"] = {
                             "application/problem+json": {
