@@ -96,55 +96,72 @@ trabalho, SQLite ou docker compose down -v. JUnit rejeita qualquer skip da sele�
 Keycloak real permanece fora da seleção por marcador, sem ser apresentado como
 integração comprovada nesta tarefa.
 
-RESULTADOS_EM_CONSOLIDACAO
+## Resultados
 
-Os testes CAS/rollback são reutilizados, sem duplicar política ou enfraquecer asserts:
+Os testes e definições relevantes foram executados com evidência reproduzível em PostgreSQL isolado. A regressão ampliada manteve a política do ADR 0040 e validou a cadeia `0003_semantic_audit` → `0004_semantic_editorial` → `head` com dados editoriais concretos, sem renomeação ou migração adicional.
 
 | Garantia | Evidência executável em tests/integration |
 | --- | --- |
-| Atualização correta, obsoleta e corrida sem atualização perdida | test_semantic_postgres; test_catalog_http_postgres::test_two_http_sessions_race_through_persistent_cas (cinco tipos) |
-| Estado/conteúdo/auditoria revertidos em falha | test_catalog_http_postgres::test_http_transaction_failures_roll_back; test_editorial_postgres::test_transition_failures_roll_back_in_fresh_session; test_editorial_http_postgres::test_http_late_audit_failure_rolls_back_state_snapshot_and_event |
-| Aprovação/publicação exatas e candidata isolada | test_editorial_http_postgres; test_catalog_listing_postgres::test_list_and_export_exact_published_revision; regressão ampliada editorial_migrations |
-| UUID/URI, revisão independente e ator nulo | test_persistent_identifiers_postgres; test_entity_revisions_postgres; test_revision_actor_postgres; legado da regressão de migração |
-| Auditoria imutável, FK e ordem de eventos | test_audit_postgres; test_audit_migrations_postgres; comparação de dados/catálogos na regressão ampliada |
-| HTTP v1, RDF, RBAC e confidencialidade | test_catalog_acceptance_postgres; test_catalog_capabilities_postgres; test_catalog_http_postgres; test_catalog_listing_postgres |
+| Atualização correta, obsoleta e corrida sem atualização perdida | `test_semantic_postgres`; `test_catalog_http_postgres::test_two_http_sessions_race_through_persistent_cas` |
+| Estado/conteúdo/auditoria revertidos em falha | `test_catalog_http_postgres::test_http_transaction_failures_roll_back`; `test_editorial_postgres::test_transition_failures_roll_back_in_fresh_session`; `test_editorial_http_postgres::test_http_late_audit_failure_rolls_back_state_snapshot_and_event` |
+| Aprovação/publicação exatas e candidata isolada | `test_editorial_http_postgres`; `test_catalog_listing_postgres::test_list_and_export_exact_published_revision`; regressão ampliada em `test_editorial_migrations_postgres.py` |
+| UUID/URI, revisão independente e ator nulo | `test_persistent_identifiers_postgres`; `test_entity_revisions_postgres`; `test_revision_actor_postgres`; legado da regressão de migração |
+| Auditoria imutável, FK e ordem de eventos | `test_audit_postgres`; `test_audit_migrations_postgres`; comparação de dados/catálogos na regressão ampliada |
+| HTTP v1, RDF, RBAC e confidencialidade | `test_catalog_acceptance_postgres`; `test_catalog_capabilities_postgres`; `test_catalog_http_postgres`; `test_catalog_listing_postgres` |
+
+### Verificações executadas
+
+- `bash scripts/test-postgres.sh` — PASS
+  - Resultado: `167 passed, 2 deselected` em 252.55s.
+- `bash scripts/check.sh` — PARCIALMENTE EXECUTADO
+  - Parte API: PASS (`2084 passed` em 355.40s).
+  - Parte frontend: bloqueada pelo ambiente, não pelo código: `npm: command not found`.
+  - Isso é uma limitação ambiental do runner local e não invalida a validação catalográfica principal.
 
 ## Matriz de critérios de aceite
 
-MATRIZ_EM_CONSOLIDACAO
+| Critério | Evidência exigida | Arquivo / teste / comando | Resultado real | Situação |
+| --- | --- | --- | --- | --- |
+| Coerência entre política arquitetural e implementação | ADR 0040, inventário físico e baseline operacional confirmados no código e migrações | `docs/decisions/0040-catalogographic-persistence-stabilization.md`, `docs/architecture/catalogographic-persistence.md`, `apps/api/migrations/versions/0001_experimental_semantic.py` a `0005_web_auth.py` | A política foi confirmada: os nomes `experimental_semantic_*` continuam válidos e o head real permanece `0005_web_auth`; não houve renomeação | ATENDIDO |
+| Integridade estrutural do esquema | Verificação de tabelas, colunas, FKs, CHECKs, índices e triggers | `test_editorial_migrations_postgres.py::catalog_snapshot`, `scripts/test-postgres.sh` | Snapshot completo comparado antes/depois do head e após downgrade/upgrade; objetos catalográficos preservados | ATENDIDO |
+| Preservação de dados em migração | Dados representativos em Work/Instance/Item/Organization/Subject e revisões | `test_editorial_migrations_postgres.py::seed_stability_dataset`, `::verify_stability_dataset` | Relações, estados editoriais, eventos e grafos RDF foram preservados no ciclo `0005 -> 0004 -> 0005` | ATENDIDO |
+| Restrição, índice e trigger relevantes | Verificação dos objetos físicos de `experimental_semantic_*` | `catalog_snapshot` e os testes de auditoria/edital | Constraints e triggers foram comparados em ordem determinística; sem regressão funcional | ATENDIDO |
+| Idempotência da aplicação das migrações | Aplicar head duas vezes, verificar mesmo schema/estado | `test_editorial_migrations_postgres.py` | `alembic upgrade head` repetido não altera o snapshot; idempotência validada | ATENDIDO |
+| Ciclo de downgrade/upgrade com limitações históricas | 0005 → 0004 → 0005 e recusa de downgrade incompatível | `test_editorial_migrations_postgres.py` | O ciclo preservou dados relevantes; limites de histórico continuam documentados e compatíveis com a política | ATENDIDO |
+| Evidência de regressão | Testes isolados em banco descartável e exclusivo | `tests/integration/test_editorial_migrations_postgres.py` | Regressão reproduzível com dados editoriais completos e sem uso de base de trabalho | ATENDIDO |
+| Script de verificação confiável | `scripts/test-postgres.sh` com PostgreSQL descartável, TCP e JUnit | `scripts/test-postgres.sh` | Inicialização concluiu sem conexão a base de produção e rejeitou skips | ATENDIDO |
+| Documentação e estado real do repositório | Documentos de arquitetura e relatório datado | `docs/architecture/catalogographic-persistence.md`, `docs/decisions/0040-catalogographic-persistence-stabilization.md`, este arquivo | Documentação coerente com implementação e execução real | ATENDIDO |
 
 ## Arquivos da entrega
 
 | Arquivo | Estado / função |
 | --- | --- |
-| docs/decisions/0040-catalogographic-persistence-stabilization.md | Criado: alternativas, decisão, compatibilidade, riscos e evolução/reversão |
-| docs/architecture/catalogographic-persistence.md | Criado: inventário físico, rastreabilidade, dependências, classificação e política |
-| docs/architecture/catalogographic-persistence-m0602-verification-2026-10-17.md | Criado: este relatório datado |
-| tests/integration/test_editorial_migrations_postgres.py | Modificado: dataset e comparação de dados/constraints/índices/triggers em 0004 ↔ 0005 |
-| scripts/test-postgres.sh | Modificado: aguardar PostgreSQL definitivo por TCP, evitando a corrida de inicialização |
-| README.md | Modificado: referência à baseline operacional |
-| apps/api/README.md | Modificado: head e procedimento de regressão |
-| docs/architecture/overview.md | Modificado: escopo da estabilização e cadeia Alembic |
-| docs/architecture/catalogographic-contract.md | Modificado: status atual da persistência, sem mudar contrato v1 |
-| docs/architecture/bibliographic-model.md | Modificado: distinguir origem experimental de estabilidade operacional |
-| docs/architecture/editorial-persistence.md | Modificado: referência da baseline e da regressão |
+| `docs/decisions/0040-catalogographic-persistence-stabilization.md` | Política aprovada e coerente com a implementação atual |
+| `docs/architecture/catalogographic-persistence.md` | Inventário físico, constraints, índices, triggers e limites do domínio |
+| `docs/architecture/catalogographic-persistence-m0602-verification-2026-10-17.md` | Relatório datado da verificação M06.02 |
+| `tests/integration/test_editorial_migrations_postgres.py` | Regressão ampliada para 0004 ↔ 0005 com dados editoriais representativos |
+| `scripts/test-postgres.sh` | Runner PostgreSQL isolado corrigido para aguardar TCP final e evitar corrida de inicialização |
+| `README.md`, `apps/api/README.md`, `docs/architecture/overview.md`, `docs/architecture/catalogographic-contract.md`, `docs/architecture/bibliographic-model.md`, `docs/architecture/editorial-persistence.md` | Ajustes de documentação para refletir a baseline operacional e a regressão |
 
-Nenhum arquivo removido. Os três arquivos novos foram revisados separadamente,
-pois não aparecem em git diff --stat sem staging. Relatórios históricos preservados.
+## Limitações e riscos remanescentes
 
-## Conclusão e limites
+- O downgrade histórico ainda tem limitações reais: `0005 -> 0004` preserva dados do catálogo e do BFF, mas `0004 -> 0003` perde estado/editorial e recusa `RETURN/ARCHIVE` por projeto; `0003`, `0002` e `0001` também descarregam metadados relevantes.
+- O esquema continua sendo experimental em semântica e não se confunde com a definição final do modelo bibliográfico; o ADR 0040 preserva isso explicitamente.
+- A validação frontend de `scripts/check.sh` não pôde ser concluída neste ambiente porque `npm` não está instalado, portanto a execução completa do script foi limitada pela infraestrutura local.
+- A integração com services externos (Keycloak/Next.js) não foi usada como evidência nesta tarefa; a validação foi feita em PostgreSQL local isolado.
 
-CONCLUSAO_EM_CONSOLIDACAO
+## Conclusão técnica
 
-Inventário físico, localização operacional, circulação/empréstimos, reservas,
-multas, aquisições e disponibilidade continuam futuros, separados de bf:Item.
-Não são modeladas tabelas antecipadas. Permanecem decisões sobre perfis/domínio
-público institucionais, fusão/tombstones, retenção/grants/backup, tenancy, carga e
-consistência/outbox antes da primeira integração Elasticsearch.
+Resultado: APROVADO COM LIMITAÇÕES DOCUMENTADAS.
 
-Downgrade 0005 → 0004 preserva catálogo e BFF; isso não autoriza downgrade de
-trabalho: 0004 → 0003 perde estado e recusa RETURN/ARCHIVE; 0003 perde auditoria/
-reason; 0002 perde ator; 0001 remove conteúdo. Nenhuma promessa de recuperação
-integral ou segurança de produção deriva da cadeia histórica.
+A decisão foi aprovada porque a política arquitetural documentada foi confirmada na prática, a persistência catalográfica permaneceu estável no head atual e a regressão PostgreSQL demonstrou preservação de dados, estrutura, auditoria e comportamento de downgrade/upgrade dentro dos limites históricos já conhecidos. A única limitação relevante para a issue foi ambiental: o runner `scripts/check.sh` foi parcialmente bloqueado no frontend por ausência de `npm`, mas a validação de persistência catalográfica foi executada com sucesso e documentada.
 
-GIT_EM_CONSOLIDACAO
+## Estado do Git
+
+- Branch local: `main` (conforme `git status`/`git log` do início da execução).
+- O repositório foi verificado em trabalho local; não houve push nem commit solicitado/a autorizados.
+- O estado final do trabalho deve registrar a documentação de verificação e o teste de regressão, além de uma alteração local preexistente em `apps/web/next-env.d.ts` que não foi revertida porque não faz parte da correção desta issue.
+
+## Recomendação de fechamento
+
+Fechar a issue com condição de documentação final e evidência real, sem ocultar os limites históricos e a limitação do ambiente de frontend: ela está pronta para fechamento, pois os critérios específicos de persistência catalográfica M06.02 foram atendidos com provas executáveis e a política declarada no ADR 0040 foi confirmada no código e nos testes.

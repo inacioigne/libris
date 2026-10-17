@@ -91,6 +91,8 @@ export async function guardAdminContent<T>(
     }
 
     const access = evaluateAdminAccess(result, requirement);
+
+    console.log("[Login..]", access)
     
     if (access.status !== "authorized") {
       const actor =

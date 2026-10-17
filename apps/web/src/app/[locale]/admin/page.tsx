@@ -32,6 +32,8 @@ export default async function AdminPage({
       <AdminAccessState locale={locale} access={access} feedback={feedback} />
     ),
   );
+
+  
   
 
   return <AdminFrame locale={locale}>
