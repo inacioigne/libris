@@ -32,6 +32,12 @@ e [evidências reais e limites](docs/architecture/identity-m04-02-verification.m
 Consulte a [fundação semântica](docs/architecture/semantic-foundation.md) para
 exemplos, serviços internos, limites e testes de integração PostgreSQL.
 
+A M06.02 estabelece a [baseline operacional da persistência catalográfica](docs/architecture/catalogographic-persistence.md)
+e sua política incremental de evolução. Preserva os nomes físicos históricos
+`experimental_semantic_*`, sem nova migração ou mudança dos contratos M03–M05.
+O [ADR 0040](docs/decisions/0040-catalogographic-persistence-stabilization.md)
+distingue estabilidade operacional de esquema definitivo e homologação institucional.
+
 A Etapa 3, Incremento 1 consolida o [contrato catalográfico](docs/architecture/catalogographic-contract.md):
 release candidata monograph-v1.1, perfil complementar de autoridades, snapshots
 proprietários e revisões independentes, preservando o perfil experimental legado.

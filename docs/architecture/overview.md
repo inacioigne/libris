@@ -1,5 +1,10 @@
 # Arquitetura inicial do Libris
 
+A M06.02 consolida a [baseline operacional catalográfica](catalogographic-persistence.md)
+sem substituir os nomes físicos de origem experimental. O
+[ADR 0040](../decisions/0040-catalogographic-persistence-stabilization.md) estabelece
+evolução incremental e limites; não declara esquema bibliográfico definitivo.
+
 ## Escopo e estado
 
 O Libris será um ILS de código aberto, modular e orientado a dados conectados.
@@ -34,7 +39,7 @@ serviços de infraestrutura. Um único backend controla transações e módulos.
 
 - `apps/api/src/libris`: fábrica FastAPI, configuração, rotas e infraestrutura.
 - `apps/api/src/libris/modules`: núcleo bibliográfico experimental e módulo inicial de identidade OIDC; demais domínios futuros.
-- `apps/api/migrations`: ambiente Alembic assíncrono e migrações experimentais 0001–0004 para semântica, ator, auditoria e estados editoriais.
+- `apps/api/migrations`: ambiente Alembic assíncrono; revisões históricas 0001–0004 para semântica, ator, auditoria e estados editoriais; head 0005_web_auth para o schema isolado do BFF.
 - `apps/web/src/server/auth`: BFF OIDC/sessões PostgreSQL isoladas; [fluxo e limites](identity-web.md).
 - `apps/web/src/app`: App Router e páginas `/pt/opac`, `/en/opac`; `/` redireciona para `/pt/opac`.
   As entradas `/pt` e `/en` encaminham ao OPAC preservando parâmetros de consulta.

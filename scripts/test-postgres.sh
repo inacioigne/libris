@@ -29,7 +29,9 @@ port=$(docker port "$container_id" 5432/tcp)
 port=${port##*:}
 ready=0
 for ((attempt=0; attempt<60; attempt++)); do
-  if docker exec "$container_id" pg_isready -U libris_test >/dev/null 2>&1; then
+  # The image's temporary initialization server accepts Unix sockets before
+  # restarting. TCP is available only once the final server is ready.
+  if docker exec "$container_id" pg_isready -h 127.0.0.1 -U libris_test >/dev/null 2>&1; then
     ready=1
     break
   fi

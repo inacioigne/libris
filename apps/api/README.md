@@ -34,3 +34,8 @@ A M05.03 implementa POST/GET/PATCH em `/api/v1/catalog` para Work, Instance, Ite
 Agent e Subject. GET é editorial autenticado; PATCH exige um único If-Match forte.
 Consulte [rotas, permissões, ETag e testes PostgreSQL isolados](../../docs/architecture/catalogographic-http.md).
 Nenhuma migração nova é necessária nesta entrega; aplicar head continua explícito.
+
+A M06.02 consolida a [persistência catalográfica e sua política de evolução](../../docs/architecture/catalogographic-persistence.md).
+Os nomes físicos históricos permanecem suportados; o head continua `0005_web_auth`.
+`bash scripts/test-postgres.sh`, na raiz, executa a regressão em PostgreSQL descartável,
+incluindo preservação de dados editoriais em `0005 → 0004 → 0005`.

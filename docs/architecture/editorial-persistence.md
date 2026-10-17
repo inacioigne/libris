@@ -1,5 +1,12 @@
 # Persistência editorial PostgreSQL — issue #43
 
+A [baseline M06.02](catalogographic-persistence.md) consolida o inventário físico,
+a rastreabilidade e a política de evolução destes mecanismos. O
+[ADR 0040](../decisions/0040-catalogographic-persistence-stabilization.md) preserva
+os nomes históricos e os contratos transacionais abaixo, sem nova migração.
+O head efetivo é `0005_web_auth`; a regressão ampliada verifica sua reversão para
+0004 e re-upgrade com revisões, candidata/publicação, instituições e eventos.
+
 Implementação interna da [issue #43](https://github.com/inacioigne/libris/issues/43),
 com os contratos das #27/#28. Decisão: [ADR 0028](../decisions/0028-editorial-transactions.md).
 Não acrescenta rotas, editor, indexação, circulação ou esquema bibliográfico definitivo.

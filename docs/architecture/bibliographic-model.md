@@ -1,5 +1,11 @@
 # Estratégia bibliográfica: BIBFRAME 2.0
 
+Atualização M06.02: o [ADR 0040](../decisions/0040-catalogographic-persistence-stabilization.md)
+e o [inventário da persistência](catalogographic-persistence.md) estabilizam
+operacionalmente os mecanismos M03–M05 sem renomeação física. As referências ao
+protótipo abaixo registram sua origem; não obrigam substituir o armazenamento.
+O perfil legado continua experimental e não há esquema bibliográfico definitivo.
+
 Os limites de entidades, propriedade de snapshots, revisões independentes e política
 de URIs foram consolidados tecnicamente na Etapa 3, Incremento 1. Consulte o
 [contrato catalográfico](catalogographic-contract.md) e ADRs 0009–0015; os perfis

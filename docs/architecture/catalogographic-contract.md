@@ -15,7 +15,11 @@ pela leitura integral do código. RDFLib Graph é a representação semântica c
 PostgreSQL é a fonte persistente, com snapshots JSON-LD expandido em JSONB.
 Pydantic é a superfície tipada de aplicação, não uma segunda fonte bibliográfica.
 Python 3.13–3.14, Pydantic 2, SQLAlchemy 2 async, RDFLib e pySHACL são dependências
-fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` são experimentais.
+fixadas por `apps/api/uv.lock`. Tabelas `experimental_semantic_*` conservam nomes
+históricos; a [baseline operacional M06.02](catalogographic-persistence.md) e o
+[ADR 0040](../decisions/0040-catalogographic-persistence-stabilization.md) estabelecem
+suporte e evolução incremental, sem definir esquema bibliográfico definitivo ou
+alterar esta especificação v1.
 
 ## Como usar a especificação
 
