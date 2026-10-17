@@ -16,14 +16,15 @@ export function AdminFrame({
 }) {
   const t = messages[locale];
 
-
   return (
     <>
       <a href="#content" className="skip-link">
         {t.skip}
       </a>
 
-      <main id="content" tabIndex={-1} className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+      <main id="content" tabIndex={-1} className="mx-auto max-w-7xl px-6 py-10">
+        {children}
+      </main>
 
       <footer className="border-t border-slate-200 dark:border-gray-700 px-6 py-8 text-center text-sm text-slate-600 dark:text-gray-400">
         {t.footer}
@@ -149,6 +150,7 @@ export function AdminShell({
   const t = messages[locale];
   const items = adminNavigation(access.identity.permissions, locale);
   return (
+    
     <div className="grid gap-8 md:grid-cols-[16rem_minmax(0,1fr)]">
       <AdminNavigation locale={locale} items={items} />
       <div className="min-w-0">

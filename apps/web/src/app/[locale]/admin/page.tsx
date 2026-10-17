@@ -40,8 +40,15 @@ export default async function AdminPage({
 //  console.log("[Login..]", content)
   
 
-  return <AdminFrame locale={locale}>
-    {content}
-    {/* {JSON.stringify(content)} */}
-    </AdminFrame>;
+  // return <AdminFrame locale={locale}>
+  //   {content}
+  //   {/* {JSON.stringify(content)} */}
+  //   </AdminFrame>;
+  return (
+    <main className="mx-auto max-w-7xl px-6 py-10">
+      <h1>Libris</h1>
+       
+
+    </main>
+  )
 }
