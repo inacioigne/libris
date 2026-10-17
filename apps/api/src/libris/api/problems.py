@@ -385,9 +385,9 @@ def install_problem_handlers(app: FastAPI, *, correlation: bool = True) -> None:
                             }
                         },
                     }
-                for auth_status in ("401", "403"):
-                    if auth_status in operation["responses"]:
-                        operation["responses"][auth_status]["content"] = {
+                for response_status, response in operation["responses"].items():
+                    if response_status.isdigit() and int(response_status) >= 400:
+                        response["content"] = {
                             "application/problem+json": {
                                 "schema": {"$ref": "#/components/schemas/ProblemDetails"}
                             }

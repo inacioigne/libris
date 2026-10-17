@@ -5,6 +5,11 @@ Complemento do [contrato canônico v1](catalogographic-contract.md), especifica�
 `/api/v1/catalog`. Não significa homologação institucional dos perfis nem do OIDC
 em produção. `/health` e `/api/v1/identity/me` permanecem disponíveis.
 
+A M05.07 / #51 reúne [exemplos de consumo, execução isolada e níveis de evidência](catalogographic-api-testing.md)
+e a [matriz de aceitação datada](catalogographic-m0507-verification-2026-10-16.md).
+O OpenAPI declara `application/problem+json` para todos os erros declarados,
+incluindo 406, preservando o comportamento HTTP e o contrato v1.
+
 [Evidências datadas da #47](catalogographic-m0503-verification-2026-10-16.md).
 A [verificação da #45](catalogographic-http-m05-01-verification-2026-10-16.md)
 permanece como registro histórico da composição sem operações naquele momento.

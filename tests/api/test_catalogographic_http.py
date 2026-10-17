@@ -157,6 +157,21 @@ def test_openapi_only_describes_real_operations_and_schemas() -> None:
                 assert name + suffix in schema["components"]["schemas"]
 
 
+def test_openapi_declared_errors_match_problem_details_transport() -> None:
+    schema = main.create_app(Settings(_env_file=None, app_env="test")).openapi()
+    for path, methods in schema["paths"].items():
+        if not path.startswith("/api/v1/catalog"):
+            continue
+        for operation in methods.values():
+            for status, response in operation["responses"].items():
+                if status.isdigit() and int(status) >= 400:
+                    assert response["content"] == {
+                        "application/problem+json": {
+                            "schema": {"$ref": "#/components/schemas/ProblemDetails"}
+                        }
+                    }, (path, status)
+
+
 @pytest.mark.parametrize("authorization", [None, "Bearer invalid-token", "Basic forged"])
 def test_identity_401_cannot_be_bypassed_by_client_context(
     authorization: str | None,

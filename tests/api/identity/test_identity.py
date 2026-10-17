@@ -755,3 +755,85 @@ def test_client_binding_requires_signature_and_does_not_classify_subject_prefix(
     # A subject is opaque; only the provider/client configuration defines trust.
     actor = asyncio.run(service.authenticate(provider.token({"sub": "service-account-human-name"})))
     assert actor.subject == "service-account-human-name"
+
+
+@pytest.mark.parametrize("collection", ["works", "instances", "items", "agents", "subjects"])
+@pytest.mark.parametrize(
+    "case",
+    ["missing", "malformed", "expired", "signature", "issuer", "audience", "key", "jwks"],
+)
+def test_catalog_rejects_invalid_oidc_before_storage(
+    provider: Provider, collection: str, case: str
+) -> None:
+    """Real catalog handlers and JWT validation, deterministic offline discovery/JWKS."""
+    from unittest.mock import patch
+
+    changes = {
+        "expired": {"exp": 1},
+        "issuer": {"iss": "https://wrong.invalid"},
+        "audience": {"aud": "libris-web"},
+    }.get(case, {})
+    token = provider.token(
+        changes,
+        private=provider.other if case == "signature" else None,
+        kid="unknown" if case == "key" else "one",
+    )
+    if case == "malformed":
+        token = "malformed-private-sentinel"
+    if case == "jwks":
+        provider.timeout = True
+    headers = {
+        "actor_id": "forged-private-sentinel",
+        "roles": "libris-admin",
+        "permissions": "system:admin",
+    }
+    if case != "missing":
+        headers["Authorization"] = "Bearer " + token
+    app = create_app(provider.settings)
+    with TestClient(app) as client:
+        app.state.identity_service.validator = provider.validator
+        with patch("sqlalchemy.ext.asyncio.AsyncSession.execute", side_effect=AssertionError):
+            response = client.post(f"/api/v1/catalog/{collection}", json={}, headers=headers)
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+    assert response.headers["content-type"] == "application/problem+json"
+    assert response.json()["code"] == "authentication.required"
+    assert response.json()["request_id"] == response.headers["x-request-id"]
+    assert "no-store" in response.headers["cache-control"]
+    assert "etag" not in response.headers and "location" not in response.headers
+    assert token not in response.text and "forged-private-sentinel" not in response.text
+
+
+@pytest.mark.parametrize("collection", ["works", "instances", "items", "agents", "subjects"])
+@pytest.mark.parametrize("roles", [[], ["libris-reader"], ["libris-publisher"]])
+def test_catalog_signed_roles_cannot_be_promoted_by_client(
+    provider: Provider, collection: str, roles: list[str]
+) -> None:
+    from pathlib import Path
+    from unittest.mock import patch
+
+    singular = dict(zip(
+        ["works", "instances", "items", "agents", "subjects"],
+        ["work", "instance", "item", "agent", "subject"], strict=True,
+    ))[collection]
+    payload = json.loads((
+        Path(__file__).parents[2] / "fixtures/bibliographic/contracts"
+        / f"{singular}-create.json"
+    ).read_text())
+    token = provider.token({
+        "resource_access": {"libris-api": {"roles": roles}},
+        "realm_access": {"roles": ["libris-admin"]},
+        "permissions": [p.value for p in P],
+        "actor_id": "forged-private-sentinel",
+    })
+    app = create_app(provider.settings)
+    with TestClient(app) as client:
+        app.state.identity_service.validator = provider.validator
+        with patch("sqlalchemy.ext.asyncio.AsyncSession.execute", side_effect=AssertionError):
+            response = client.post(
+                f"/api/v1/catalog/{collection}?roles=libris-admin", json=payload,
+                headers={"Authorization": "Bearer " + token, "X-Roles": "libris-admin"},
+            )
+    assert response.status_code == 403
+    assert response.json()["code"] == "authorization.denied"
+    assert "forged-private-sentinel" not in response.text and token not in response.text

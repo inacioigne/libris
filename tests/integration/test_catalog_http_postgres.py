@@ -176,10 +176,11 @@ def test_http_rejections_leave_persistence_unchanged(collection: str) -> None:
     asyncio.run(scenario())
 
 
-def test_two_http_sessions_race_through_persistent_cas() -> None:
+@pytest.mark.parametrize("collection", COLLECTIONS)
+def test_two_http_sessions_race_through_persistent_cas(collection: str) -> None:
     async def scenario() -> None:
         async with client_context() as (client, service):
-            first = await create(client)
+            first = await create(client, collection)
             path = first.headers["location"]
             identifier = UUID(first.json()["internal_id"])
             both_read = asyncio.Event()
@@ -196,11 +197,16 @@ def test_two_http_sessions_race_through_persistent_cas() -> None:
 
             service.update_resource = synchronized
             # Each request opens its own sessions/transaction, both with the same view.
+            field = (
+                "variant_name" if collection == "agents"
+                else ("alternative_label" if collection == "subjects" else "note")
+            )
             responses = await asyncio.gather(
                 *[
                     client.patch(
                         path,
-                        json={"note": [{"label": [{"value": value}]}]},
+                        json={field: [{"value": value}] if collection in {"agents", "subjects"}
+                              else [{"label": [{"value": value}]}]},
                         headers={"If-Match": first.headers["etag"]},
                     )
                     for value in ("winner-a", "winner-b")

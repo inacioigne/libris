@@ -4,6 +4,7 @@ import asyncio
 import json
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -11,7 +12,7 @@ import httpx
 import pytest
 from rdflib import BNode, Literal, URIRef
 from rdflib.compare import isomorphic
-from rdflib.namespace import DCTERMS, RDF
+from rdflib.namespace import DCTERMS, RDF, SKOS
 from test_catalogographic_http import actor
 
 from libris.core.config import Settings
@@ -39,6 +40,7 @@ from libris.modules.bibliographic.infrastructure.relationship_graph import (
     change_relationship_graph,
 )
 from libris.modules.bibliographic.infrastructure.validation import (
+    AUTHORITY_PROFILE_ID,
     INSTITUTIONAL_PROFILE_ID,
     ShaclValidationError,
 )
@@ -47,6 +49,8 @@ from libris.modules.identity.domain.permissions import Permission as P
 
 ROOT = "https://example.invalid/work"
 TITLE = f'<{ROOT}> a <{BF.Work}>; <{BF.title}> [a <{BF.Title}>; <{BF.mainTitle}> "Test"].'
+CORPUS = Path(__file__).parents[1] / "fixtures/bibliographic/institutional"
+INSTITUTIONAL_CASES = json.loads((CORPUS / "manifest.json").read_text())["fixtures"]
 
 
 @asynccontextmanager
@@ -74,6 +78,40 @@ def rdf_payload(
         "document": document,
         "root": ROOT,
     }
+
+
+@pytest.mark.parametrize("case", INSTITUTIONAL_CASES, ids=lambda case: case["scenario"])
+def test_institutional_corpus_through_http_validation(case: dict[str, object]) -> None:
+    async def scenario() -> None:
+        graph = parse_document((CORPUS / str(case["file"])).read_text(), "turtle")
+        # Build the composed representation explicitly; never rewrite fixture snapshots.
+        for canonical, inverse in [(BF.instanceOf, BF.hasInstance), (BF.itemOf, BF.hasItem)]:
+            for child, parent in list(graph.subject_objects(canonical)):
+                if isinstance(parent, URIRef):
+                    graph.add((parent, inverse, child))
+        root, collection = next(
+            (root, collection)
+            for kind, collection in [(BF.Work, "works"), (BF.Instance, "instances"),
+                                     (BF.Item, "items"), (BF.Person, "agents"),
+                                     (BF.Organization, "agents"), (SKOS.Concept, "subjects")]
+            for root in graph.subjects(RDF.type, kind)
+        )
+        async with client_for(P.BIBLIOGRAPHIC_CREATE, P.AUTHORITY_MANAGE) as client:
+            with patch("sqlalchemy.ext.asyncio.AsyncSession.execute", side_effect=AssertionError):
+                response = await client.post(f"/api/v1/catalog/{collection}/validation", json={
+                    "kind": "rdf", "context": "composed", "root": str(root),
+                    "profile_release": AUTHORITY_PROFILE_ID
+                    if collection in {"agents", "subjects"} else INSTITUTIONAL_PROFILE_ID,
+                    "format": "turtle", "document": graph.serialize(format="turtle"),
+                })
+        assert response.status_code == 200, response.text
+        assert response.json()["conforms"] is case["valid"], response.text
+        assert response.json()["contract_version"] == "1.0"
+        assert response.json()["request_id"] == response.headers["x-request-id"]
+        if not case["valid"]:
+            assert any(issue["severity"] == "Violation" for issue in response.json()["issues"])
+
+    asyncio.run(scenario())
 
 
 def test_rdf_prevalidation_same_engine_and_no_sessions() -> None:

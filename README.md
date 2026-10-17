@@ -240,6 +240,13 @@ conexão no startup; isso é intencional e não comprova readiness dos serviços
 
 ## Testes e verificações
 
+A M05.07 / #51 consolida o [guia de consumo e testes HTTP catalográficos](docs/architecture/catalogographic-api-testing.md),
+com [matriz e evidências próprias](docs/architecture/catalogographic-m0507-verification-2026-10-16.md).
+`bash scripts/test-postgres.sh` executa a integração em PostgreSQL 17 novo e
+descartável, com quatro bancos separados, migrações explícitas e rejeição de skips.
+JWT/JWKS assinados offline, overrides de ator e integração Keycloak real são
+identificados separadamente; a suíte padrão permanece sem serviços externos.
+
 Referência canônica da M03.05.02 / #31: [contrato catalográfico v1, especificação 1.0.0](docs/architecture/catalogographic-contract.md),
 [inventário de campos](docs/architecture/catalogographic-contract-field-inventory.md),
 [JSON Schema documental](docs/architecture/catalogographic-contract-v1.schema.json),
