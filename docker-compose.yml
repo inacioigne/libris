@@ -1,0 +1,118 @@
+name: libris
+services:
+  # postgres:
+  #   image: postgres:17-bookworm
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB:-libris}
+  #     POSTGRES_USER: ${POSTGRES_USER:-libris}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copie .env.example para .env e configure a senha}
+  #   ports:
+  #     - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 20
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:9.5.5
+  #   environment:
+  #     discovery.type: single-node
+  #     xpack.security.enabled: "false"
+  #     ES_JAVA_OPTS: "-Xms${ELASTICSEARCH_HEAP:-512m} -Xmx${ELASTICSEARCH_HEAP:-512m}"
+  #   ports:
+  #     - "127.0.0.1:${ELASTICSEARCH_PORT:-9200}:9200"
+  #   volumes:
+  #     - elasticsearch_data:/usr/share/elasticsearch/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=3s' >/dev/null"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 30
+  #     start_period: 30s
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0
+    command: ["start-dev", "--http-port=8081", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:?Defina KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Defina KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: http://keycloak.localhost:8081
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      - ./infrastructure/keycloak/libris-realm.json:/opt/keycloak/data/import/libris-realm.json:ro
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      default:
+        aliases: [keycloak.localhost]
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: infrastructure/docker/api.Dockerfile
+  #   environment:
+  #     OIDC_ENABLED: ${OIDC_ENABLED:-true}
+  #     OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-http://keycloak.localhost:8081/realms/libris}
+  #     OIDC_AUDIENCE: ${OIDC_AUDIENCE:-libris-api}
+  #     OIDC_ALGORITHMS: ${OIDC_ALGORITHMS:-RS256}
+  #     OIDC_JWKS_CACHE_TTL: ${OIDC_JWKS_CACHE_TTL:-300}
+  #     OIDC_JWKS_REFRESH_INTERVAL: ${OIDC_JWKS_REFRESH_INTERVAL:-10}
+  #     OIDC_CLOCK_SKEW_SECONDS: ${OIDC_CLOCK_SKEW_SECONDS:-30}
+  #     OIDC_HTTP_TIMEOUT_SECONDS: ${OIDC_HTTP_TIMEOUT_SECONDS:-5}
+  #     OIDC_ROLE_SOURCE: ${OIDC_ROLE_SOURCE:-client}
+  #     OIDC_ROLE_CLIENT: ${OIDC_ROLE_CLIENT:-libris-api}
+  #     OIDC_HUMAN_CLIENT_ID: ${OIDC_HUMAN_CLIENT_ID:-libris-web}
+  #     OIDC_ACCESS_TOKEN_CLAIM: ${OIDC_ACCESS_TOKEN_CLAIM:-typ}
+  #     OIDC_ACCESS_TOKEN_VALUE: ${OIDC_ACCESS_TOKEN_VALUE:-Bearer}
+  #     RESOURCE_BASE_URI: ${RESOURCE_BASE_URI:-http://localhost:8000/resources}
+  #     RDF_MAX_DOCUMENT_BYTES: ${RDF_MAX_DOCUMENT_BYTES:-1048576}
+  #     APP_ENV: ${APP_ENV:-development}
+  #     DATABASE_URL: ${DATABASE_URL:?Configure DATABASE_URL no .env}
+  #     ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+  #     CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
+  #   ports:
+  #     - "127.0.0.1:${API_PORT:-8000}:8000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: infrastructure/docker/web.Dockerfile
+  #   environment:
+  #     API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000}
+  #     WEB_AUTH_ENV: ${WEB_AUTH_ENV:-local}
+  #     WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+  #     WEB_OIDC_ISSUER: ${WEB_OIDC_ISSUER:-http://keycloak.localhost:8081/realms/libris}
+  #     WEB_OIDC_CLIENT_ID: ${WEB_OIDC_CLIENT_ID:-libris-web}
+  #     WEB_OIDC_SCOPES: ${WEB_OIDC_SCOPES:-openid profile}
+  #     WEB_SESSION_DATABASE_URL: ${WEB_SESSION_DATABASE_URL:-}
+  #     WEB_SESSION_KEYS: ${WEB_SESSION_KEYS:-}
+  #     WEB_SESSION_ACTIVE_KEY: ${WEB_SESSION_ACTIVE_KEY:-}
+  #     WEB_SESSION_SECONDS: ${WEB_SESSION_SECONDS:-28800}
+  #     WEB_AUTH_RATE_WINDOW_SECONDS: ${WEB_AUTH_RATE_WINDOW_SECONDS:-60}
+  #     WEB_AUTH_LOGIN_LIMIT: ${WEB_AUTH_LOGIN_LIMIT:-120}
+  #     WEB_AUTH_CALLBACK_LIMIT: ${WEB_AUTH_CALLBACK_LIMIT:-240}
+  #     WEB_AUTH_LOGOUT_LIMIT: ${WEB_AUTH_LOGOUT_LIMIT:-240}
+  #     WEB_HTTPS_TERMINATED: ${WEB_HTTPS_TERMINATED:-0}
+  #   ports:
+  #     - "127.0.0.1:${WEB_PORT:-3000}:3000"
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/pt').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
+volumes:
+  # postgres_data:
+  # elasticsearch_data:
+  keycloak_data:
