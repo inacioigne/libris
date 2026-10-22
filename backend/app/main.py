@@ -7,7 +7,7 @@ from app.modules.bibliograph.api.router import router as bibliograph_router
 
 app = FastAPI(
     title="Libris API",
-    version="0.2.0",
+    version="0.3.0",
 )
 app.include_router(health_router)
 app.include_router(bibliograph_router)

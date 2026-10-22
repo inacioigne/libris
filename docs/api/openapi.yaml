@@ -1,37 +1,35 @@
 openapi: 3.1.0
 info:
   title: Libris Bibliographic API
-  version: 0.2.0
+  version: 0.3.0
   description: Initial contract proposal. JSON writes, JSON and JSON-LD reads.
 servers:
   - url: /api/v1
 paths:
-  /works:
+  /bibliographic/drafts:
     post:
-      operationId: createWork
-      summary: Create a bibliographic Work
+      operationId: createBibliographicDraft
+      summary: Create an empty bibliographic draft for a cataloger
+      parameters:
+        - $ref: '#/components/parameters/CatalogerId'
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkCreate'
+              $ref: '#/components/schemas/DraftCreate'
       responses:
         '201':
-          description: Created
+          description: Draft identity created and associated with the cataloger
           headers:
             Location:
-              schema: {type: string}
-            ETag:
-              schema: {type: string}
+              schema: {type: string, format: uri-reference}
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Work'
+                $ref: '#/components/schemas/Draft'
         '422':
           $ref: '#/components/responses/ValidationError'
-        '501':
-          $ref: '#/components/responses/NotImplemented'
   /works/{id}:
     parameters:
       - $ref: '#/components/parameters/ResourceId'
@@ -124,6 +122,12 @@ paths:
                 $ref: '#/components/schemas/CatalogingProfile'
 components:
   parameters:
+    CatalogerId:
+      name: X-Cataloger-Id
+      in: header
+      required: true
+      description: Provisional identity of the authenticated cataloger until the identity module is implemented.
+      schema: {type: string, format: uuid}
     ResourceId:
       name: id
       in: path
@@ -160,13 +164,19 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
-    NotImplemented:
-      description: Work creation is exposed provisionally but has no business flow yet
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   schemas:
+    DraftCreate:
+      type: object
+      description: Empty initial payload; cataloging fields will be introduced in a later flow.
+      additionalProperties: false
+      maxProperties: 0
+    Draft:
+      type: object
+      additionalProperties: false
+      required: [id, catalogerId]
+      properties:
+        id: {type: string, format: uuid}
+        catalogerId: {type: string, format: uuid}
     Contributor:
       type: object
       additionalProperties: false

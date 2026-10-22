@@ -5,6 +5,16 @@ from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
 
+@dataclass(frozen=True)
+class BibliographicDraft:
+    id: UUID
+    cataloger_id: UUID
+
+    @classmethod
+    def create(cls, cataloger_id: UUID) -> "BibliographicDraft":
+        return cls(id=uuid4(), cataloger_id=cataloger_id)
+
+
 def validate_identity_uri(value: str) -> str:
     """Validate a stored identity/base URI without normalizing or dereferencing it."""
     if not isinstance(value, str) or re.search(r'[\s<>"{}|\\^`\x00-\x20\x7f]', value):
