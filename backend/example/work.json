@@ -1,0 +1,12 @@
+{
+    "title": [
+        {
+            "kind": "Title",
+            "main_title": [
+                {"value": "Ecologia da Amazônia", "language": "pt-BR"}
+            ],
+            "subtitle": []
+        }
+    ],
+    "language": [{"uri": "http://id.loc.gov/vocabulary/languages/por"}]
+}

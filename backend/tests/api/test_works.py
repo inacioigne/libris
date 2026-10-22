@@ -6,34 +6,43 @@ from app.main import app
 
 
 VALID_WORK = {
-    "title": "Ecologia da Amazônia",
-    "language": "pt-BR",
-    "contributors": [],
-    "subjectIds": [],
-    "profile": {"id": "title-v1", "version": "1.0.0"},
+    "title": [
+        {
+            "kind": "Title",
+            "main_title": [
+                {"value": "Ecologia da Amazônia", "language": "pt-BR"}
+            ],
+            "subtitle": [],
+        }
+    ],
+    "language": [{"uri": "http://id.loc.gov/vocabulary/languages/por"}],
 }
 
 
 async def post_work(payload: dict):
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        return await client.post("/api/v1/works", json=payload)
+        return await client.post("/api/v1/bibliographic/works", json=payload)
 
 
-def test_create_work_is_exposed_as_a_provisional_endpoint() -> None:
+def test_create_work_returns_the_validated_payload_with_not_implemented_status() -> None:
     response = asyncio.run(post_work(VALID_WORK))
 
     assert response.status_code == 501
-    assert response.headers["content-type"] == "application/problem+json"
+    assert response.headers["content-type"] == "application/json"
     assert response.json() == {
-        "type": "about:blank",
-        "title": "Not Implemented",
-        "status": 501,
-        "detail": "Work creation is not implemented yet.",
+        **VALID_WORK,
+        "content": [],
+        "contribution": [],
+        "subject": [],
+        "classification": [],
+        "related_to": [],
+        "translation_of": [],
+        "note": [],
     }
 
 
 def test_create_work_validates_the_proposed_request_contract() -> None:
-    response = asyncio.run(post_work({"profile": VALID_WORK["profile"]}))
+    response = asyncio.run(post_work({"language": VALID_WORK["language"]}))
 
     assert response.status_code == 422
