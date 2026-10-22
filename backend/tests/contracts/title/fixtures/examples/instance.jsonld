@@ -1,0 +1,34 @@
+{
+  "@context": {
+    "bf": "http://id.loc.gov/ontologies/bibframe/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "https://catalogo.example.org/instances/456",
+      "@type": "bf:Instance",
+      "bf:instanceOf": {
+        "@id": "https://catalogo.example.org/works/123"
+      },
+      "bf:title": {
+        "@id": "_:N0c41cfb309c54f91a91c3d1fb40e9d13"
+      }
+    },
+    {
+      "@id": "_:N0c41cfb309c54f91a91c3d1fb40e9d13",
+      "@type": "bf:Title",
+      "bf:mainTitle": {
+        "@language": "pt",
+        "@value": "Dom Casmurro"
+      },
+      "bf:subTitle": {
+        "@language": "pt",
+        "@value": "romance"
+      },
+      "rdfs:label": {
+        "@language": "pt",
+        "@value": "Dom Casmurro: romance"
+      }
+    }
+  ]
+}

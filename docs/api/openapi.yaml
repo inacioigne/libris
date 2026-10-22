@@ -1,0 +1,255 @@
+openapi: 3.1.0
+info:
+  title: Libris Bibliographic API
+  version: 0.2.0
+  description: Initial contract proposal. JSON writes, JSON and JSON-LD reads.
+servers:
+  - url: /api/v1
+paths:
+  /works:
+    post:
+      operationId: createWork
+      summary: Create a bibliographic Work
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkCreate'
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema: {type: string}
+            ETag:
+              schema: {type: string}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /works/{id}:
+    parameters:
+      - $ref: '#/components/parameters/ResourceId'
+    get:
+      operationId: getWork
+      summary: Get a Work in JSON or JSON-LD
+      responses:
+        '200':
+          description: Work representation
+          headers:
+            ETag:
+              schema: {type: string}
+            Vary:
+              schema: {type: string, example: Accept}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/JsonLdDocument'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+    patch:
+      operationId: updateWork
+      summary: Partially update simplified Work fields
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/WorkPatch'
+      responses:
+        '200':
+          description: Updated Work
+          headers:
+            ETag:
+              schema: {type: string}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '428':
+          $ref: '#/components/responses/PreconditionRequired'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /cataloging-profiles:
+    get:
+      operationId: listCatalogingProfiles
+      responses:
+        '200':
+          description: Cataloging profile summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogingProfile'
+  /cataloging-profiles/{profileId}/versions/{version}:
+    get:
+      operationId: getCatalogingProfileVersion
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema: {type: string}
+        - name: version
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Immutable published profile version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogingProfile'
+components:
+  parameters:
+    ResourceId:
+      name: id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+  responses:
+    ValidationError:
+      description: Domain or SHACL validation failed
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Resource not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotAcceptable:
+      description: Unsupported representation
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionFailed:
+      description: Revision conflict
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionRequired:
+      description: If-Match required
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Contributor:
+      type: object
+      additionalProperties: false
+      required: [agentId, role]
+      properties:
+        agentId: {type: string, format: uuid}
+        role: {type: string, minLength: 1}
+    WorkCreate:
+      type: object
+      additionalProperties: false
+      required: [title, profile]
+      properties:
+        title: {type: string, minLength: 1}
+        language: {type: string, description: BCP 47 language tag for initial simplified contract}
+        contributors:
+          type: array
+          items: {$ref: '#/components/schemas/Contributor'}
+        subjectIds:
+          type: array
+          items: {type: string, format: uuid}
+        profile:
+          $ref: '#/components/schemas/ProfileReference'
+    WorkPatch:
+      type: object
+      description: RFC 7396 merge patch. Null removes an optional mapped property; unknown fields are rejected.
+      additionalProperties: false
+      properties:
+        title: {type: [string, 'null'], minLength: 1}
+        language: {type: [string, 'null']}
+        contributors:
+          type: [array, 'null']
+          items: {$ref: '#/components/schemas/Contributor'}
+        subjectIds:
+          type: [array, 'null']
+          items: {type: string, format: uuid}
+    ProfileReference:
+      type: object
+      additionalProperties: false
+      required: [id, version]
+      properties:
+        id: {type: string}
+        version: {type: string}
+    Work:
+      allOf:
+        - $ref: '#/components/schemas/WorkCreate'
+        - type: object
+          required: [id, uri, revision]
+          properties:
+            id: {type: string, format: uuid}
+            uri: {type: string, format: uri}
+            revision: {type: integer, minimum: 1}
+    JsonLdDocument:
+      type: object
+      description: JSON-LD graph serialization. Exact graph shapes governed by published SHACL profile.
+      required: ['@context', '@id']
+      properties:
+        '@context': {}
+        '@id': {type: string, format: uri}
+      additionalProperties: true
+    CatalogingProfile:
+      type: object
+      required: [id, version, targetClass, fields]
+      properties:
+        id: {type: string}
+        version: {type: string}
+        targetClass: {type: string, format: uri}
+        fields:
+          type: array
+          items:
+            type: object
+            required: [name, path, required]
+            properties:
+              name: {type: string}
+              path: {type: array, items: {type: string, format: uri}}
+              required: {type: boolean}
+              label: {type: string}
+              widget: {type: string}
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: {type: string, format: uri-reference}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        instance: {type: string, format: uri-reference}
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              path: {type: string}
+              message: {type: string}
+              code: {type: string}

@@ -1,0 +1,10 @@
+{
+  "kind": "instance",
+  "id": "https://catalogo.example.org/instances/456",
+  "work_id": "https://catalogo.example.org/works/123",
+  "titles": {
+    "title": {"main_title": "Dom Casmurro", "subtitle": "romance", "language": "pt"},
+    "variant_titles": [],
+    "parallel_titles": []
+  }
+}

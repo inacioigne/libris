@@ -1,0 +1,9 @@
+{
+  "kind": "work",
+  "id": "https://catalogo.example.org/works/123",
+  "titles": {
+    "title": {"main_title": "Dom Casmurro", "language": "pt"},
+    "variant_titles": [{"type": "variant", "main_title": "Dom Casmurro: romance", "language": "pt"}],
+    "parallel_titles": []
+  }
+}
