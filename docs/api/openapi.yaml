@@ -30,6 +30,8 @@ paths:
                 $ref: '#/components/schemas/Work'
         '422':
           $ref: '#/components/responses/ValidationError'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
   /works/{id}:
     parameters:
       - $ref: '#/components/parameters/ResourceId'
@@ -154,6 +156,12 @@ components:
             $ref: '#/components/schemas/Problem'
     PreconditionRequired:
       description: If-Match required
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotImplemented:
+      description: Work creation is exposed provisionally but has no business flow yet
       content:
         application/problem+json:
           schema:
