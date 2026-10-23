@@ -6,7 +6,23 @@ export const metadata: Metadata = {
   description: "Acesso seguro ao ambiente administrativo do Libris.",
 };
 
-export default function LoginPage() {
+const ERROR_MESSAGES: Record<string, string> = {
+  access_denied: "O acesso foi cancelado. Você pode tentar novamente.",
+  authentication_failed:
+    "Não foi possível concluir a autenticação. Tente novamente.",
+  invalid_callback:
+    "A solicitação de acesso expirou ou é inválida. Inicie o acesso novamente.",
+};
+
+type LoginPageProps = {
+  searchParams: Promise<{ error?: string | string[] }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { error } = await searchParams;
+  const errorCode = typeof error === "string" ? error : undefined;
+  const errorMessage = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-slate-950">
       <section
@@ -25,6 +41,15 @@ export default function LoginPage() {
             demais serviços administrativos.
           </p>
         </div>
+
+        {errorMessage ? (
+          <p
+            className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-800"
+            role="alert"
+          >
+            {errorMessage}
+          </p>
+        ) : null}
 
         <form action="/oidc/login" method="post">
           <input type="hidden" name="returnTo" value="/admin" />

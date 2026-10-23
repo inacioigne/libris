@@ -4,11 +4,10 @@ import {
   buildAuthorizationUrl,
   createOidcTransaction,
   getOidcLoginConfiguration,
+  OIDC_COOKIE_PREFIX,
   OIDC_TRANSACTION_TTL_SECONDS,
   safeReturnTo,
 } from "@/lib/auth/oidc";
-
-const COOKIE_PREFIX = "libris.oidc";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,10 +26,10 @@ export async function POST(request: NextRequest) {
       secure,
     };
 
-    response.cookies.set(`${COOKIE_PREFIX}.state`, transaction.state, cookieOptions);
-    response.cookies.set(`${COOKIE_PREFIX}.nonce`, transaction.nonce, cookieOptions);
-    response.cookies.set(`${COOKIE_PREFIX}.verifier`, transaction.verifier, cookieOptions);
-    response.cookies.set(`${COOKIE_PREFIX}.return-to`, returnTo, cookieOptions);
+    response.cookies.set(`${OIDC_COOKIE_PREFIX}.state`, transaction.state, cookieOptions);
+    response.cookies.set(`${OIDC_COOKIE_PREFIX}.nonce`, transaction.nonce, cookieOptions);
+    response.cookies.set(`${OIDC_COOKIE_PREFIX}.verifier`, transaction.verifier, cookieOptions);
+    response.cookies.set(`${OIDC_COOKIE_PREFIX}.return-to`, returnTo, cookieOptions);
     response.headers.set("Cache-Control", "no-store");
 
     return response;

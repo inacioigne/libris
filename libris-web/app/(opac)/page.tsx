@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export default function Home() {
+  const returnTo = "/"
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-slate-950">
       <section
@@ -12,7 +13,7 @@ export default function Home() {
         </h1>
 
         <form action="/oidc/login" method="post">
-          <input type="hidden" name="returnTo" value="/admin" />
+          <input type="hidden" name="returnTo" value={returnTo} />
           <button
             type="submit"
             className="w-full cursor-pointer rounded-xl bg-teal-700 px-5 py-3.5 font-semibold text-white transition hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-700"
