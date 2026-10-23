@@ -46,42 +46,42 @@ services:
     networks:
       default:
         aliases: [keycloak.localhost]
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: infrastructure/docker/api.Dockerfile
-  #   environment:
-  #     OIDC_ENABLED: ${OIDC_ENABLED:-true}
-  #     OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-http://keycloak.localhost:8081/realms/libris}
-  #     OIDC_AUDIENCE: ${OIDC_AUDIENCE:-libris-api}
-  #     OIDC_ALGORITHMS: ${OIDC_ALGORITHMS:-RS256}
-  #     OIDC_JWKS_CACHE_TTL: ${OIDC_JWKS_CACHE_TTL:-300}
-  #     OIDC_JWKS_REFRESH_INTERVAL: ${OIDC_JWKS_REFRESH_INTERVAL:-10}
-  #     OIDC_CLOCK_SKEW_SECONDS: ${OIDC_CLOCK_SKEW_SECONDS:-30}
-  #     OIDC_HTTP_TIMEOUT_SECONDS: ${OIDC_HTTP_TIMEOUT_SECONDS:-5}
-  #     OIDC_ROLE_SOURCE: ${OIDC_ROLE_SOURCE:-client}
-  #     OIDC_ROLE_CLIENT: ${OIDC_ROLE_CLIENT:-libris-api}
-  #     OIDC_HUMAN_CLIENT_ID: ${OIDC_HUMAN_CLIENT_ID:-libris-web}
-  #     OIDC_ACCESS_TOKEN_CLAIM: ${OIDC_ACCESS_TOKEN_CLAIM:-typ}
-  #     OIDC_ACCESS_TOKEN_VALUE: ${OIDC_ACCESS_TOKEN_VALUE:-Bearer}
-  #     RESOURCE_BASE_URI: ${RESOURCE_BASE_URI:-http://localhost:8000/resources}
-  #     RDF_MAX_DOCUMENT_BYTES: ${RDF_MAX_DOCUMENT_BYTES:-1048576}
-  #     APP_ENV: ${APP_ENV:-development}
-  #     DATABASE_URL: ${DATABASE_URL:?Configure DATABASE_URL no .env}
-  #     ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}
-  #     CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
-  #   ports:
-  #     - "127.0.0.1:${API_PORT:-8000}:8000"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    environment:
+      OIDC_ENABLED: ${OIDC_ENABLED:-true}
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-http://keycloak.localhost:8081/realms/libris}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE:-libris-api}
+      OIDC_ALGORITHMS: ${OIDC_ALGORITHMS:-RS256}
+      OIDC_JWKS_CACHE_TTL: ${OIDC_JWKS_CACHE_TTL:-300}
+      OIDC_JWKS_REFRESH_INTERVAL: ${OIDC_JWKS_REFRESH_INTERVAL:-10}
+      OIDC_CLOCK_SKEW_SECONDS: ${OIDC_CLOCK_SKEW_SECONDS:-30}
+      OIDC_HTTP_TIMEOUT_SECONDS: ${OIDC_HTTP_TIMEOUT_SECONDS:-5}
+      OIDC_ROLE_SOURCE: ${OIDC_ROLE_SOURCE:-client}
+      OIDC_ROLE_CLIENT: ${OIDC_ROLE_CLIENT:-libris-api}
+      OIDC_HUMAN_CLIENT_ID: ${OIDC_HUMAN_CLIENT_ID:-libris-web}
+      OIDC_ACCESS_TOKEN_CLAIM: ${OIDC_ACCESS_TOKEN_CLAIM:-typ}
+      OIDC_ACCESS_TOKEN_VALUE: ${OIDC_ACCESS_TOKEN_VALUE:-Bearer}
+      RESOURCE_BASE_URI: ${RESOURCE_BASE_URI:-http://localhost:8000/resources}
+      RDF_MAX_DOCUMENT_BYTES: ${RDF_MAX_DOCUMENT_BYTES:-1048576}
+      APP_ENV: ${APP_ENV:-development}
+      # DATABASE_URL: ${DATABASE_URL:?Configure DATABASE_URL no .env}
+      # ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    #   elasticsearch:
+    #     condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
   # web:
   #   build:
   #     context: .
