@@ -8,12 +8,16 @@ const DEFAULT_LOCAL_API_ORIGIN = "http://localhost:8000";
 
 type IdentityPayload = {
   actor_id: string;
+  display_name: string | null;
+  picture_url: string | null;
   permissions: string[];
   roles: string[];
 };
 
 export type Identity = {
   actorId: string;
+  displayName: string | null;
+  pictureUrl: string | null;
   permissions: string[];
   roles: string[];
 };
@@ -37,6 +41,10 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
+function isNullableString(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
 function parseIdentity(value: unknown): Identity {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error("A API retornou uma identidade invalida.");
@@ -46,6 +54,8 @@ function parseIdentity(value: unknown): Identity {
   if (
     typeof payload.actor_id !== "string" ||
     payload.actor_id.length === 0 ||
+    !isNullableString(payload.display_name) ||
+    !isNullableString(payload.picture_url) ||
     !isStringArray(payload.roles) ||
     !isStringArray(payload.permissions)
   ) {
@@ -54,6 +64,8 @@ function parseIdentity(value: unknown): Identity {
 
   return {
     actorId: payload.actor_id,
+    displayName: payload.display_name,
+    pictureUrl: payload.picture_url,
     roles: payload.roles,
     permissions: payload.permissions,
   };
@@ -65,6 +77,7 @@ export async function requestIdentity(): Promise<Identity | null> {
   const accessToken = cookieStore.get(
     `${SESSION_COOKIE_PREFIX}.access-token`,
   )?.value;
+  // console.log("[TOKEN..]", accessToken)
 
   if (!accessToken) {
     return null;

@@ -15,5 +15,7 @@ class AuthenticatedActor:
     actor_id: str
     issuer: str
     subject: str
+    display_name: str | None
+    picture_url: str | None
     roles: frozenset[str]
     permissions: frozenset[Permission]

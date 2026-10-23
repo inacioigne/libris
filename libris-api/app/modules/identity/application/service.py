@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from typing import Protocol
+from urllib.parse import urlparse
 
 from app.modules.identity.domain.exceptions import (
     AuthenticationError,
@@ -97,8 +98,31 @@ class IdentityService:
             raise AuthenticationError()
         roles = extract_roles(claims, self.role_source, self.role_client)
         return AuthenticatedActor(
-            actor_identifier(issuer, subject), issuer, subject, roles, map_permissions(roles)
+            actor_id=actor_identifier(issuer, subject),
+            issuer=issuer,
+            subject=subject,
+            display_name=_optional_text(claims.get("name")),
+            picture_url=_optional_http_url(claims.get("picture")),
+            roles=roles,
+            permissions=map_permissions(roles),
         )
+
+
+def _optional_text(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip()
+    return normalized or None
+
+
+def _optional_http_url(value: object) -> str | None:
+    normalized = _optional_text(value)
+    if normalized is None:
+        return None
+    parsed = urlparse(normalized)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return None
+    return normalized
 
 
 def authorize(actor: AuthenticatedActor, permissions: tuple[Permission, ...]) -> None:

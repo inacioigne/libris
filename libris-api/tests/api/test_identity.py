@@ -78,6 +78,8 @@ def test_identity_returns_actor_roles_and_permissions() -> None:
             "azp": "libris-web",
             "iss": "http://keycloak.localhost:8081/realms/libris",
             "sub": "user-123",
+            "name": "Maria da Silva",
+            "picture": "https://images.example.org/users/maria.jpg",
             "resource_access": {
                 "libris-api": {"roles": ["libris-reader", "libris-admin"]}
             },
@@ -88,8 +90,27 @@ def test_identity_returns_actor_roles_and_permissions() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload["actor_id"].startswith("oidc:sha256:")
+    assert payload["display_name"] == "Maria da Silva"
+    assert payload["picture_url"] == "https://images.example.org/users/maria.jpg"
     assert payload["roles"] == ["libris-admin", "libris-reader"]
     assert payload["permissions"] == ["bibliographic:read", "system:admin"]
+
+
+def test_identity_omits_invalid_optional_profile_claims() -> None:
+    install_service(
+        {
+            "azp": "libris-web",
+            "iss": "http://keycloak.localhost:8081/realms/libris",
+            "sub": "user-123",
+            "name": "   ",
+            "picture": "javascript:alert(1)",
+        }
+    )
+    response = asyncio.run(request_identity("valid-token"))
+
+    assert response.status_code == 200
+    assert response.json()["display_name"] is None
+    assert response.json()["picture_url"] is None
 
 
 def test_oidc_validator_verifies_a_signed_access_token() -> None:
