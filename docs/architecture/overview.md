@@ -141,7 +141,8 @@ Os pontos seguintes devem ser discutidos e documentados em ADRs:
 3. Fonte de verdade para RDF e dados operacionais.
 4. Necessidade e seleção de RDF Store.
 5. Estratégia de sincronização e reindexação do Elasticsearch.
-6. Autenticação, autorização, multi-instituição e limites de tenancy.
+6. Armazenamento compartilhado de sessões do BFF, autorização,
+   multi-instituição e limites de tenancy (ver ADR 0004 para o fluxo OIDC local).
 7. Versionamento da API, migrações e compatibilidade.
 
 ## 11. Orientações para agentes de IA

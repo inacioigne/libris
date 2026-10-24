@@ -11,7 +11,6 @@ const DEFAULT_LOCAL_ORIGIN = "http://localhost:3000";
 
 export const OIDC_TRANSACTION_TTL_SECONDS = 10 * 60;
 export const OIDC_COOKIE_PREFIX = "libris.oidc";
-export const SESSION_COOKIE_PREFIX = "libris.session";
 
 const JWT_CLOCK_SKEW_SECONDS = 30;
 
@@ -24,9 +23,9 @@ export type OidcLoginConfiguration = {
 
 export type OidcTokenSet = {
   accessToken: string;
-  expiresIn: number;
-  idToken: string;
-  refreshExpiresIn?: number;
+  accessExpiresAt: number;
+  idToken?: string;
+  refreshExpiresAt?: number;
   refreshToken?: string;
 };
 
@@ -201,11 +200,75 @@ export async function exchangeAuthorizationCode(
 
   return {
     accessToken,
-    expiresIn,
+    accessExpiresAt: Date.now() + expiresIn * 1000,
     idToken,
-    refreshExpiresIn,
+    refreshExpiresAt: refreshExpiresIn
+      ? Date.now() + refreshExpiresIn * 1000
+      : undefined,
     refreshToken,
   };
+}
+
+export async function refreshAccessToken(
+  config: OidcLoginConfiguration,
+  refreshToken: string,
+): Promise<OidcTokenSet> {
+  const tokenEndpoint = new URL(
+    `${config.issuer.toString().replace(/\/$/, "")}/protocol/openid-connect/token`,
+  );
+  const response = await fetch(tokenEndpoint, {
+    body: new URLSearchParams({
+      client_id: config.clientId,
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    }),
+    cache: "no-store",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("OIDC token refresh failed.");
+
+  const payload: unknown = await response.json();
+  if (!isJsonObject(payload)) throw new Error("OIDC refresh payload is invalid.");
+  const accessToken = payload.access_token;
+  const expiresIn = positiveInteger(payload.expires_in);
+  const rotatedRefreshToken = payload.refresh_token;
+  const refreshExpiresIn = positiveInteger(payload.refresh_expires_in);
+  if (
+    typeof accessToken !== "string" ||
+    expiresIn === undefined ||
+    (rotatedRefreshToken !== undefined && typeof rotatedRefreshToken !== "string")
+  ) {
+    throw new Error("OIDC refresh payload omitted required fields.");
+  }
+  return {
+    accessToken,
+    accessExpiresAt: Date.now() + expiresIn * 1000,
+    refreshExpiresAt: refreshExpiresIn
+      ? Date.now() + refreshExpiresIn * 1000
+      : undefined,
+    refreshToken:
+      typeof rotatedRefreshToken === "string" ? rotatedRefreshToken : refreshToken,
+  };
+}
+
+export async function revokeOidcSession(
+  config: OidcLoginConfiguration,
+  refreshToken: string,
+): Promise<void> {
+  const endpoint = new URL(
+    `${config.issuer.toString().replace(/\/$/, "")}/protocol/openid-connect/logout`,
+  );
+  const response = await fetch(endpoint, {
+    body: new URLSearchParams({
+      client_id: config.clientId,
+      refresh_token: refreshToken,
+    }),
+    cache: "no-store",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("OIDC logout failed.");
 }
 
 function decodeJwtPart(value: string): JsonObject {

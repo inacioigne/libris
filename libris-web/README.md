@@ -16,6 +16,20 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Authentication sessions
+
+The web application uses OIDC Authorization Code with PKCE. After the callback,
+tokens stay in a server-side session and the browser receives only the opaque
+`libris.session` cookie. Access tokens are refreshed server-side and logout
+invalidates both the local session and, when possible, the Keycloak session.
+
+The current session registry is intentionally limited to local development. It
+is process-local, is cleared on restart, and refuses to start in production.
+Before enabling the web service in production, provide a shared `SessionStore`
+(for example PostgreSQL or Redis) with encryption at rest and atomic refresh
+coordination. `WEB_SESSION_SECONDS` controls the local absolute session lifetime
+and defaults to eight hours.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

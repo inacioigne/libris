@@ -6,11 +6,20 @@ import {
   matchesOidcState,
   OIDC_COOKIE_PREFIX,
   safeReturnTo,
-  SESSION_COOKIE_PREFIX,
   validateIdToken,
 } from "@/lib/auth/oidc";
+import {
+  createSession,
+  SESSION_COOKIE_NAME,
+  sessionCookieMaxAge,
+} from "@/lib/auth/session";
 
 const TRANSACTION_COOKIE_NAMES = ["state", "nonce", "verifier", "return-to"];
+const LEGACY_TOKEN_COOKIE_NAMES = [
+  "libris.session.access-token",
+  "libris.session.id-token",
+  "libris.session.refresh-token",
+];
 
 function clearTransactionCookies(response: NextResponse) {
   for (const name of TRANSACTION_COOKIE_NAMES) {
@@ -67,7 +76,9 @@ export async function GET(request: NextRequest) {
   try {
     const config = getOidcLoginConfiguration();
     const tokens = await exchangeAuthorizationCode(config, code, verifier);
+    if (!tokens.idToken) throw new Error("OIDC login omitted the ID token.");
     await validateIdToken(config, tokens.idToken, nonce);
+    const session = createSession(tokens);
 
     const response = NextResponse.redirect(new URL(returnTo, config.origin), 303);
     const cookieOptions = {
@@ -77,24 +88,13 @@ export async function GET(request: NextRequest) {
       secure: config.origin.protocol === "https:",
     };
 
-    response.cookies.set(
-      `${SESSION_COOKIE_PREFIX}.access-token`,
-      tokens.accessToken,
-      { ...cookieOptions, maxAge: tokens.expiresIn },
-    );
-    response.cookies.set(`${SESSION_COOKIE_PREFIX}.id-token`, tokens.idToken, {
+    response.cookies.set(SESSION_COOKIE_NAME, session.sessionId, {
       ...cookieOptions,
-      maxAge: tokens.expiresIn,
+      maxAge: sessionCookieMaxAge(session.expiresAt),
+      priority: "high",
     });
-    if (tokens.refreshToken) {
-      response.cookies.set(
-        `${SESSION_COOKIE_PREFIX}.refresh-token`,
-        tokens.refreshToken,
-        {
-          ...cookieOptions,
-          maxAge: tokens.refreshExpiresIn ?? tokens.expiresIn,
-        },
-      );
+    for (const name of LEGACY_TOKEN_COOKIE_NAMES) {
+      response.cookies.set(name, "", { ...cookieOptions, maxAge: 0 });
     }
 
     clearTransactionCookies(response);

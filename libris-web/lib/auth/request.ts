@@ -1,8 +1,18 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
-import { SESSION_COOKIE_PREFIX } from "@/lib/auth/oidc";
+import {
+  getOidcLoginConfiguration,
+  refreshAccessToken,
+} from "@/lib/auth/oidc";
+import {
+  destroySession,
+  getAccessToken,
+  SESSION_COOKIE_NAME,
+} from "@/lib/auth/session";
+import { Identity } from "@/types/identity";
 
 const DEFAULT_LOCAL_API_ORIGIN = "http://localhost:8000";
 
@@ -14,13 +24,13 @@ type IdentityPayload = {
   roles: string[];
 };
 
-export type Identity = {
-  actorId: string;
-  displayName: string | null;
-  pictureUrl: string | null;
-  permissions: string[];
-  roles: string[];
-};
+// export type Identity = {
+//   actorId: string;
+//   displayName: string | null;
+//   pictureUrl: string | null;
+//   permissions: string[];
+//   roles: string[];
+// };
 
 function getApiOrigin(): URL {
   const configuredOrigin = process.env.API_INTERNAL_URL?.trim();
@@ -73,15 +83,19 @@ function parseIdentity(value: unknown): Identity {
 
 /** Loads the current identity without exposing the access token to the browser. */
 export async function requestIdentity(): Promise<Identity | null> {
+  await connection();
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get(
-    `${SESSION_COOKIE_PREFIX}.access-token`,
-  )?.value;
-  // console.log("[TOKEN..]", accessToken)
+  const sessionId = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
-  if (!accessToken) {
+  if (!sessionId) {
     return null;
   }
+
+  const config = getOidcLoginConfiguration();
+  const accessToken = await getAccessToken(sessionId, (refreshToken) =>
+    refreshAccessToken(config, refreshToken),
+  );
+  if (!accessToken) return null;
 
   const response = await fetch(new URL("/api/v1/identity/me", getApiOrigin()), {
     cache: "no-store",
@@ -89,6 +103,7 @@ export async function requestIdentity(): Promise<Identity | null> {
   });
 
   if (response.status === 401) {
+    destroySession(sessionId);
     return null;
   }
 
