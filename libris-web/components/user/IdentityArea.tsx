@@ -21,18 +21,4 @@ export async function IdentityArea() {
 
   return <UserMenu identity={identity} />
 
-//   return (
-//     <section aria-labelledby="user-information-title">
-//       <h2
-//         id="user-information-title"
-//         className="text-2xl font-semibold text-slate-950"
-//       >
-//         Informações do usuário
-//       </h2>
-//       <code>{JSON.stringify(identity)}</code>
-//       <form action="/oidc/logout" method="post">
-//         <button type="submit">Sair</button>
-//       </form>
-//     </section>
-//   );
 }

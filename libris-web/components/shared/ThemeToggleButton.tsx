@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "@/app/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import React from "react";
 import { MdOutlineLightMode, MdOutlineNightlight } from "react-icons/md";
 

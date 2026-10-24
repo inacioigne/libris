@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import type { Identity } from "@/types/identity";
 import Link from "next/link";
+import { GiExitDoor } from "react-icons/gi";
 
 type UserMenuProps = {
   identity: Identity;
@@ -77,7 +78,7 @@ export default function UserMenu({ identity }: UserMenuProps) {
               {identity.displayName}
             </span>
           </div>
-          <ul className="flex flex-col gap-1 border-b border-gray-200 pt-4 pb-3 dark:border-gray-800">
+          <ul className="flex flex-col gap-1 border-gray-200 pt-4 pb-3 dark:border-gray-800">
             {identity.roles.includes("libris-admin") && (
               <li>
                 <Link
@@ -93,7 +94,18 @@ export default function UserMenu({ identity }: UserMenuProps) {
                 </Link>
               </li>
             )}
-            {/* <code>"Identidade: "{JSON.stringify(identity)}</code> */}
+            <li className="mt-1 border-t">
+              <form action="/oidc/logout" method="post">
+                <button
+                  type="submit"
+                  // onClick={closeDropdown}
+                  className="flex items-center gap-3 rounded-lg mt-4 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:no-underline! focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 dark:text-gray-400 dark:hover:bg-gray-800"
+                >
+                  <GiExitDoor className="size-5 shrink-0" />
+                  <span>Sair</span>
+                </button>
+              </form>
+            </li>
           </ul>
         </div>
       )}
