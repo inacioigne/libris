@@ -82,36 +82,36 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: infrastructure/docker/web.Dockerfile
-  #   environment:
-  #     API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000}
-  #     WEB_AUTH_ENV: ${WEB_AUTH_ENV:-local}
-  #     WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
-  #     WEB_OIDC_ISSUER: ${WEB_OIDC_ISSUER:-http://keycloak.localhost:8081/realms/libris}
-  #     WEB_OIDC_CLIENT_ID: ${WEB_OIDC_CLIENT_ID:-libris-web}
-  #     WEB_OIDC_SCOPES: ${WEB_OIDC_SCOPES:-openid profile}
-  #     WEB_SESSION_DATABASE_URL: ${WEB_SESSION_DATABASE_URL:-}
-  #     WEB_SESSION_KEYS: ${WEB_SESSION_KEYS:-}
-  #     WEB_SESSION_ACTIVE_KEY: ${WEB_SESSION_ACTIVE_KEY:-}
-  #     WEB_SESSION_SECONDS: ${WEB_SESSION_SECONDS:-28800}
-  #     WEB_AUTH_RATE_WINDOW_SECONDS: ${WEB_AUTH_RATE_WINDOW_SECONDS:-60}
-  #     WEB_AUTH_LOGIN_LIMIT: ${WEB_AUTH_LOGIN_LIMIT:-120}
-  #     WEB_AUTH_CALLBACK_LIMIT: ${WEB_AUTH_CALLBACK_LIMIT:-240}
-  #     WEB_AUTH_LOGOUT_LIMIT: ${WEB_AUTH_LOGOUT_LIMIT:-240}
-  #     WEB_HTTPS_TERMINATED: ${WEB_HTTPS_TERMINATED:-0}
-  #   ports:
-  #     - "127.0.0.1:${WEB_PORT:-3000}:3000"
-  #   depends_on:
-  #     api:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/pt').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
+  web:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/web.Dockerfile
+    environment:
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000}
+      WEB_AUTH_ENV: ${WEB_AUTH_ENV:-local}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WEB_OIDC_ISSUER: ${WEB_OIDC_ISSUER:-http://keycloak.localhost:8081/realms/libris}
+      WEB_OIDC_CLIENT_ID: ${WEB_OIDC_CLIENT_ID:-libris-web}
+      WEB_OIDC_SCOPES: ${WEB_OIDC_SCOPES:-openid profile}
+      WEB_SESSION_DATABASE_URL: ${WEB_SESSION_DATABASE_URL:-}
+      WEB_SESSION_KEYS: ${WEB_SESSION_KEYS:-}
+      WEB_SESSION_ACTIVE_KEY: ${WEB_SESSION_ACTIVE_KEY:-}
+      WEB_SESSION_SECONDS: ${WEB_SESSION_SECONDS:-28800}
+      WEB_AUTH_RATE_WINDOW_SECONDS: ${WEB_AUTH_RATE_WINDOW_SECONDS:-60}
+      WEB_AUTH_LOGIN_LIMIT: ${WEB_AUTH_LOGIN_LIMIT:-120}
+      WEB_AUTH_CALLBACK_LIMIT: ${WEB_AUTH_CALLBACK_LIMIT:-240}
+      WEB_AUTH_LOGOUT_LIMIT: ${WEB_AUTH_LOGOUT_LIMIT:-240}
+      WEB_HTTPS_TERMINATED: ${WEB_HTTPS_TERMINATED:-0}
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 volumes:
   # postgres_data:
   # elasticsearch_data:
