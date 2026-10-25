@@ -1,7 +1,14 @@
 import { Suspense } from "react";
+import { requestIdentity } from "@/lib/auth/request";
 import { IdentityArea } from "./IdentityArea";
 
-export default async function UserArea() {
+async function IdentityAreaLoader() {
+  const identity = await requestIdentity();
+
+  return <IdentityArea identity={identity} />;
+}
+
+export default function UserArea() {
   return (
     <Suspense
       fallback={
@@ -10,7 +17,7 @@ export default async function UserArea() {
         </p>
       }
     >
-      <IdentityArea />
+      <IdentityAreaLoader />
     </Suspense>
   );
 }

@@ -1,10 +1,12 @@
-import { requestIdentity } from "@/lib/auth/request";
+import type { Identity } from "@/types/identity";
 import { LoginForm } from "./LoginForm";
 import UserMenu from "./UserMenu";
 
-export async function IdentityArea() {
-  const identity = await requestIdentity();
+type IdentityAreaProps = {
+  identity: Identity | null;
+};
 
+export function IdentityArea({ identity }: IdentityAreaProps) {
   if (!identity) {
     return <LoginForm />;
   }
