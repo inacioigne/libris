@@ -1,6 +1,6 @@
 import "server-only";
 
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 
 import { requestIdentity } from "@/lib/auth/request";
 import type { Identity } from "@/types/identity";
@@ -45,6 +45,8 @@ export async function requireAdminPageAccess(
   try {
     identity = await requestIdentity();
   } catch (error) {
+    // Preserve prerender and navigation control-flow errors owned by Next.js.
+    unstable_rethrow(error);
     console.error("Falha ao verificar acesso administrativo.", error);
     redirect("/admin/unavailable");
   }
