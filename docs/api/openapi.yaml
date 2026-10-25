@@ -216,9 +216,11 @@ components:
           description: HTTP(S) profile image URL from the standard OIDC picture claim, when supplied.
         roles:
           type: array
+          description: Informational OIDC roles recognized by the API; clients must not use role names as authorization rules.
           items: {type: string}
         permissions:
           type: array
+          description: Effective permissions derived by the API and suitable for UI guards; API endpoints still enforce authorization independently.
           items: {type: string}
     DraftCreate:
       type: object

@@ -86,6 +86,7 @@ services:
     build:
       context: .
       dockerfile: infrastructure/docker/web.Dockerfile
+      target: runtime
     environment:
       API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000}
       WEB_AUTH_ENV: ${WEB_AUTH_ENV:-local}
@@ -107,6 +108,9 @@ services:
     depends_on:
       api:
         condition: service_healthy
+      keycloak:
+        condition: service_started
+    init: true
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 10s

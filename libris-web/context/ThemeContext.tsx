@@ -18,32 +18,44 @@ function isThemeMode(value: string | null): value is ThemeMode {
   return value === "light" || value === "dark" || value === "auto";
 }
 
+function initialThemeMode(): ThemeMode {
+  if (typeof window === "undefined") return "light";
+
+  try {
+    const savedMode = localStorage.getItem("theme-mode");
+    const legacyTheme = localStorage.getItem("theme");
+    return isThemeMode(savedMode)
+      ? savedMode
+      : isThemeMode(legacyTheme)
+        ? legacyTheme
+        : "light";
+  } catch {
+    return "light";
+  }
+}
+
+function initialSystemTheme(): ResolvedTheme {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>("light");
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(initialThemeMode);
+  const [systemTheme, setSystemTheme] =
+    useState<ResolvedTheme>(initialSystemTheme);
   const theme = themeMode === "auto" ? systemTheme : themeMode;
 
   useEffect(() => {
-    try {
-      const savedMode = localStorage.getItem("theme-mode");
-      const legacyTheme = localStorage.getItem("theme");
-      setThemeMode(isThemeMode(savedMode) ? savedMode : isThemeMode(legacyTheme) ? legacyTheme : "light");
-    } catch {
-      // The theme remains usable when browser storage is unavailable.
-    }
-
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const updateSystemTheme = () => setSystemTheme(mediaQuery.matches ? "dark" : "light");
-    updateSystemTheme();
+    const updateSystemTheme = (event: MediaQueryListEvent) =>
+      setSystemTheme(event.matches ? "dark" : "light");
     mediaQuery.addEventListener("change", updateSystemTheme);
-    setIsInitialized(true);
     return () => mediaQuery.removeEventListener("change", updateSystemTheme);
   }, []);
 
   useEffect(() => {
-    if (!isInitialized) return;
-
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.setAttribute("data-color-scheme", theme);
     try {
@@ -52,10 +64,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {
       // Applying the theme does not depend on persisting the preference.
     }
-  }, [theme, themeMode, isInitialized]);
+  }, [theme, themeMode]);
 
   const toggleTheme = () => {
-    setThemeMode((mode) => (mode === "auto" ? systemTheme : mode) === "light" ? "dark" : "light");
+    setThemeMode((mode) =>
+      (mode === "auto" ? systemTheme : mode) === "light" ? "dark" : "light",
+    );
   };
 
   return (

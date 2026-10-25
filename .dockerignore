@@ -1,0 +1,42 @@
+# Version control and editor metadata
+.git
+.gitignore
+.gitattributes
+.github
+.vscode
+.idea
+
+# Local dependencies and framework build output
+**/node_modules
+**/.next
+**/out
+**/dist
+**/build
+**/*.tsbuildinfo
+
+# Python virtual environments and caches
+**/.venv
+**/venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/*.egg-info
+
+# Test, coverage, and temporary output
+**/coverage
+**/.coverage
+**/htmlcov
+**/.cache
+**/tmp
+**/*.log
+
+# Local environment files may contain secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Operating-system metadata
+**/.DS_Store
+**/Thumbs.db

@@ -22,6 +22,15 @@ mesma sessão, remove a sessão quando refresh ou validação na API falham e of
 logout que também tenta encerrar a sessão no provedor OIDC. A API continua sendo
 a autoridade para autenticação do access token e autorização.
 
+As páginas administrativas aplicam guards no servidor antes de renderizar seu
+conteúdo. Esses guards usam as permissões efetivas retornadas por
+`GET /api/v1/identity/me`, e não nomes de papéis do provedor, mantendo o
+mapeamento papel–permissão sob responsabilidade da API. Ausência de sessão inicia
+o fluxo OIDC com retorno à rota solicitada; permissão insuficiente e falha ao
+consultar a API são tratadas como estados distintos. Esse guard melhora a
+experiência e evita renderização indevida, mas não substitui a autorização dos
+endpoints da API.
+
 ## Limite atual
 
 O registro disponível é propositalmente apenas em memória e recusa execução em
@@ -36,6 +45,8 @@ atômica de refresh. PostgreSQL e Redis permanecem alternativas em avaliação.
 ## Consequências
 
 - Tokens OIDC deixam de ser armazenados no navegador.
+- Rotas administrativas podem exigir permissões no servidor sem expor tokens ao
+  navegador.
 - Reiniciar o servidor web encerra sessões locais.
 - Uma implantação de produção falha explicitamente até receber um store aprovado.
 - Cookies legados de tokens são apagados no próximo callback ou logout.

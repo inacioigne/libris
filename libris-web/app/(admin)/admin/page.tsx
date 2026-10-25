@@ -1,15 +1,13 @@
-import { Suspense } from "react";
-import { redirect } from "next/navigation";
+import {
+  adminPermission,
+  requireAdminPageAccess,
+} from "../page-access";
 
-import { requestIdentity } from "@/lib/auth/request";
-
-async function IdentityDetails() {
-  const identity = await requestIdentity();
-
-  if (!identity) {
-    redirect("/login");
-  }
-
+function IdentityDetails({
+  identity,
+}: {
+  identity: Awaited<ReturnType<typeof requireAdminPageAccess>>["identity"];
+}) {
   return (
     <dl className="mt-5 space-y-5">
       <div>
@@ -38,35 +36,32 @@ async function IdentityDetails() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const { identity } = await requireAdminPageAccess(
+    { allOf: [adminPermission.systemAdmin] },
+    "/admin",
+  );
+
   return (
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">
-            Libris
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold">Área administrativa</h1>
-          <p className="mt-3 text-slate-600">Sessão autenticada com sucesso.</p>
-        </div>
+    <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 dark:bg-black sm:items-start">
+      <div>
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">
+          Libris
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold">Área administrativa</h1>
+        <p className="mt-3 text-slate-600">Sessão autenticada com sucesso.</p>
+      </div>
 
-        <section
-          className="my-10 w-full rounded-2xl border border-slate-200 bg-slate-50 p-6"
-          aria-labelledby="identity-title"
-        >
-          <h2 id="identity-title" className="text-xl font-semibold">
-            Informações do usuário
-          </h2>
+      <section
+        className="my-10 w-full rounded-2xl border border-slate-200 bg-slate-50 p-6"
+        aria-labelledby="identity-title"
+      >
+        <h2 id="identity-title" className="text-xl font-semibold">
+          Informações do usuário
+        </h2>
 
-          <Suspense
-            fallback={
-              <p className="mt-5 text-sm text-slate-600" role="status">
-                Carregando informações do usuário...
-              </p>
-            }
-          >
-            <IdentityDetails />
-          </Suspense>
-        </section>
-      </main>
+        <IdentityDetails identity={identity} />
+      </section>
+    </main>
   );
 }
