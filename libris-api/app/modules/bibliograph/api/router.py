@@ -1,6 +1,9 @@
+import json
+from importlib.resources import files
 from uuid import UUID
 
 from fastapi import APIRouter, Header, Response, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 
 from app.modules.bibliograph.domain.models import BibliographicDraft
@@ -19,7 +22,21 @@ class DraftRead(ApiModel):
     catalogerId: UUID
 
 
-router = APIRouter(prefix="/api/v1/bibliographic", tags=["bibliographic drafts"])
+router = APIRouter(prefix="/api/v1/bibliographic", tags=["bibliographic"])
+
+
+@router.get(
+    "/profile/work-default.v1.json",
+    operation_id="getDefaultWorkSchema",
+    response_class=JSONResponse,
+)
+async def get_default_work_schema() -> JSONResponse:
+    """Return the provisional default Work cataloging schema for the frontend."""
+    schema_path = files("app.modules.bibliograph.api.schemas").joinpath(
+        "work-default.v1.json"
+    )
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    return JSONResponse(content=schema)
 
 
 @router.post(

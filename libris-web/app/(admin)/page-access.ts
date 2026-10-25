@@ -48,7 +48,7 @@ export async function requireAdminPageAccess(
     // Preserve prerender and navigation control-flow errors owned by Next.js.
     unstable_rethrow(error);
     console.error("Falha ao verificar acesso administrativo.", error);
-    redirect("/admin/unavailable");
+    redirect("/unavailable");
   }
 
   if (!identity) {
@@ -58,7 +58,7 @@ export async function requireAdminPageAccess(
   }
 
   if (!hasRequiredPermissions(identity, requirement)) {
-    redirect("/admin/forbidden");
+    redirect("/forbidden");
   }
 
   return { identity, status: "authorized" };

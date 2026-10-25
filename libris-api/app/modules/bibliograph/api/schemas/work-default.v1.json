@@ -1,0 +1,46 @@
+
+{
+  "id": "bibframe-work-default",
+  "version": "1.0.0",
+  "name": "Catalogação de obra",
+  "targetClass": "http://id.loc.gov/ontologies/bibframe/Work",
+  "sections": [
+    {
+      "id": "identification",
+      "label": "Identificação da obra",
+      "fields": [
+        {
+          "id": "mainTitle",
+          "label": "Título principal",
+          "widget": "text",
+          "required": true,
+          "path": [
+            "http://id.loc.gov/ontologies/bibframe/title",
+            "http://id.loc.gov/ontologies/bibframe/mainTitle"
+          ]
+        },
+        {
+          "id": "subtitle",
+          "label": "Subtítulo",
+          "widget": "text",
+          "required": false,
+          "path": [
+            "http://id.loc.gov/ontologies/bibframe/title",
+            "http://id.loc.gov/ontologies/bibframe/subtitle"
+          ]
+        },
+        {
+          "id": "language",
+          "label": "Idioma",
+          "widget": "vocabulary-select",
+          "required": false,
+          "repeatable": true,
+          "path": [
+            "http://id.loc.gov/ontologies/bibframe/language"
+          ],
+          "vocabulary": "loc-languages"
+        }
+      ]
+    }
+  ]
+}

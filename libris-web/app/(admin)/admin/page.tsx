@@ -37,10 +37,10 @@ function IdentityDetails({
 }
 
 export default async function Home() {
-  const { identity } = await requireAdminPageAccess(
-    { allOf: [adminPermission.systemAdmin] },
-    "/admin",
-  );
+  // const { identity } = await requireAdminPageAccess(
+  //   { allOf: [adminPermission.systemAdmin] },
+  //   "/admin",
+  // );
 
   return (
     <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 dark:bg-black sm:items-start">
@@ -60,7 +60,7 @@ export default async function Home() {
           Informações do usuário
         </h2>
 
-        <IdentityDetails identity={identity} />
+        {/* <IdentityDetails identity={identity} /> */}
       </section>
     </main>
   );

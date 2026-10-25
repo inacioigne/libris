@@ -63,3 +63,23 @@ def test_old_work_creation_route_is_not_exposed() -> None:
     response = asyncio.run(request_old_route())
 
     assert response.status_code == 404
+
+
+def test_default_work_schema_is_exposed_for_the_frontend() -> None:
+    transport = ASGITransport(app=app)
+
+    async def request_schema():
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            return await client.get(
+                "/api/v1/bibliographic/schemas/work-default.v1.json"
+            )
+
+    response = asyncio.run(request_schema())
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    assert response.json()["id"] == "bibframe-work-default"
+    assert response.json()["version"] == "1.0.0"
+    assert response.json()["targetClass"] == (
+        "http://id.loc.gov/ontologies/bibframe/Work"
+    )
