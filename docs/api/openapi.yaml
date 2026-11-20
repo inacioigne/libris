@@ -101,7 +101,7 @@ paths:
           $ref: '#/components/responses/PreconditionRequired'
         '422':
           $ref: '#/components/responses/ValidationError'
-  /bibliographic/schemas/work-default.v1.json:
+  /bibliographic/profile/work-default.v1.json:
     get:
       operationId: getDefaultWorkSchema
       summary: Get the provisional default Work cataloging schema
