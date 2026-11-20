@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 
+import { VocabularyCombobox } from "@/components/forms/VocabularyCombobox";
 import type {
   WorkProfile,
   WorkProfileField,
+  WorkProfileVocabularies,
 } from "@/lib/cataloging/work-profile";
 
-type FieldValues = Record<string, string>;
+type FieldValue = string | string[];
+type FieldValues = Record<string, FieldValue>;
 
 type FieldRendererProps = {
   field: WorkProfileField;
-  onChange: (value: string) => void;
-  value: string;
+  onChange: (value: FieldValue) => void;
+  value: FieldValue;
+  vocabularies: WorkProfileVocabularies;
 };
 
 type FieldRenderer = (props: FieldRendererProps) => React.ReactNode;
@@ -30,30 +34,42 @@ const fieldRenderers: Record<string, FieldRenderer> = {
       onChange={(event) => onChange(event.target.value)}
       required={field.required}
       type="text"
-      value={value}
+      value={typeof value === "string" ? value : ""}
     />
   ),
-  "vocabulary-select": ({ field, onChange, value }) => (
-    <select
-      aria-describedby={`${field.id}-vocabulary`}
-      aria-required={field.required}
-      className={inputClasses}
-      data-vocabulary={field.vocabulary}
-      id={field.id}
-      name={field.id}
-      onChange={(event) => onChange(event.target.value)}
-      required={field.required}
-      value={value}
-    >
-      <option value="">Selecione uma opção</option>
-    </select>
-  ),
+  "vocabulary-select": ({ field, onChange, value, vocabularies }) => {
+    const vocabulary = field.vocabulary
+      ? vocabularies[field.vocabulary]
+      : undefined;
+    const error =
+      vocabulary?.status === "error"
+        ? vocabulary.message
+        : !vocabulary
+          ? "Não foi possível identificar o vocabulário deste campo."
+          : undefined;
+
+    return (
+      <VocabularyCombobox
+        describedBy={`${field.id}-vocabulary`}
+        disabled={Boolean(error)}
+        error={error}
+        fieldId={field.id}
+        label={field.label}
+        onChange={onChange}
+        repeatable={field.repeatable}
+        required={field.required}
+        terms={vocabulary?.status === "loaded" ? vocabulary.vocabulary.terms : []}
+        value={value}
+      />
+    );
+  },
 };
 
 function ProfileField({
   field,
   onChange,
   value,
+  vocabularies,
 }: FieldRendererProps) {
   const renderField = fieldRenderers[field.widget];
   const semanticPath = JSON.stringify(field.path);
@@ -73,7 +89,7 @@ function ProfileField({
       </label>
 
       {renderField ? (
-        renderField({ field, onChange, value })
+        renderField({ field, onChange, value, vocabularies })
       ) : (
         <p
           className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
@@ -96,16 +112,21 @@ function ProfileField({
   );
 }
 
-export function WorkCatalogingForm({ profile }: { profile: WorkProfile }) {
+export function WorkCatalogingForm({
+  profile,
+  vocabularies,
+}: {
+  profile: WorkProfile;
+  vocabularies: WorkProfileVocabularies;
+}) {
   const [values, setValues] = useState<FieldValues>({});
 
-  function updateField(fieldId: string, value: string) {
+  function updateField(fieldId: string, value: FieldValue) {
     setValues((currentValues) => ({
       ...currentValues,
       [fieldId]: value,
     }));
   }
-
 
   return (
     <form className="space-y-8">
@@ -127,13 +148,12 @@ export function WorkCatalogingForm({ profile }: { profile: WorkProfile }) {
               field={field}
               key={field.id}
               onChange={(value) => updateField(field.id, value)}
-              value={values[field.id] ?? ""}
+              value={values[field.id] ?? (field.repeatable ? [] : "")}
+              vocabularies={vocabularies}
             />
           ))}
         </fieldset>
       ))}
-
-      <pre>{JSON.stringify(profile, null, 2)}</pre>
     </form>
   );
 }

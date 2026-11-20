@@ -31,6 +31,24 @@ export type WorkProfile = {
   version: string;
 };
 
+export type VocabularyTerm = {
+  code: string;
+  label: string;
+  uri: string;
+};
+
+export type Vocabulary = {
+  terms: VocabularyTerm[];
+  version: string;
+  vocabulary: string;
+};
+
+export type VocabularyState =
+  | { status: "loaded"; vocabulary: Vocabulary }
+  | { message: string; status: "error" };
+
+export type WorkProfileVocabularies = Record<string, VocabularyState>;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -123,6 +141,36 @@ export function parseWorkProfile(value: unknown): WorkProfile {
   };
 }
 
+function parseVocabularyTerm(value: unknown): VocabularyTerm {
+  if (!isRecord(value)) {
+    throw new Error("A API retornou um termo de vocabulario invalido.");
+  }
+
+  const { code, label, uri } = value;
+  if (!isNonEmptyString(code) || !isNonEmptyString(label) || !isHttpUrl(uri)) {
+    throw new Error("A API retornou um termo de vocabulario invalido.");
+  }
+
+  return { code, label, uri };
+}
+
+export function parseVocabulary(value: unknown): Vocabulary {
+  if (!isRecord(value)) {
+    throw new Error("A API retornou um vocabulario invalido.");
+  }
+
+  const { terms, version, vocabulary } = value;
+  if (
+    !isNonEmptyString(vocabulary) ||
+    !isNonEmptyString(version) ||
+    !Array.isArray(terms)
+  ) {
+    throw new Error("A API retornou um vocabulario invalido.");
+  }
+
+  return { terms: terms.map(parseVocabularyTerm), version, vocabulary };
+}
+
 export async function requestDefaultWorkProfile(): Promise<WorkProfile> {
   await connection();
 
@@ -139,4 +187,29 @@ export async function requestDefaultWorkProfile(): Promise<WorkProfile> {
   }
 
   return parseWorkProfile(await response.json());
+}
+
+export async function requestVocabulary(
+  vocabulary: string,
+): Promise<Vocabulary> {
+  const response = await fetch(
+    new URL(
+      `/api/v1/bibliographic/vocabularies/${encodeURIComponent(vocabulary)}`,
+      getApiOrigin(),
+    ),
+    { cache: "no-store" },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `A API do vocabulario ${vocabulary} retornou ${response.status}.`,
+    );
+  }
+
+  const parsed = parseVocabulary(await response.json());
+  if (parsed.vocabulary !== vocabulary) {
+    throw new Error("A API retornou um vocabulario diferente do solicitado.");
+  }
+
+  return parsed;
 }
