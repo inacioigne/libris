@@ -3,6 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 
+import { getApiOrigin } from "@/lib/api/origin";
 import {
   getOidcLoginConfiguration,
   refreshAccessToken,
@@ -13,8 +14,6 @@ import {
   SESSION_COOKIE_NAME,
 } from "@/lib/auth/session";
 import { Identity } from "@/types/identity";
-
-const DEFAULT_LOCAL_API_ORIGIN = "http://localhost:8000";
 
 type IdentityPayload = {
   actor_id: string;
@@ -31,21 +30,6 @@ type IdentityPayload = {
 //   permissions: string[];
 //   roles: string[];
 // };
-
-function getApiOrigin(): URL {
-  const configuredOrigin = process.env.API_INTERNAL_URL?.trim();
-
-  if (!configuredOrigin && process.env.NODE_ENV === "production") {
-    throw new Error("A variavel de ambiente API_INTERNAL_URL e obrigatoria.");
-  }
-
-  const origin = new URL(configuredOrigin || DEFAULT_LOCAL_API_ORIGIN);
-  if (origin.protocol !== "http:" && origin.protocol !== "https:") {
-    throw new Error("API_INTERNAL_URL deve usar HTTP ou HTTPS.");
-  }
-
-  return origin;
-}
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");

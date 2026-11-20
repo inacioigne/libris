@@ -70,7 +70,7 @@ O serializador atual utiliza o namespace `http://id.loc.gov/ontologies/bibframe/
 
 - `bf:title` conecta Work/Instance ao nó de título;
 - `rdf:type` distingue `bf:Title`, `bf:VariantTitle` e `bf:ParallelTitle`;
-- `bf:mainTitle`, `bf:subTitle`, `bf:partNumber` e `bf:partName` representam componentes do título;
+- `bf:mainTitle`, `bf:subtitle`, `bf:partNumber` e `bf:partName` representam componentes do título;
 - `rdfs:label` fornece rótulo textual derivado;
 - `bf:instanceOf` relaciona Instance com Work.
 

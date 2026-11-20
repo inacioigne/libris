@@ -1,7 +1,18 @@
+import { Suspense } from "react";
 
+import { WorkCatalogingForm } from "@/components/forms/WorkCatalogingForm";
+import { requestDefaultWorkProfile } from "@/lib/cataloging/work-profile";
 
-export default async function Page() {
+async function WorkProfile() {
+  const profile = await requestDefaultWorkProfile();
 
+  return <WorkCatalogingForm profile={profile} />;
+}
 
-  return <h1>NOVA CATALOGAÇÃO</h1>;
+export default function Page() {
+  return (
+    <Suspense fallback={<p>Carregando perfil de catalogação…</p>}>
+      <WorkProfile />
+    </Suspense>
+  );
 }
