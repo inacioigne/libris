@@ -9,35 +9,53 @@ import type {
   WorkProfileVocabularies,
 } from "@/lib/cataloging/work-profile";
 
-type FieldValue = string | string[];
-type FieldValues = Record<string, FieldValue>;
+type TextFieldValues = Record<string, string>;
 
-type FieldRendererProps = {
+/**
+ * Form contract for controlled-vocabulary fields.
+ *
+ * Values are the semantic URIs returned by the vocabulary API. Search text and
+ * display labels never become cataloging values. Non-repeatable fields use the
+ * same representation but contain at most one URI.
+ *
+ * This is currently a frontend form-state contract only. The Work write API
+ * does not yet accept this list.
+ */
+export type VocabularyFieldValues = Record<string, string[]>;
+
+type ProfileFieldProps = {
   field: WorkProfileField;
-  onChange: (value: FieldValue) => void;
-  value: FieldValue;
+  onTextChange: (value: string) => void;
+  onVocabularyChange: (uris: string[]) => void;
+  textValue: string;
+  vocabularyValue: string[];
   vocabularies: WorkProfileVocabularies;
 };
 
-type FieldRenderer = (props: FieldRendererProps) => React.ReactNode;
+type FieldRenderer = (props: ProfileFieldProps) => React.ReactNode;
 
 const inputClasses =
   "mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white";
 
 const fieldRenderers: Record<string, FieldRenderer> = {
-  text: ({ field, onChange, value }) => (
+  text: ({ field, onTextChange, textValue }) => (
     <input
       aria-required={field.required}
       className={inputClasses}
       id={field.id}
       name={field.id}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onTextChange(event.target.value)}
       required={field.required}
       type="text"
-      value={typeof value === "string" ? value : ""}
+      value={textValue}
     />
   ),
-  "vocabulary-select": ({ field, onChange, value, vocabularies }) => {
+  "vocabulary-select": ({
+    field,
+    onVocabularyChange,
+    vocabularyValue,
+    vocabularies,
+  }) => {
     const vocabulary = field.vocabulary
       ? vocabularies[field.vocabulary]
       : undefined;
@@ -55,11 +73,11 @@ const fieldRenderers: Record<string, FieldRenderer> = {
         error={error}
         fieldId={field.id}
         label={field.label}
-        onChange={onChange}
+        onChange={onVocabularyChange}
         repeatable={field.repeatable}
         required={field.required}
+        selectedUris={vocabularyValue}
         terms={vocabulary?.status === "loaded" ? vocabulary.vocabulary.terms : []}
-        value={value}
       />
     );
   },
@@ -67,10 +85,12 @@ const fieldRenderers: Record<string, FieldRenderer> = {
 
 function ProfileField({
   field,
-  onChange,
-  value,
+  onTextChange,
+  onVocabularyChange,
+  textValue,
+  vocabularyValue,
   vocabularies,
-}: FieldRendererProps) {
+}: ProfileFieldProps) {
   const renderField = fieldRenderers[field.widget];
   const semanticPath = JSON.stringify(field.path);
 
@@ -89,7 +109,14 @@ function ProfileField({
       </label>
 
       {renderField ? (
-        renderField({ field, onChange, value, vocabularies })
+        renderField({
+          field,
+          onTextChange,
+          onVocabularyChange,
+          textValue,
+          vocabularyValue,
+          vocabularies,
+        })
       ) : (
         <p
           className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200"
@@ -119,12 +146,21 @@ export function WorkCatalogingForm({
   profile: WorkProfile;
   vocabularies: WorkProfileVocabularies;
 }) {
-  const [values, setValues] = useState<FieldValues>({});
+  const [textValues, setTextValues] = useState<TextFieldValues>({});
+  const [vocabularyValues, setVocabularyValues] =
+    useState<VocabularyFieldValues>({});
 
-  function updateField(fieldId: string, value: FieldValue) {
-    setValues((currentValues) => ({
+  function updateTextField(fieldId: string, value: string) {
+    setTextValues((currentValues) => ({
       ...currentValues,
       [fieldId]: value,
+    }));
+  }
+
+  function updateVocabularyField(fieldId: string, uris: string[]) {
+    setVocabularyValues((currentValues) => ({
+      ...currentValues,
+      [fieldId]: uris,
     }));
   }
 
@@ -147,8 +183,12 @@ export function WorkCatalogingForm({
             <ProfileField
               field={field}
               key={field.id}
-              onChange={(value) => updateField(field.id, value)}
-              value={values[field.id] ?? (field.repeatable ? [] : "")}
+              onTextChange={(value) => updateTextField(field.id, value)}
+              onVocabularyChange={(uris) =>
+                updateVocabularyField(field.id, uris)
+              }
+              textValue={textValues[field.id] ?? ""}
+              vocabularyValue={vocabularyValues[field.id] ?? []}
               vocabularies={vocabularies}
             />
           ))}

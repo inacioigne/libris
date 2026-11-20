@@ -11,11 +11,11 @@ type VocabularyComboboxProps = {
   error?: string;
   fieldId: string;
   label: string;
-  onChange: (value: string | string[]) => void;
+  onChange: (uris: string[]) => void;
   repeatable?: boolean;
   required?: boolean;
   terms: VocabularyTerm[];
-  value: string | string[];
+  selectedUris: string[];
 };
 
 const inputClasses =
@@ -37,18 +37,14 @@ export function VocabularyCombobox({
   onChange,
   repeatable = false,
   required = false,
+  selectedUris,
   terms,
-  value,
 }: VocabularyComboboxProps) {
   const listboxId = `${fieldId}-${useId().replaceAll(":", "")}-listbox`;
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const selectedUris = useMemo(
-    () => (Array.isArray(value) ? value : value ? [value] : []),
-    [value],
-  );
   const selectedTerms = selectedUris
     .map((uri) => terms.find((term) => term.uri === uri))
     .filter((term): term is VocabularyTerm => Boolean(term));
@@ -82,7 +78,7 @@ export function VocabularyCombobox({
       onChange([...selectedUris, term.uri]);
       setQuery("");
     } else {
-      onChange(term.uri);
+      onChange([term.uri]);
       setQuery(term.label);
       closeList();
     }
@@ -90,7 +86,7 @@ export function VocabularyCombobox({
 
   function removeTerm(uri: string) {
     const nextValue = selectedUris.filter((selectedUri) => selectedUri !== uri);
-    onChange(repeatable ? nextValue : "");
+    onChange(nextValue);
     if (!repeatable) setQuery("");
     inputRef.current?.focus();
   }
@@ -151,7 +147,7 @@ export function VocabularyCombobox({
           id={fieldId}
           onBlur={() => window.setTimeout(closeList, 100)}
           onChange={(event) => {
-            if (selectedTerm) onChange("");
+            if (selectedTerm) onChange([]);
             setQuery(event.target.value);
             setIsOpen(true);
             setActiveIndex(0);
