@@ -1,0 +1,1 @@
+"""Bibliographic application services."""

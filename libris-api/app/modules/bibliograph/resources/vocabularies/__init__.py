@@ -1,0 +1,1 @@
+"""Versioned controlled-vocabulary snapshots."""

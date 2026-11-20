@@ -1,0 +1,2441 @@
+{
+  "vocabulary": "loc-languages",
+  "version": "1.0.0",
+  "terms": [
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/aar",
+      "code": "aar",
+      "label": "Afar"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/abk",
+      "code": "abk",
+      "label": "Abcázio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ace",
+      "code": "ace",
+      "label": "Achinês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ach",
+      "code": "ach",
+      "label": "Acoli"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ada",
+      "code": "ada",
+      "label": "Adangme"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ady",
+      "code": "ady",
+      "label": "Adigue; Adigei"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/afa",
+      "code": "afa",
+      "label": "Idiomas afro-asiáticas"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/afh",
+      "code": "afh",
+      "label": "Afrihili"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/afr",
+      "code": "afr",
+      "label": "Africâner"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ain",
+      "code": "ain",
+      "label": "Aino"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/aka",
+      "code": "aka",
+      "label": "Akan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/akk",
+      "code": "akk",
+      "label": "Acádio; Acadiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/alb",
+      "code": "alb",
+      "label": "Albanês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ale",
+      "code": "ale",
+      "label": "Aleúte"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/alg",
+      "code": "alg",
+      "label": "Línguas algonquinas"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/alt",
+      "code": "alt",
+      "label": "Altai do Sul"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/amh",
+      "code": "amh",
+      "label": "Amárico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ang",
+      "code": "ang",
+      "label": "Inglês, Arcaico (apr.450-1100)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/anp",
+      "code": "anp",
+      "label": "Angika"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/apa",
+      "code": "apa",
+      "label": "Idiomas apache"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ara",
+      "code": "ara",
+      "label": "Árabe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arc",
+      "code": "arc",
+      "label": "Aramaico oficial (700-300 AEC); Aramaico imperial (700-300 AEC)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arg",
+      "code": "arg",
+      "label": "Aragonês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arm",
+      "code": "arm",
+      "label": "Armênio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arn",
+      "code": "arn",
+      "label": "Mapudungun; Mapuche"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arp",
+      "code": "arp",
+      "label": "Arapaho"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/art",
+      "code": "art",
+      "label": "Idiomas artificiais"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/arw",
+      "code": "arw",
+      "label": "Aruaque"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/asm",
+      "code": "asm",
+      "label": "Assamês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ast",
+      "code": "ast",
+      "label": "Asturiano; Bable; Leonês; Asturo-leonês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ath",
+      "code": "ath",
+      "label": "Idiomas atabascanos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/aus",
+      "code": "aus",
+      "label": "Idiomas australianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ava",
+      "code": "ava",
+      "label": "Avárico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ave",
+      "code": "ave",
+      "label": "Avéstico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/awa",
+      "code": "awa",
+      "label": "Awadhi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/aym",
+      "code": "aym",
+      "label": "Aimará"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/aze",
+      "code": "aze",
+      "label": "Azerbaidjano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bad",
+      "code": "bad",
+      "label": "Idiomas maias"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bai",
+      "code": "bai",
+      "label": "Idiomas bamileke"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bak",
+      "code": "bak",
+      "label": "Basquir"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bal",
+      "code": "bal",
+      "label": "Balúchi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bam",
+      "code": "bam",
+      "label": "Bambara"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ban",
+      "code": "ban",
+      "label": "Balinês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/baq",
+      "code": "baq",
+      "label": "Basco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bas",
+      "code": "bas",
+      "label": "Basa"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bat",
+      "code": "bat",
+      "label": "Idiomas bálticos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bej",
+      "code": "bej",
+      "label": "Beja; Bedawi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bel",
+      "code": "bel",
+      "label": "Bielorusso"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bem",
+      "code": "bem",
+      "label": "Bemba"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ben",
+      "code": "ben",
+      "label": "Bengali"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ber",
+      "code": "ber",
+      "label": "Idiomas berberes"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bho",
+      "code": "bho",
+      "label": "Bhojpuri"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bih",
+      "code": "bih",
+      "label": "Idiomas biaris"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bik",
+      "code": "bik",
+      "label": "Bikol"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bin",
+      "code": "bin",
+      "label": "Bini; Edo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bis",
+      "code": "bis",
+      "label": "Bislamá"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bla",
+      "code": "bla",
+      "label": "Siksika"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bnt",
+      "code": "bnt",
+      "label": "Bantu languages"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bos",
+      "code": "bos",
+      "label": "Bósnio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bra",
+      "code": "bra",
+      "label": "Braj"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bre",
+      "code": "bre",
+      "label": "Bretão"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/btk",
+      "code": "btk",
+      "label": "Idiomas batak"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bua",
+      "code": "bua",
+      "label": "Buriata"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bug",
+      "code": "bug",
+      "label": "Buginês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bul",
+      "code": "bul",
+      "label": "Búlgaro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/bur",
+      "code": "bur",
+      "label": "Birmanês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/byn",
+      "code": "byn",
+      "label": "Blin; Bilin"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cad",
+      "code": "cad",
+      "label": "Caddo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cai",
+      "code": "cai",
+      "label": "Idiomas indígenas da América Central"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/car",
+      "code": "car",
+      "label": "Caribe galibi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cat",
+      "code": "cat",
+      "label": "Catalão; Valenciano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cau",
+      "code": "cau",
+      "label": "Idiomas caucasianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ceb",
+      "code": "ceb",
+      "label": "Cebuano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cel",
+      "code": "cel",
+      "label": "Idiomas celtas"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cha",
+      "code": "cha",
+      "label": "Chamorro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chb",
+      "code": "chb",
+      "label": "Chibcha"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/che",
+      "code": "che",
+      "label": "Checheno"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chg",
+      "code": "chg",
+      "label": "Chagatai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chi",
+      "code": "chi",
+      "label": "Chinês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chk",
+      "code": "chk",
+      "label": "Chuquês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chm",
+      "code": "chm",
+      "label": "Mari"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chn",
+      "code": "chn",
+      "label": "Jargão Chinook"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cho",
+      "code": "cho",
+      "label": "Choctaw"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chp",
+      "code": "chp",
+      "label": "Chipewyan; Dene Suline"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chr",
+      "code": "chr",
+      "label": "cheroqui"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chu",
+      "code": "chu",
+      "label": "Eslavo Eclesiástico; Eslavo Antigo; Eslavo Eclesiástico; Búlgaro Antigo; Eslavônico Antigo Eclesiástico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chv",
+      "code": "chv",
+      "label": "Tchuvache"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/chy",
+      "code": "chy",
+      "label": "Cheyenne"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cmc",
+      "code": "cmc",
+      "label": "Idiomas châmicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cnr",
+      "code": "cnr",
+      "label": "Montenegrino"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cop",
+      "code": "cop",
+      "label": "Copta"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cor",
+      "code": "cor",
+      "label": "Córnico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cos",
+      "code": "cos",
+      "label": "Corso"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cpe",
+      "code": "cpe",
+      "label": "Crioulos e pidgins baseados no inglês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cpf",
+      "code": "cpf",
+      "label": "Crioulos e pidgins baseados no francês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cpp",
+      "code": "cpp",
+      "label": "Crioulos e pidgins, baseados no português"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cre",
+      "code": "cre",
+      "label": "Cree"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/crh",
+      "code": "crh",
+      "label": "Tártaro da Crimeia; Turco crimeu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/crp",
+      "code": "crp",
+      "label": "Crioulos e pidgins"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/csb",
+      "code": "csb",
+      "label": "Cassúbio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cus",
+      "code": "cus",
+      "label": "Idiomas cuchíticos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/cze",
+      "code": "cze",
+      "label": "Tcheco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dak",
+      "code": "dak",
+      "label": "Dacota"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dan",
+      "code": "dan",
+      "label": "Dinamarquês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dar",
+      "code": "dar",
+      "label": "Dargínico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/day",
+      "code": "day",
+      "label": "Idiomas Bidayuhs"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/del",
+      "code": "del",
+      "label": "Delaware"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/den",
+      "code": "den",
+      "label": "Slave (Atabascano)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dgr",
+      "code": "dgr",
+      "label": "Tlicho; Dogrib"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/din",
+      "code": "din",
+      "label": "Dinka"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/div",
+      "code": "div",
+      "label": "Divehi; Maldívio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/doi",
+      "code": "doi",
+      "label": "Dogri"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dra",
+      "code": "dra",
+      "label": "Idiomas dravídicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dsb",
+      "code": "dsb",
+      "label": "Baixo sorábio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dua",
+      "code": "dua",
+      "label": "Duala"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dum",
+      "code": "dum",
+      "label": "Holandês, Medieval (apr. 1050-1350)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dut",
+      "code": "dut",
+      "label": "Holandês; Flamengo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dyu",
+      "code": "dyu",
+      "label": "Dyula"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/dzo",
+      "code": "dzo",
+      "label": "Butanês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/efi",
+      "code": "efi",
+      "label": "Efik"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/egy",
+      "code": "egy",
+      "label": "Egípcio (Antigo)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/eka",
+      "code": "eka",
+      "label": "Ekajuk"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/elx",
+      "code": "elx",
+      "label": "Elamita"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/eng",
+      "code": "eng",
+      "label": "Inglês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/enm",
+      "code": "enm",
+      "label": "Inglês, Medieval (1100-1500)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/epo",
+      "code": "epo",
+      "label": "Esperanto"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/est",
+      "code": "est",
+      "label": "Estoniano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ewe",
+      "code": "ewe",
+      "label": "Jeje"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ewo",
+      "code": "ewo",
+      "label": "Ewondo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fan",
+      "code": "fan",
+      "label": "Fang"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fao",
+      "code": "fao",
+      "label": "Faroês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fat",
+      "code": "fat",
+      "label": "Fânti"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fij",
+      "code": "fij",
+      "label": "Fidjiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fil",
+      "code": "fil",
+      "label": "Filipino; Pilipino"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fin",
+      "code": "fin",
+      "label": "Finlandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fiu",
+      "code": "fiu",
+      "label": "Idiomas fino-úgricos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fon",
+      "code": "fon",
+      "label": "Fon"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fre",
+      "code": "fre",
+      "label": "Francês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/frm",
+      "code": "frm",
+      "label": "Francês, médio (aprox. 1400-1600)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fro",
+      "code": "fro",
+      "label": "Francês, antigo (842-apr. 1400)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/frr",
+      "code": "frr",
+      "label": "Frísico do Norte"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/frs",
+      "code": "frs",
+      "label": "Frísio oriental"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fry",
+      "code": "fry",
+      "label": "Frísio ocidental"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ful",
+      "code": "ful",
+      "label": "Fula"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/fur",
+      "code": "fur",
+      "label": "Friuliano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gaa",
+      "code": "gaa",
+      "label": "Ga"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gay",
+      "code": "gay",
+      "label": "Gayo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gba",
+      "code": "gba",
+      "label": "Gbaya"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gem",
+      "code": "gem",
+      "label": "Idiomas germânicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/geo",
+      "code": "geo",
+      "label": "Georgiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ger",
+      "code": "ger",
+      "label": "Alemão"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gez",
+      "code": "gez",
+      "label": "Geez"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gil",
+      "code": "gil",
+      "label": "Gilbertês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gla",
+      "code": "gla",
+      "label": "Escocês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gle",
+      "code": "gle",
+      "label": "Irlandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/glg",
+      "code": "glg",
+      "label": "Galego"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/glv",
+      "code": "glv",
+      "label": "Manx"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gmh",
+      "code": "gmh",
+      "label": "Alemão, alta medieval (apr. 1050-1500)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/goh",
+      "code": "goh",
+      "label": "Alemão, medieval antigo (apr. 750-1050)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gon",
+      "code": "gon",
+      "label": "Gondi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gor",
+      "code": "gor",
+      "label": "Gorontalo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/got",
+      "code": "got",
+      "label": "Gótico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/grb",
+      "code": "grb",
+      "label": "Grebo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/grc",
+      "code": "grc",
+      "label": "Grego, Arcaico (até 1453)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gre",
+      "code": "gre",
+      "label": "Grego, Moderno (1453-)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/grn",
+      "code": "grn",
+      "label": "Guarani"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gsw",
+      "code": "gsw",
+      "label": "Suíço-alemão; Alemânico; Alsaciano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/guj",
+      "code": "guj",
+      "label": "gujerati"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/gwi",
+      "code": "gwi",
+      "label": "Gwich'in"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hai",
+      "code": "hai",
+      "label": "Haida"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hat",
+      "code": "hat",
+      "label": "Haitiano; Crioulo haitiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hau",
+      "code": "hau",
+      "label": "Hauçá"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/haw",
+      "code": "haw",
+      "label": "Havaiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/heb",
+      "code": "heb",
+      "label": "Hebraico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/her",
+      "code": "her",
+      "label": "Hereró"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hil",
+      "code": "hil",
+      "label": "Hiligaynon"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/him",
+      "code": "him",
+      "label": "Línguas Himachali; Línguas Pahari Ocidental"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hin",
+      "code": "hin",
+      "label": "Híndi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hit",
+      "code": "hit",
+      "label": "Hittita"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hmn",
+      "code": "hmn",
+      "label": "Hmong; Mong"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hmo",
+      "code": "hmo",
+      "label": "Hiri Motu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hrv",
+      "code": "hrv",
+      "label": "Croata"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hsb",
+      "code": "hsb",
+      "label": "Alto sorábio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hun",
+      "code": "hun",
+      "label": "Húngaro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/hup",
+      "code": "hup",
+      "label": "Hupa"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/iba",
+      "code": "iba",
+      "label": "Iban"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ibo",
+      "code": "ibo",
+      "label": "Ibo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ice",
+      "code": "ice",
+      "label": "Islandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ido",
+      "code": "ido",
+      "label": "Ido"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/iii",
+      "code": "iii",
+      "label": "Yi de Sichuan; Nuosu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ijo",
+      "code": "ijo",
+      "label": "Idiomas ijo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/iku",
+      "code": "iku",
+      "label": "Inuktitut"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ile",
+      "code": "ile",
+      "label": "Ocidental"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ilo",
+      "code": "ilo",
+      "label": "Ilocano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ina",
+      "code": "ina",
+      "label": "Interlíngua"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/inc",
+      "code": "inc",
+      "label": "Idiomas índicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ind",
+      "code": "ind",
+      "label": "Indonésio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ine",
+      "code": "ine",
+      "label": "Idiomas indo-europeus"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/inh",
+      "code": "inh",
+      "label": "Íngushe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ipk",
+      "code": "ipk",
+      "label": "Inupiaque"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ira",
+      "code": "ira",
+      "label": "Idiomas iranianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/iro",
+      "code": "iro",
+      "label": "Idiomas iroquianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ita",
+      "code": "ita",
+      "label": "Italiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/jav",
+      "code": "jav",
+      "label": "Javanês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/jbo",
+      "code": "jbo",
+      "label": "Lojban"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/jpn",
+      "code": "jpn",
+      "label": "Japonês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/jpr",
+      "code": "jpr",
+      "label": "Judaico-Persa"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/jrb",
+      "code": "jrb",
+      "label": "Judaico-Árabe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kaa",
+      "code": "kaa",
+      "label": "Kara-Kalpak"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kab",
+      "code": "kab",
+      "label": "Cabila"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kac",
+      "code": "kac",
+      "label": "Kachin; Jingpho"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kal",
+      "code": "kal",
+      "label": "Groenlandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kam",
+      "code": "kam",
+      "label": "Camba"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kan",
+      "code": "kan",
+      "label": "Canarês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kar",
+      "code": "kar",
+      "label": "Idiomas karen"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kas",
+      "code": "kas",
+      "label": "Caxemira"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kau",
+      "code": "kau",
+      "label": "Canúri"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kaw",
+      "code": "kaw",
+      "label": "Kawi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kaz",
+      "code": "kaz",
+      "label": "Cazaque"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kbd",
+      "code": "kbd",
+      "label": "kabardino"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kha",
+      "code": "kha",
+      "label": "Khasi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/khi",
+      "code": "khi",
+      "label": "Idiomas coissãos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/khm",
+      "code": "khm",
+      "label": "Khmer Central"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kho",
+      "code": "kho",
+      "label": "Khotanês; Saka"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kik",
+      "code": "kik",
+      "label": "Quicuio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kin",
+      "code": "kin",
+      "label": "Ruanda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kir",
+      "code": "kir",
+      "label": "Quiguiz"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kmb",
+      "code": "kmb",
+      "label": "Kimbundu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kok",
+      "code": "kok",
+      "label": "Concani"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kom",
+      "code": "kom",
+      "label": "Komi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kon",
+      "code": "kon",
+      "label": "Congo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kor",
+      "code": "kor",
+      "label": "Coreano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kos",
+      "code": "kos",
+      "label": "Kosraeano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kpe",
+      "code": "kpe",
+      "label": "Kpelle"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/krc",
+      "code": "krc",
+      "label": "Carachaio-Bálcara"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/krl",
+      "code": "krl",
+      "label": "Careliano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kro",
+      "code": "kro",
+      "label": "Idiomas kru"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kru",
+      "code": "kru",
+      "label": "Kurux"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kua",
+      "code": "kua",
+      "label": "Cuanhama"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kum",
+      "code": "kum",
+      "label": "Kumyk"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kur",
+      "code": "kur",
+      "label": "Curdo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/kut",
+      "code": "kut",
+      "label": "Kutenai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lad",
+      "code": "lad",
+      "label": "Ladino"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lah",
+      "code": "lah",
+      "label": "Lahnda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lam",
+      "code": "lam",
+      "label": "Lamba"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lao",
+      "code": "lao",
+      "label": "Laosiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lat",
+      "code": "lat",
+      "label": "Latim"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lav",
+      "code": "lav",
+      "label": "Letão"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lez",
+      "code": "lez",
+      "label": "Lezgui"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lim",
+      "code": "lim",
+      "label": "Limburgês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lin",
+      "code": "lin",
+      "label": "Lingala"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lit",
+      "code": "lit",
+      "label": "Lituano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lol",
+      "code": "lol",
+      "label": "Mongo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/loz",
+      "code": "loz",
+      "label": "Lozi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ltz",
+      "code": "ltz",
+      "label": "Luxemburguês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lua",
+      "code": "lua",
+      "label": "Luba-Lulua"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lub",
+      "code": "lub",
+      "label": "Baluba"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lug",
+      "code": "lug",
+      "label": "Nganda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lui",
+      "code": "lui",
+      "label": "Luiseño"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lun",
+      "code": "lun",
+      "label": "Lunda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/luo",
+      "code": "luo",
+      "label": "Luo (Quênia e Tanzânia)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/lus",
+      "code": "lus",
+      "label": "Lushai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mac",
+      "code": "mac",
+      "label": "Macedônio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mad",
+      "code": "mad",
+      "label": "Madurês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mag",
+      "code": "mag",
+      "label": "Magahi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mah",
+      "code": "mah",
+      "label": "Marshalês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mai",
+      "code": "mai",
+      "label": "Maithili"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mak",
+      "code": "mak",
+      "label": "Makasar"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mal",
+      "code": "mal",
+      "label": "Malaiala"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/man",
+      "code": "man",
+      "label": "Mandingo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mao",
+      "code": "mao",
+      "label": "Maori"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/map",
+      "code": "map",
+      "label": "Idiomas austronesianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mar",
+      "code": "mar",
+      "label": "Marati"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mas",
+      "code": "mas",
+      "label": "Masai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/may",
+      "code": "may",
+      "label": "Malaio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mdf",
+      "code": "mdf",
+      "label": "Moksha"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mdr",
+      "code": "mdr",
+      "label": "Mandar"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/men",
+      "code": "men",
+      "label": "Mende"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mga",
+      "code": "mga",
+      "label": "Irlandês, Medieval (900-1200)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mic",
+      "code": "mic",
+      "label": "Mi'kmaq; Micmac"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/min",
+      "code": "min",
+      "label": "Minangkabau"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mis",
+      "code": "mis",
+      "label": "Idiomas não codificados"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mkh",
+      "code": "mkh",
+      "label": "Idiomas mon-khmer"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mlg",
+      "code": "mlg",
+      "label": "Malgaxe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mlt",
+      "code": "mlt",
+      "label": "Maltês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mnc",
+      "code": "mnc",
+      "label": "Manchu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mni",
+      "code": "mni",
+      "label": "Manipuri"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mno",
+      "code": "mno",
+      "label": "Idiomas manobo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/moh",
+      "code": "moh",
+      "label": "Mohawk"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mon",
+      "code": "mon",
+      "label": "Mongol"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mos",
+      "code": "mos",
+      "label": "Mossi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mul",
+      "code": "mul",
+      "label": "Idiomas múltiplos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mun",
+      "code": "mun",
+      "label": "Idiomas munda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mus",
+      "code": "mus",
+      "label": "Creek"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mwl",
+      "code": "mwl",
+      "label": "Mirandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/mwr",
+      "code": "mwr",
+      "label": "Marwari"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/myn",
+      "code": "myn",
+      "label": "Idiomas maias"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/myv",
+      "code": "myv",
+      "label": "Erzya"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nah",
+      "code": "nah",
+      "label": "Idiomas náuatle"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nai",
+      "code": "nai",
+      "label": "Idiomas indígenas da América do Norte"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nap",
+      "code": "nap",
+      "label": "Napolitano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nau",
+      "code": "nau",
+      "label": "Nauru"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nav",
+      "code": "nav",
+      "label": "Navarro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nbl",
+      "code": "nbl",
+      "label": "South Ndebele"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nde",
+      "code": "nde",
+      "label": "North Ndebele"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ndo",
+      "code": "ndo",
+      "label": "Ovampo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nds",
+      "code": "nds",
+      "label": "Baixo saxão; Baixo alemão"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nep",
+      "code": "nep",
+      "label": "Nepali"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/new",
+      "code": "new",
+      "label": "Nepal Bhasa; Newar; Newari"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nia",
+      "code": "nia",
+      "label": "Nias"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nic",
+      "code": "nic",
+      "label": "Idiomas nigero-cordofanianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/niu",
+      "code": "niu",
+      "label": "Niueano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nno",
+      "code": "nno",
+      "label": "Norwegian Nynorsk"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nob",
+      "code": "nob",
+      "label": "Norwegian Bokmål"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nog",
+      "code": "nog",
+      "label": "Nogai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/non",
+      "code": "non",
+      "label": "Nórdico, Arcaico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nor",
+      "code": "nor",
+      "label": "Norueguês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nqo",
+      "code": "nqo",
+      "label": "N'Ko"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nso",
+      "code": "nso",
+      "label": "Sepedi; Sotho do Norte"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nub",
+      "code": "nub",
+      "label": "Idiomas núbios"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nwc",
+      "code": "nwc",
+      "label": "Neuari clássico; Neuari antigo; Nepal Bahasa clássico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nya",
+      "code": "nya",
+      "label": "Cinianja"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nym",
+      "code": "nym",
+      "label": "Nyamwezi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nyn",
+      "code": "nyn",
+      "label": "Nyankole"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nyo",
+      "code": "nyo",
+      "label": "Nyoro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/nzi",
+      "code": "nzi",
+      "label": "Nzema"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/oci",
+      "code": "oci",
+      "label": "Occitan (post 1500)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/oji",
+      "code": "oji",
+      "label": "Obíjua"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ori",
+      "code": "ori",
+      "label": "Oriá"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/orm",
+      "code": "orm",
+      "label": "Oromo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/osa",
+      "code": "osa",
+      "label": "Osage"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/oss",
+      "code": "oss",
+      "label": "Osseta"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ota",
+      "code": "ota",
+      "label": "Turco, Otomano (1500-1928)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/oto",
+      "code": "oto",
+      "label": "Idiomas otomi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/paa",
+      "code": "paa",
+      "label": "Idiomas papua"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pag",
+      "code": "pag",
+      "label": "Pangasinan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pal",
+      "code": "pal",
+      "label": "Pahlavi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pam",
+      "code": "pam",
+      "label": "Pampanga; Kapampangan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pan",
+      "code": "pan",
+      "label": "Panjabi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pap",
+      "code": "pap",
+      "label": "Papiamento"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pau",
+      "code": "pau",
+      "label": "Palauano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/peo",
+      "code": "peo",
+      "label": "Persa, antigo (apr. 600-400 AC)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/per",
+      "code": "per",
+      "label": "Persa"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/phi",
+      "code": "phi",
+      "label": "Idiomas filipinos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/phn",
+      "code": "phn",
+      "label": "Fenício"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pli",
+      "code": "pli",
+      "label": "Páli"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pol",
+      "code": "pol",
+      "label": "Polonês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pon",
+      "code": "pon",
+      "label": "Pohnpeian"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/por",
+      "code": "por",
+      "label": "Português"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pra",
+      "code": "pra",
+      "label": "Idiomas prácritos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pro",
+      "code": "pro",
+      "label": "Provençal, Old (to 1500); Occitan, Old (to 1500)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/pus",
+      "code": "pus",
+      "label": "Pachto"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/qaa-qtz",
+      "code": "qaa-qtz",
+      "label": "Reservado para uso local"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/que",
+      "code": "que",
+      "label": "Quíchua"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/raj",
+      "code": "raj",
+      "label": "Rajastani"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rap",
+      "code": "rap",
+      "label": "Rapanui"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rar",
+      "code": "rar",
+      "label": "Rarotongan; Maori das Ilhas Cook"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/roa",
+      "code": "roa",
+      "label": "Idiomas românicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/roh",
+      "code": "roh",
+      "label": "Romanche"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rom",
+      "code": "rom",
+      "label": "Romani"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rum",
+      "code": "rum",
+      "label": "Romeno; Moldávio; Moldavo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/run",
+      "code": "run",
+      "label": "Kirundi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rup",
+      "code": "rup",
+      "label": "Aromeno; Arumeno; Macedo-Romeno"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/rus",
+      "code": "rus",
+      "label": "Russo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sad",
+      "code": "sad",
+      "label": "Sandawe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sag",
+      "code": "sag",
+      "label": "Sango"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sah",
+      "code": "sah",
+      "label": "Yakut"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sai",
+      "code": "sai",
+      "label": "South American Indian languages"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sal",
+      "code": "sal",
+      "label": "Idiomas salishan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sam",
+      "code": "sam",
+      "label": "Aramaico Samaritano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/san",
+      "code": "san",
+      "label": "Sânscrito"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sas",
+      "code": "sas",
+      "label": "Sasak"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sat",
+      "code": "sat",
+      "label": "Santali"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/scn",
+      "code": "scn",
+      "label": "Siciliano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sco",
+      "code": "sco",
+      "label": "Escocês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sel",
+      "code": "sel",
+      "label": "Selkup"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sem",
+      "code": "sem",
+      "label": "Idiomas semíticos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sga",
+      "code": "sga",
+      "label": "Irlandês, Arcaico (até 900)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sgn",
+      "code": "sgn",
+      "label": "Idiomas de sinais"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/shn",
+      "code": "shn",
+      "label": "Shan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sid",
+      "code": "sid",
+      "label": "Sidamo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sin",
+      "code": "sin",
+      "label": "Cingalês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sio",
+      "code": "sio",
+      "label": "Idiomas sioux"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sit",
+      "code": "sit",
+      "label": "Idiomas sino-tibetanos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sla",
+      "code": "sla",
+      "label": "Idiomas eslavos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/slo",
+      "code": "slo",
+      "label": "Eslovaco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/slv",
+      "code": "slv",
+      "label": "Esloveno"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sma",
+      "code": "sma",
+      "label": "Sami do Sul"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sme",
+      "code": "sme",
+      "label": "Sami do norte"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/smi",
+      "code": "smi",
+      "label": "Idiomas sami"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/smj",
+      "code": "smj",
+      "label": "Sami de Lule"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/smn",
+      "code": "smn",
+      "label": "Sami de Inari"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/smo",
+      "code": "smo",
+      "label": "Samoano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sms",
+      "code": "sms",
+      "label": "Sami de Skolt"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sna",
+      "code": "sna",
+      "label": "Xona"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/snd",
+      "code": "snd",
+      "label": "Síndi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/snk",
+      "code": "snk",
+      "label": "Soninquê"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sog",
+      "code": "sog",
+      "label": "Sogdiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/som",
+      "code": "som",
+      "label": "Somali"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/son",
+      "code": "son",
+      "label": "Idiomas songai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sot",
+      "code": "sot",
+      "label": "Sesoto do Sul"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/spa",
+      "code": "spa",
+      "label": "Espanhol; Castelhano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/srd",
+      "code": "srd",
+      "label": "Sardo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/srn",
+      "code": "srn",
+      "label": "Idioma surinamês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/srp",
+      "code": "srp",
+      "label": "Sérvio"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/srr",
+      "code": "srr",
+      "label": "Serer"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ssa",
+      "code": "ssa",
+      "label": "Idiomas nilo-saarianos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ssw",
+      "code": "ssw",
+      "label": "Swati"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/suk",
+      "code": "suk",
+      "label": "Sukuma"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sun",
+      "code": "sun",
+      "label": "Sundanês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sus",
+      "code": "sus",
+      "label": "Susu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/sux",
+      "code": "sux",
+      "label": "Sumeriano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/swa",
+      "code": "swa",
+      "label": "Suaíli"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/swe",
+      "code": "swe",
+      "label": "Sueco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/syc",
+      "code": "syc",
+      "label": "Siríaco Clássico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/syr",
+      "code": "syr",
+      "label": "siríaco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tah",
+      "code": "tah",
+      "label": "Taitiano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tai",
+      "code": "tai",
+      "label": "Idiomas tai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tam",
+      "code": "tam",
+      "label": "Tâmil"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tat",
+      "code": "tat",
+      "label": "Tártaro"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tel",
+      "code": "tel",
+      "label": "Télugo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tem",
+      "code": "tem",
+      "label": "Timne"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ter",
+      "code": "ter",
+      "label": "Tereno"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tet",
+      "code": "tet",
+      "label": "Tetum"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tgk",
+      "code": "tgk",
+      "label": "Tadjique"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tgl",
+      "code": "tgl",
+      "label": "Tagalo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tha",
+      "code": "tha",
+      "label": "Tailandês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tib",
+      "code": "tib",
+      "label": "Tibetano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tig",
+      "code": "tig",
+      "label": "Tigre"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tir",
+      "code": "tir",
+      "label": "Tigrínia"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tiv",
+      "code": "tiv",
+      "label": "Tiv"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tkl",
+      "code": "tkl",
+      "label": "Toquelau"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tlh",
+      "code": "tlh",
+      "label": "Klingon; tlhIngan-Hol"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tli",
+      "code": "tli",
+      "label": "Tlingit"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tmh",
+      "code": "tmh",
+      "label": "Tamashek"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tog",
+      "code": "tog",
+      "label": "Tonga (Nyasa)"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ton",
+      "code": "ton",
+      "label": "Tonga"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tpi",
+      "code": "tpi",
+      "label": "Tok Pisin"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tsi",
+      "code": "tsi",
+      "label": "Tsimshian"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tsn",
+      "code": "tsn",
+      "label": "Tsuana"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tso",
+      "code": "tso",
+      "label": "Tsonga"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tuk",
+      "code": "tuk",
+      "label": "Turcomeno"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tum",
+      "code": "tum",
+      "label": "Tumbuka"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tup",
+      "code": "tup",
+      "label": "Idiomas tupi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tur",
+      "code": "tur",
+      "label": "Turco"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tut",
+      "code": "tut",
+      "label": "Idiomas altaicos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tvl",
+      "code": "tvl",
+      "label": "Tuvalu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/twi",
+      "code": "twi",
+      "label": "Twi"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/tyv",
+      "code": "tyv",
+      "label": "Tuviniano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/udm",
+      "code": "udm",
+      "label": "Udmurt"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/uga",
+      "code": "uga",
+      "label": "Ugarítico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/uig",
+      "code": "uig",
+      "label": "Uigur"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ukr",
+      "code": "ukr",
+      "label": "Ucraniano"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/umb",
+      "code": "umb",
+      "label": "Umbundu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/und",
+      "code": "und",
+      "label": "Indeterminado"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/urd",
+      "code": "urd",
+      "label": "Urdu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/uzb",
+      "code": "uzb",
+      "label": "Uzbeque"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/vai",
+      "code": "vai",
+      "label": "Vai"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ven",
+      "code": "ven",
+      "label": "Venda"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/vie",
+      "code": "vie",
+      "label": "Vietnamita"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/vol",
+      "code": "vol",
+      "label": "Volapuque"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/vot",
+      "code": "vot",
+      "label": "Vótico"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wak",
+      "code": "wak",
+      "label": "Idiomas Wakashan"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wal",
+      "code": "wal",
+      "label": "Wolaitta; Wolaytta"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/war",
+      "code": "war",
+      "label": "Waray"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/was",
+      "code": "was",
+      "label": "Washo"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wel",
+      "code": "wel",
+      "label": "Galês"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wen",
+      "code": "wen",
+      "label": "Idiomas sorábios"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wln",
+      "code": "wln",
+      "label": "Valão"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/wol",
+      "code": "wol",
+      "label": "Uólofe"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/xal",
+      "code": "xal",
+      "label": "Calcumo; Oirata"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/xho",
+      "code": "xho",
+      "label": "Xhosa"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/yao",
+      "code": "yao",
+      "label": "Yao"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/yap",
+      "code": "yap",
+      "label": "Yap"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/yid",
+      "code": "yid",
+      "label": "Iídiche"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/yor",
+      "code": "yor",
+      "label": "Ioruba"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/ypk",
+      "code": "ypk",
+      "label": "Idiomas iúpiques"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zap",
+      "code": "zap",
+      "label": "Zapoteca"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zbl",
+      "code": "zbl",
+      "label": "Semantografia; Blissymbolics; Bliss"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zen",
+      "code": "zen",
+      "label": "Zenaga"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zgh",
+      "code": "zgh",
+      "label": "Tamazirte Padrão do Marrocos"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zha",
+      "code": "zha",
+      "label": "Zhuang; Chuang"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/znd",
+      "code": "znd",
+      "label": "Idiomas zandes"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zul",
+      "code": "zul",
+      "label": "Zulu"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zun",
+      "code": "zun",
+      "label": "Zuni"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zxx",
+      "code": "zxx",
+      "label": "Sem conteúdo linguístico; Não aplicável"
+    },
+    {
+      "uri": "http://id.loc.gov/vocabulary/languages/zza",
+      "code": "zza",
+      "label": "Zaza; Dimili; Dimli; Kirdki; Kirmanjk; Zazaki"
+    }
+  ]
+}

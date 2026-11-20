@@ -2,10 +2,15 @@ import json
 from importlib.resources import files
 from uuid import UUID
 
-from fastapi import APIRouter, Header, Response, status
+from fastapi import APIRouter, Header, HTTPException, Response, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 
+from app.modules.bibliograph.application.vocabularies import (
+    Vocabulary,
+    VocabularyNotFoundError,
+    get_vocabulary,
+)
 from app.modules.bibliograph.domain.models import BibliographicDraft
 
 
@@ -23,6 +28,22 @@ class DraftRead(ApiModel):
 
 
 router = APIRouter(prefix="/api/v1/bibliographic", tags=["bibliographic"])
+
+
+@router.get(
+    "/vocabularies/{vocabulary}",
+    operation_id="getBibliographicVocabulary",
+    response_model=Vocabulary,
+)
+async def read_vocabulary(vocabulary: str) -> Vocabulary:
+    """Return a complete, versioned controlled-vocabulary snapshot."""
+    try:
+        return get_vocabulary(vocabulary)
+    except VocabularyNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Vocabulary '{vocabulary}' is not available",
+        ) from exc
 
 
 @router.get(

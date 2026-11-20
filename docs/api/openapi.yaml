@@ -46,6 +46,25 @@ paths:
                 $ref: '#/components/schemas/Draft'
         '422':
           $ref: '#/components/responses/ValidationError'
+  /bibliographic/vocabularies/{vocabulary}:
+    get:
+      operationId: getBibliographicVocabulary
+      summary: Get a complete controlled vocabulary
+      parameters:
+        - name: vocabulary
+          in: path
+          required: true
+          description: Controlled-vocabulary name. Currently only `loc-languages` is available.
+          schema: {type: string}
+      responses:
+        '200':
+          description: Versioned snapshot of the requested controlled vocabulary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vocabulary'
+        '404':
+          description: The requested vocabulary is not available
   /works/{id}:
     parameters:
       - $ref: '#/components/parameters/ResourceId'
@@ -219,6 +238,25 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
   schemas:
+    VocabularyTerm:
+      type: object
+      additionalProperties: false
+      required: [uri, code, label]
+      properties:
+        uri: {type: string, format: uri}
+        code: {type: string, minLength: 1}
+        label: {type: string, minLength: 1}
+    Vocabulary:
+      type: object
+      additionalProperties: false
+      required: [vocabulary, version, terms]
+      properties:
+        vocabulary: {type: string}
+        version: {type: string}
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/VocabularyTerm'
     Identity:
       type: object
       additionalProperties: false
