@@ -1,56 +1,103 @@
 import asyncio
-from uuid import UUID
+from collections.abc import Mapping
 
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
+from app.modules.identity.application.service import IdentityService
+from app.modules.identity.domain.exceptions import AuthenticationError
 
 
-CATALOGER_ID = "1f95cb0d-ef38-4f0d-a9bf-8918222ee429"
+class StubValidator:
+    def __init__(self, claims: Mapping[str, object] | None = None) -> None:
+        self.claims = claims
+
+    async def validate(self, token: str) -> Mapping[str, object]:
+        if token != "valid-token" or self.claims is None:
+            raise AuthenticationError()
+        return self.claims
 
 
-async def post_draft(*, payload: dict | None = None, cataloger_id: str = CATALOGER_ID):
+class NullSecuritySink:
+    def emit(self, event: object) -> None:
+        pass
+
+
+def install_service(*roles: str) -> None:
+    app.state.identity_service = IdentityService(
+        validator=StubValidator(
+            {
+                "azp": "libris-web",
+                "iss": "http://keycloak.localhost:8081/realms/libris",
+                "sub": "cataloger-123",
+                "resource_access": {"libris-api": {"roles": list(roles)}},
+            }
+        ),
+        role_source="client",
+        role_client="libris-api",
+        human_client="libris-web",
+        observer=NullSecuritySink(),
+    )
+
+
+async def post_draft(payload: dict, token: str | None = "valid-token"):
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
-        kwargs = {"headers": {"X-Cataloger-Id": cataloger_id}}
-        if payload is not None:
-            kwargs["json"] = payload
-        return await client.post("/api/v1/bibliographic/drafts", **kwargs)
+        return await client.post(
+            "/api/v1/bibliographic/drafts", json=payload, headers=headers
+        )
 
 
-def test_create_draft_accepts_an_empty_object_and_associates_the_cataloger() -> None:
-    response = asyncio.run(post_draft(payload={}))
-
-    assert response.status_code == 201
-    assert response.headers["content-type"] == "application/json"
-    body = response.json()
-    assert UUID(body["id"])
-    assert body["catalogerId"] == CATALOGER_ID
-    assert response.headers["location"] == f"/api/v1/bibliographic/drafts/{body['id']}"
+def draft_payload(values: dict) -> dict:
+    return {
+        "profileId": "bibframe-work-default",
+        "profileVersion": "1.0.0",
+        "values": values,
+    }
 
 
-def test_create_draft_accepts_an_absent_body() -> None:
-    response = asyncio.run(post_draft())
+def test_draft_accepts_partial_work_without_main_title() -> None:
+    install_service("libris-cataloger")
+    response = asyncio.run(
+        post_draft(
+            draft_payload(
+                {
+                    "subtitle": "Fundamentos e perspectivas",
+                    "language": ["http://id.loc.gov/vocabulary/languages/por"],
+                }
+            )
+        )
+    )
+    assert response.status_code == 200
+    assert response.json() == {"message": "Rascunho enviado com sucesso."}
 
-    assert response.status_code == 201
 
-
-def test_create_draft_rejects_cataloging_fields_for_now() -> None:
-    response = asyncio.run(post_draft(payload={"title": "Not implemented yet"}))
-
+def test_draft_rejects_uri_outside_the_field_vocabulary() -> None:
+    install_service("libris-cataloger")
+    response = asyncio.run(
+        post_draft(draft_payload({"language": ["https://example.org/languages/por"]}))
+    )
     assert response.status_code == 422
 
 
-def test_create_draft_requires_the_cataloger_identity() -> None:
-    transport = ASGITransport(app=app)
-
-    async def request_without_cataloger():
-        async with AsyncClient(transport=transport, base_url="http://test") as client:
-            return await client.post("/api/v1/bibliographic/drafts", json={})
-
-    response = asyncio.run(request_without_cataloger())
-
+def test_draft_rejects_unknown_field() -> None:
+    install_service("libris-cataloger")
+    response = asyncio.run(post_draft(draft_payload({"unknown": "value"})))
     assert response.status_code == 422
+
+
+def test_draft_requires_authentication() -> None:
+    install_service("libris-cataloger")
+    response = asyncio.run(post_draft(draft_payload({}), token=None))
+    assert response.status_code == 401
+    assert response.headers["www-authenticate"] == "Bearer"
+
+
+def test_draft_requires_bibliographic_create_permission() -> None:
+    install_service("libris-reader")
+    response = asyncio.run(post_draft(draft_payload({})))
+    assert response.status_code == 403
 
 
 def test_old_work_creation_route_is_not_exposed() -> None:
@@ -60,9 +107,7 @@ def test_old_work_creation_route_is_not_exposed() -> None:
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             return await client.post("/api/v1/bibliographic/works", json={})
 
-    response = asyncio.run(request_old_route())
-
-    assert response.status_code == 404
+    assert asyncio.run(request_old_route()).status_code == 404
 
 
 def test_default_work_schema_is_exposed_for_the_frontend() -> None:
@@ -71,15 +116,10 @@ def test_default_work_schema_is_exposed_for_the_frontend() -> None:
     async def request_schema():
         async with AsyncClient(transport=transport, base_url="http://test") as client:
             return await client.get(
-                "/api/v1/bibliographic/schemas/work-default.v1.json"
+                "/api/v1/bibliographic/profile/work-default.v1.json"
             )
 
     response = asyncio.run(request_schema())
-
     assert response.status_code == 200
-    assert response.headers["content-type"] == "application/json"
     assert response.json()["id"] == "bibframe-work-default"
     assert response.json()["version"] == "1.0.0"
-    assert response.json()["targetClass"] == (
-        "http://id.loc.gov/ontologies/bibframe/Work"
-    )

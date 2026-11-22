@@ -93,7 +93,11 @@ def test_identity_returns_actor_roles_and_permissions() -> None:
     assert payload["display_name"] == "Maria da Silva"
     assert payload["picture_url"] == "https://images.example.org/users/maria.jpg"
     assert payload["roles"] == ["libris-admin", "libris-reader"]
-    assert payload["permissions"] == ["bibliographic:read", "system:admin"]
+    assert payload["permissions"] == [
+        "bibliographic:create",
+        "bibliographic:read",
+        "system:admin",
+    ]
 
 
 def test_identity_omits_invalid_optional_profile_claims() -> None:

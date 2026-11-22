@@ -1,30 +1,20 @@
-import json
-from importlib.resources import files
-from uuid import UUID
+from typing import Annotated
 
-from fastapi import APIRouter, Header, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict
 
+from app.modules.bibliograph.application.cataloging_profiles import (
+    get_default_work_profile_document,
+)
+from app.modules.bibliograph.application.drafts import DraftCreate, DraftReceived
 from app.modules.bibliograph.application.vocabularies import (
     Vocabulary,
     VocabularyNotFoundError,
     get_vocabulary,
 )
-from app.modules.bibliograph.domain.models import BibliographicDraft
-
-
-class ApiModel(BaseModel):
-    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
-
-
-class DraftCreate(ApiModel):
-    pass
-
-
-class DraftRead(ApiModel):
-    id: UUID
-    catalogerId: UUID
+from app.modules.identity.api.dependencies import require_permissions
+from app.modules.identity.domain.models import AuthenticatedActor
+from app.modules.identity.domain.permissions import Permission
 
 
 router = APIRouter(prefix="/api/v1/bibliographic", tags=["bibliographic"])
@@ -53,26 +43,22 @@ async def read_vocabulary(vocabulary: str) -> Vocabulary:
 )
 async def get_default_work_schema() -> JSONResponse:
     """Return the provisional default Work cataloging schema for the frontend."""
-    schema_path = files("app.modules.bibliograph.api.schemas").joinpath(
-        "work-default.v1.json"
-    )
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    return JSONResponse(content=schema)
+    return JSONResponse(content=get_default_work_profile_document())
 
 
 @router.post(
     "/drafts",
     operation_id="createBibliographicDraft",
-    response_model=DraftRead,
-    status_code=status.HTTP_201_CREATED,
+    response_model=DraftReceived,
+    status_code=status.HTTP_200_OK,
 )
 async def create_draft(
-    response: Response,
-    payload: DraftCreate | None = None,
-    cataloger_id: UUID = Header(alias="X-Cataloger-Id"),
-) -> DraftRead:
-    """Create the identity of a draft owned by the current cataloger."""
-    del payload
-    draft = BibliographicDraft.create(cataloger_id)
-    response.headers["Location"] = f"/api/v1/bibliographic/drafts/{draft.id}"
-    return DraftRead(id=draft.id, catalogerId=draft.cataloger_id)
+    payload: DraftCreate,
+    actor: Annotated[
+        AuthenticatedActor,
+        Depends(require_permissions(Permission.BIBLIOGRAPHIC_CREATE)),
+    ],
+) -> DraftReceived:
+    """Validate a partial Work description without persisting it."""
+    del payload, actor
+    return DraftReceived(message="Rascunho enviado com sucesso.")

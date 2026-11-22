@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
     subItems: [
       { key: "works", path: "admin/catalog/works" },
       { key: "instances", path: "admin/catalog/instances" },
-      { key: "newCatalogRecord", label: "Novo", path: "admin/catalog/works/new" },
+      { key: "newCatalogRecord", label: "Novo", path: "/admin/catalog/works/new" },
     ],
   },
   {
@@ -63,7 +63,8 @@ export function AppSidebar() {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar } =
     useSidebar();
   const showLabels = isExpanded || isHovered || isMobileOpen;
-  const localizedPath = (path: string) => `/${path}`;
+  const localizedPath = (path: string) =>
+    path.startsWith("/") ? path : `/${path}`;
   const isActive = (path: string, exact = false): boolean => {
     const href = localizedPath(path);
     return pathname === href || (!exact && pathname.startsWith(`${href}/`));

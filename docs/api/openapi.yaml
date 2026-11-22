@@ -25,25 +25,27 @@ paths:
   /bibliographic/drafts:
     post:
       operationId: createBibliographicDraft
-      summary: Create an empty bibliographic draft for a cataloger
-      parameters:
-        - $ref: '#/components/parameters/CatalogerId'
+      summary: Validate a partial Work draft
+      description: Validates the submitted values against the identified cataloging profile and its controlled vocabularies. This operation does not persist the draft.
+      security:
+        - bearerAuth: []
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DraftCreate'
       responses:
-        '201':
-          description: Draft identity created and associated with the cataloger
-          headers:
-            Location:
-              schema: {type: string, format: uri-reference}
+        '200':
+          description: Draft content received and validated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Draft'
+                $ref: '#/components/schemas/DraftReceived'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: The authenticated actor lacks `bibliographic:create`
         '422':
           $ref: '#/components/responses/ValidationError'
   /bibliographic/vocabularies/{vocabulary}:
@@ -183,12 +185,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
-    CatalogerId:
-      name: X-Cataloger-Id
-      in: header
-      required: true
-      description: Provisional identity of the authenticated cataloger until the identity module is implemented.
-      schema: {type: string, format: uuid}
     ResourceId:
       name: id
       in: path
@@ -283,16 +279,28 @@ components:
           items: {type: string}
     DraftCreate:
       type: object
-      description: Empty initial payload; cataloging fields will be introduced in a later flow.
       additionalProperties: false
-      maxProperties: 0
-    Draft:
+      required: [profileId, profileVersion, values]
+      properties:
+        profileId: {type: string, minLength: 1, example: bibframe-work-default}
+        profileVersion: {type: string, minLength: 1, example: 1.0.0}
+        values:
+          type: object
+          description: Field IDs from the selected profile mapped to text or arrays of controlled-vocabulary URIs. Required publication fields may be omitted for a draft.
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: array
+                items: {type: string, format: uri}
+          example:
+            subtitle: Fundamentos e perspectivas
+            language: [http://id.loc.gov/vocabulary/languages/por]
+    DraftReceived:
       type: object
       additionalProperties: false
-      required: [id, catalogerId]
+      required: [message]
       properties:
-        id: {type: string, format: uuid}
-        catalogerId: {type: string, format: uuid}
+        message: {type: string, const: 'Rascunho enviado com sucesso.'}
     Contributor:
       type: object
       additionalProperties: false

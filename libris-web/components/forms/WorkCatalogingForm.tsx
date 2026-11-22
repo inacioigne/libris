@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 
+import {
+  submitWorkDraft,
+  type DraftPayload,
+  type DraftSubmissionState,
+} from "@/app/(admin)/admin/catalog/works/new/actions";
 import { VocabularyCombobox } from "@/components/forms/VocabularyCombobox";
 import type {
   WorkProfile,
@@ -18,8 +23,6 @@ type TextFieldValues = Record<string, string>;
  * display labels never become cataloging values. Non-repeatable fields use the
  * same representation but contain at most one URI.
  *
- * This is currently a frontend form-state contract only. The Work write API
- * does not yet accept this list.
  */
 export type VocabularyFieldValues = Record<string, string[]>;
 
@@ -36,6 +39,11 @@ type FieldRenderer = (props: ProfileFieldProps) => React.ReactNode;
 
 const inputClasses =
   "mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white";
+
+const initialDraftSubmissionState: DraftSubmissionState = {
+  message: "",
+  status: "idle",
+};
 
 const fieldRenderers: Record<string, FieldRenderer> = {
   text: ({ field, onTextChange, textValue }) => (
@@ -149,6 +157,10 @@ export function WorkCatalogingForm({
   const [textValues, setTextValues] = useState<TextFieldValues>({});
   const [vocabularyValues, setVocabularyValues] =
     useState<VocabularyFieldValues>({});
+  const [submission, submitDraft, isPending] = useActionState(
+    submitWorkDraft,
+    initialDraftSubmissionState,
+  );
 
   function updateTextField(fieldId: string, value: string) {
     setTextValues((currentValues) => ({
@@ -164,8 +176,30 @@ export function WorkCatalogingForm({
     }));
   }
 
+  function draftPayload(): DraftPayload {
+    const values: DraftPayload["values"] = {};
+    for (const section of profile.sections) {
+      for (const field of section.fields) {
+        if (field.widget === "vocabulary-select") {
+          const selectedUris = vocabularyValues[field.id] ?? [];
+          if (selectedUris.length > 0) values[field.id] = selectedUris;
+        } else {
+          const text = textValues[field.id] ?? "";
+          if (text.length > 0) values[field.id] = text;
+        }
+      }
+    }
+    return { profileId: profile.id, profileVersion: profile.version, values };
+  }
+
   return (
-    <form className="space-y-8">
+    <form
+      className="space-y-8"
+      onSubmit={(event) => {
+        event.preventDefault();
+        startTransition(() => submitDraft(draftPayload()));
+      }}
+    >
       <h1 className="text-2xl font-semibold text-gray-950 dark:text-white">
         {profile.name}
       </h1>
@@ -194,6 +228,28 @@ export function WorkCatalogingForm({
           ))}
         </fieldset>
       ))}
+
+      <div className="flex flex-wrap items-center gap-4">
+        <button
+          className="rounded-lg bg-teal-700 px-4 py-2 font-medium text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={isPending}
+          formNoValidate
+          type="submit"
+        >
+          {isPending ? "Enviando…" : "Salvar rascunho"}
+        </button>
+        <p
+          aria-live="polite"
+          className={
+            submission.status === "error"
+              ? "text-red-700 dark:text-red-300"
+              : "text-teal-800 dark:text-teal-200"
+          }
+          role={submission.status === "error" ? "alert" : "status"}
+        >
+          {submission.message}
+        </p>
+      </div>
     </form>
   );
 }

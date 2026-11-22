@@ -11,7 +11,7 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = MappingProxyType(
         "libris-cataloger": frozenset(
             {
                 P.BIBLIOGRAPHIC_READ,
-                # P.BIBLIOGRAPHIC_CREATE,
+                P.BIBLIOGRAPHIC_CREATE,
                 # P.BIBLIOGRAPHIC_UPDATE,
                 # P.AUTHORITY_READ,
                 # P.METADATA_REVISION_READ,
@@ -51,7 +51,7 @@ ROLE_PERMISSIONS: Mapping[str, frozenset[P]] = MappingProxyType(
         "libris-admin": frozenset(
             {
                 P.BIBLIOGRAPHIC_READ,
-                # P.BIBLIOGRAPHIC_CREATE,
+                P.BIBLIOGRAPHIC_CREATE,
                 # P.BIBLIOGRAPHIC_UPDATE,
                 # P.BIBLIOGRAPHIC_DELETE,
                 # P.AUTHORITY_READ,
